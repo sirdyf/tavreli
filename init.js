@@ -47,8 +47,8 @@ function init() {
 
     scene.add(new THREE.AmbientLight('rgb(20,150,20)'));
 
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 1.15);
-    directionalLight.position.set(1, 5, 1);
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    directionalLight.position.set(3, 3, 15);
     camera.add(directionalLight);
 
     var maxAnisotropy = renderer.getMaxAnisotropy();
@@ -69,7 +69,6 @@ function init() {
     var loader = new THREE.OBJMTLLoader();
     loader.load( 'model/props.obj', 'model/props.mtl', function ( object ){
         scene.main.createModel(object);
-        scene.add(scene.main.getMainObj());
         scene.tstBox=scene.main.getBoundingBox(object);
     });
 
@@ -121,7 +120,7 @@ function onDocumentMouseMove( event ) {
     raycaster.setFromCamera( mouseRay, camera );
 
     var child = scene.main.getMainObj();
-    var intersects = raycaster.intersectObjects( scene.children,true);
+    var intersects = raycaster.intersectObjects( child.children,true);
 
     if ( intersects.length > 0 ) {
         if ( INTERSECTED != intersects[ 0 ].object ) {
@@ -133,10 +132,6 @@ function onDocumentMouseMove( event ) {
                 if (INTERSECTED.name === "figure"){
                     scene.main.setNullCubePosition(intersects[ 0 ].object);
                 }
-                // if (INTERSECTED.name === "controlPoint"){
-//                            INTERSECTED.scale.set(2,2,2);
-                    // scene.main.setNullCubePosBack(INTERSECTED);
-                // }
             }
         }
     } else {
