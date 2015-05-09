@@ -45,7 +45,11 @@ TAVRELI.init = function() {
 
     this.getMaterialFromObj = function(object) {
         var tmpMat = [];
-        materials.grey = new THREE.MeshBasicMaterial({color: 0x111111});//new THREE.MeshLambertMaterial({color: 0x111111, shading: THREE.FlatShading, overdraw: true}); 
+        materials.grey = new THREE.MeshBasicMaterial({color: 0x111111});
+        materials.yellow = new THREE.MeshLambertMaterial({color: new THREE.Color("yellow"), shading: THREE.FlatShading, overdraw: true}); 
+        materials.yellow.name = 'yellow';
+        materials.brown = new THREE.MeshLambertMaterial({color: new THREE.Color("brown"), shading: THREE.FlatShading, overdraw: true}); 
+        materials.brown.name = 'brown';
         materials.one = new THREE.MeshBasicMaterial({color: 0x00ffff, wireframe: true, side: THREE.DoubleSide});
         if (object.children.length === 0)
             return;
@@ -92,10 +96,11 @@ TAVRELI.init = function() {
     };
     this.createBoardSquares = function(){
         mainBoard.squares = [];
+        var m = materials.brown;
         for (var i = -3; i < 5; i++) {
             for (var j = -3; j < 5; j++) {
                 var mSquare = new THREE.Mesh(new THREE.BoxGeometry( 1, 1, .1, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff00ff, wireframe: true}));
-                mSquare.material = materials.grey;
+                mSquare.material = m;
                 mSquare.name = 'square';
                 mSquare.position.x = i - .5;
                 mSquare.position.y = j - .5;
@@ -103,7 +108,17 @@ TAVRELI.init = function() {
                 // scene.add(mSquare);
                 mainBoard.add(mSquare);
                 mainBoard.squares.push(mSquare);
+                if (m.name == 'brown') {
+                    m = materials.yellow;
+                }else{
+                    m = materials.brown;
+                };
             };
+            if (m.name == 'brown') {
+                m = materials.yellow;
+                }else{
+                    m = materials.brown;
+                };
         };
     };
     (this.creates = function() {

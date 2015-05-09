@@ -45,7 +45,7 @@ function init() {
 
     scene.add(camera);
 
-    scene.add(new THREE.AmbientLight('rgb(20,150,20)'));
+    scene.add(new THREE.AmbientLight('rgb(20,20,20)'));
 
     var directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
     directionalLight.position.set(3, 3, 15);
