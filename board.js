@@ -15,14 +15,9 @@ TAVRELI.init = function() {
     var nullCube = null;
     var materials = [];
     var originCube = null;
+    var originCubeSize = null;
+    var originCubeScale = null;
     
-    var mNameRight = 0;
-    var mNameLeft = 0;
-    var mNameDown = 0;
-    var mNameFront = 0;
-    var mNameUp = 0;
-    var mNameBack = 0;
-
     var resetBoardFigure = function() {
         figures.arr = [];
         mainFigure = new Chess(originCube);
@@ -31,7 +26,8 @@ TAVRELI.init = function() {
             chess.name = 'figure';
             chess.position.x = i - 4 + .5;
             chess.position.y = i - 4 + .5;
-            chess.position.z = .5 + .25;
+            console.log(originCubeSize.y * originCubeScale);
+            chess.position.z = .5;
             figures.arr.push(chess);
             scene.add(chess);
         };
@@ -71,7 +67,17 @@ TAVRELI.init = function() {
 
     this.createModel = function(obj) {
         this.getMaterialFromObj(obj);
-        originCube = obj.clone();
+        var tmpObj=obj.clone();
+        var rotAngle = Math.PI / 2.0;
+        var axis = new THREE.Vector3(1, 0, 0);
+        UTILS.rotateAroundWorldAxis(tmpObj,axis,rotAngle);
+        var bBox = this.getBoundingBox(tmpObj);
+        originCubeSize = bBox.size();
+        var sc=1/originCubeSize.x;
+        originCubeScale = sc;
+        tmpObj.scale.set(sc,sc,sc);
+        originCube = tmpObj.clone();
+
         this.createBoardSquares();
         resetBoardFigure();
     };
