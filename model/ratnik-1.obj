@@ -212,25 +212,49 @@ f 21/28/6 18/10/6 36/44/6
 
 f 36/44/6 18/10/6 19/26/6
 
-usemtl knyaz_1
+usemtl ratnik_white
 f 19/17/6 20/18/6 21/19/6 36/20/6
 
-usemtl ratnik_1
+usemtl ratoborec_white
 f 19/17/6 20/18/6 21/19/6 36/20/6
 
-usemtl ratoborec_1
+usemtl vsadnik_white
 f 19/17/6 20/18/6 21/19/6 36/20/6
 
-usemtl vsadnik_1
+usemtl luchnik_white
 f 19/17/6 20/18/6 21/19/6 36/20/6
 
-usemtl luchnik_1
+usemtl knyaz_white
 f 19/17/6 20/18/6 21/19/6 36/20/6
 
-usemtl volhv_1
+usemtl volhv_white
 f 19/17/6 20/18/6 21/19/6 36/20/6
 
-usemtl helgi_1
+usemtl helgi_white
+f 19/17/6 20/18/6 21/19/6 36/20/6
+
+usemtl ratnik_black
+f 19/17/6 20/18/6 21/19/6 36/20/6
+
+usemtl ratoborec_black
+f 19/17/6 20/18/6 21/19/6 36/20/6
+
+usemtl vsadnik_black
+f 19/17/6 20/18/6 21/19/6 36/20/6
+
+usemtl luchnik_black
+f 19/17/6 20/18/6 21/19/6 36/20/6
+
+usemtl knyaz_black
+f 19/17/6 20/18/6 21/19/6 36/20/6
+
+usemtl volhv_black
+f 19/17/6 20/18/6 21/19/6 36/20/6
+
+usemtl helgi_black
+f 19/17/6 20/18/6 21/19/6 36/20/6
+
+usemtl FrontColorBlack
 f 19/17/6 20/18/6 21/19/6 36/20/6
 
 usemtl secondFigureMaterial

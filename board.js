@@ -24,7 +24,7 @@ TAVRELI.init = function() {
     var resetBoardFigure = function() {
         figures.white = [];
         mainFigure = new Chess(originCube);
-        for (var i = 0; i < 16; i++) {
+        for (var i = 0; i < 8*4; i++) {
             var chess = mainFigure.getMainObj().clone();
             chess.name = 'figure';
             chess.position.x = (i % 8) - 4 + .5;
@@ -33,6 +33,12 @@ TAVRELI.init = function() {
                 chess.position.z = .5;
             }else if ((i >= 8)&&(i <= 15)){
                 chess.position.y = 0 - 4 + .5;
+                chess.position.z = .5;
+            }else if ((i >= 16)&&(i <= 23)){
+                chess.position.y = 6 - 4 + .5;
+                chess.position.z = .5;
+            }else if ((i >= 24)&&(i <= 31)){
+                chess.position.y = 7 - 4 + .5;
                 chess.position.z = .5;
             }else{
                 return;
@@ -44,44 +50,49 @@ TAVRELI.init = function() {
     };
     var makeFigureWithIndex = function(obj,index){
         obj.figureIndex = index;
-        makeTavreli(obj,index);
+        if (index<16){
+            makeTavreli(obj,index,'white');
+        }else{
+            makeTavreli(obj,index-16,'black');
+            replaceMaterial(obj,'FrontColor','FrontColorBlack');
+        };
     };
-    var makeTavreli = function(obj,ind){
+    var makeTavreli = function(obj,ind,postfix){
         if (ind == 0 || ind == 7){
-            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
-            replaceMaterial(obj,'secondFigureMaterial','ratoborec_1');
+            replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','ratoborec_'+postfix);
         }else if (ind == 1 || ind == 6){
-            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
-            replaceMaterial(obj,'secondFigureMaterial','vsadnik_1');
+            replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','vsadnik_'+postfix);
         }else if (ind == 2 || ind == 5){
-            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
-            replaceMaterial(obj,'secondFigureMaterial','luchnik_1');
+            replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','luchnik_'+postfix);
         }else if (ind == 3){
-            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
-            replaceMaterial(obj,'secondFigureMaterial','knyaz_1');
+            replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','knyaz_'+postfix);
         }else if (ind == 4){
-            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
-            replaceMaterial(obj,'secondFigureMaterial','helgi_1');
+            replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','helgi_'+postfix);
         }else if (ind == 8 || ind == 15){
-            replaceMaterial(obj,'topFigureMaterial','ratoborec_1');
-            replaceMaterial(obj,'secondFigureMaterial','ratoborec_1');
-            replaceMaterial(obj,'mainFigureMaterial','ratoborec_1');
+            replaceMaterial(obj,'topFigureMaterial','ratoborec_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','ratoborec_'+postfix);
+            replaceMaterial(obj,'mainFigureMaterial','ratoborec_'+postfix);
         }else if (ind == 9 || ind == 14){
-            replaceMaterial(obj,'topFigureMaterial','vsadnik_1');
-            replaceMaterial(obj,'secondFigureMaterial','vsadnik_1');
-            replaceMaterial(obj,'mainFigureMaterial','vsadnik_1');
+            replaceMaterial(obj,'topFigureMaterial','vsadnik_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','vsadnik_'+postfix);
+            replaceMaterial(obj,'mainFigureMaterial','vsadnik_'+postfix);
         }else if (ind == 10 || ind == 13){
-            replaceMaterial(obj,'topFigureMaterial','luchnik_1');
-            replaceMaterial(obj,'secondFigureMaterial','luchnik_1');
-            replaceMaterial(obj,'mainFigureMaterial','luchnik_1');
+            replaceMaterial(obj,'topFigureMaterial','luchnik_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','luchnik_'+postfix);
+            replaceMaterial(obj,'mainFigureMaterial','luchnik_'+postfix);
         }else if (ind == 11){
-            replaceMaterial(obj,'topFigureMaterial','knyaz_1');
-            replaceMaterial(obj,'secondFigureMaterial','knyaz_1');
-            replaceMaterial(obj,'mainFigureMaterial','knyaz_1');
+            replaceMaterial(obj,'topFigureMaterial','knyaz_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','knyaz_'+postfix);
+            replaceMaterial(obj,'mainFigureMaterial','knyaz_'+postfix);
         }else if (ind == 12){
-            replaceMaterial(obj,'topFigureMaterial','volhv_1');
-            replaceMaterial(obj,'secondFigureMaterial','volhv_1');
-            replaceMaterial(obj,'mainFigureMaterial','volhv_1');
+            replaceMaterial(obj,'topFigureMaterial','volhv_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','volhv_'+postfix);
+            replaceMaterial(obj,'mainFigureMaterial','volhv_'+postfix);
         };
     };
     var replaceMaterial = function(object,matSourceName,matDestName){

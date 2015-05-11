@@ -7,62 +7,109 @@ Ka 0.000000 0.000000 0.000000
 Kd 1.000000 1.000000 1.000000
 Ks 0.330000 0.330000 0.330000
 
+newmtl FrontColorBlack
+Ka 0.000000 0.000000 0.000000
+Kd 0.300000 0.300000 0.300000
+Ks 0.330000 0.330000 0.330000
+
 newmtl secondFigureMaterial
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/ratnik_1.png
+map_Kd ratnik-1/ratnik_white.png
 
 newmtl topFigureMaterial
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/ratnik_1.png
+map_Kd ratnik-1/ratnik_white.png
 
 newmtl mainFigureMaterial
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/ratnik_1.png
+map_Kd ratnik-1/ratnik_white.png
 
-newmtl ratnik_1
+newmtl ratnik_white
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/ratnik_1.png
+map_Kd ratnik-1/ratnik_white.png
 
-newmtl ratoborec_1
+newmtl ratoborec_white
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/ratoborec_1.png
+map_Kd ratnik-1/ratoborec_white.png
 
-newmtl vsadnik_1
+newmtl vsadnik_white
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/vsadnik_1.png
+map_Kd ratnik-1/vsadnik_white.png
 
-newmtl knyaz_1
+newmtl luchnik_white
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/knyaz_1.png
+map_Kd ratnik-1/luchnik_white.png
 
-newmtl volhv_1
+newmtl knyaz_white
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/volhv_1.png
+map_Kd ratnik-1/knyaz_white.png
 
-newmtl luchnik_1
+newmtl volhv_white
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/luchnik_1.png
+map_Kd ratnik-1/volhv_white.png
 
-newmtl helgi_1
+newmtl helgi_white
 Ka 0.000000 0.000000 0.000000
 Kd 0.854902 0.854902 0.854902
 Ks 0.330000 0.330000 0.330000
-map_Kd ratnik-1/helgi_1.png
+map_Kd ratnik-1/helgi_white.png
+
+newmtl ratnik_black
+Ka 0.000000 0.000000 0.000000
+Kd 0.854902 0.854902 0.854902
+Ks 0.330000 0.330000 0.330000
+map_Kd ratnik-1/ratnik_black.png
+
+newmtl ratoborec_black
+Ka 0.000000 0.000000 0.000000
+Kd 0.854902 0.854902 0.854902
+Ks 0.330000 0.330000 0.330000
+map_Kd ratnik-1/ratoborec_black.png
+
+newmtl vsadnik_black
+Ka 0.000000 0.000000 0.000000
+Kd 0.854902 0.854902 0.854902
+Ks 0.330000 0.330000 0.330000
+map_Kd ratnik-1/vsadnik_black.png
+
+newmtl luchnik_black
+Ka 0.000000 0.000000 0.000000
+Kd 0.854902 0.854902 0.854902
+Ks 0.330000 0.330000 0.330000
+map_Kd ratnik-1/luchnik_black.png
+
+newmtl knyaz_black
+Ka 0.000000 0.000000 0.000000
+Kd 0.854902 0.854902 0.854902
+Ks 0.330000 0.330000 0.330000
+map_Kd ratnik-1/knyaz_black.png
+
+newmtl volhv_black
+Ka 0.000000 0.000000 0.000000
+Kd 0.854902 0.854902 0.854902
+Ks 0.330000 0.330000 0.330000
+map_Kd ratnik-1/volhv_black.png
+
+newmtl helgi_black
+Ka 0.000000 0.000000 0.000000
+Kd 0.854902 0.854902 0.854902
+Ks 0.330000 0.330000 0.330000
+map_Kd ratnik-1/helgi_black.png
