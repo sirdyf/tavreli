@@ -69,8 +69,9 @@ function init() {
     var loader = new THREE.OBJMTLLoader();
     loader.load( 'model/ratnik-1.obj', 'model/ratnik-1.mtl', function ( object ){
         scene.main.createModel(object);
-        scene.tstBox=scene.main.getBoundingBox(object);
+        scene.main.getMaterialFromObj(object);
     });
+
 
     stats = new Stats();
     container.appendChild(stats.domElement);

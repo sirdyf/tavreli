@@ -13,23 +13,86 @@ TAVRELI.init = function() {
     var mainFigure = null;
     var figures = {};
     var nullCube = null;
+    var textures = null;
     var materials = [];
     var originCube = null;
     var originCubeSize = null;
     var originCubeScale = null;
+
+    materials.name = [];
     
     var resetBoardFigure = function() {
-        figures.arr = [];
+        figures.white = [];
         mainFigure = new Chess(originCube);
-        for (var i = 0; i < 8; i++) {
+        for (var i = 0; i < 16; i++) {
             var chess = mainFigure.getMainObj().clone();
             chess.name = 'figure';
-            chess.position.x = i - 4 + .5;
-            chess.position.y = i - 4 + .5;
-            console.log(originCubeSize.y * originCubeScale);
-            chess.position.z = .5;
-            figures.arr.push(chess);
+            chess.position.x = (i % 8) - 4 + .5;
+            if (i <= 7){
+                chess.position.y = 1 - 4 + .5;
+                chess.position.z = .5;
+            }else if ((i >= 8)&&(i <= 15)){
+                chess.position.y = 0 - 4 + .5;
+                chess.position.z = .5;
+            }else{
+                return;
+            }
+            makeFigureWithIndex(chess,i);
+            figures.white.push(chess);
             scene.add(chess);
+        };
+    };
+    var makeFigureWithIndex = function(obj,index){
+        obj.figureIndex = index;
+        makeTavreli(obj,index);
+    };
+    var makeTavreli = function(obj,ind){
+        if (ind == 0 || ind == 7){
+            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
+            replaceMaterial(obj,'secondFigureMaterial','ratoborec_1');
+        }else if (ind == 1 || ind == 6){
+            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
+            replaceMaterial(obj,'secondFigureMaterial','vsadnik_1');
+        }else if (ind == 2 || ind == 5){
+            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
+            replaceMaterial(obj,'secondFigureMaterial','luchnik_1');
+        }else if (ind == 3){
+            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
+            replaceMaterial(obj,'secondFigureMaterial','knyaz_1');
+        }else if (ind == 4){
+            replaceMaterial(obj,'topFigureMaterial','ratnik_1');
+            replaceMaterial(obj,'secondFigureMaterial','helgi_1');
+        }else if (ind == 8 || ind == 15){
+            replaceMaterial(obj,'topFigureMaterial','ratoborec_1');
+            replaceMaterial(obj,'secondFigureMaterial','ratoborec_1');
+            replaceMaterial(obj,'mainFigureMaterial','ratoborec_1');
+        }else if (ind == 9 || ind == 14){
+            replaceMaterial(obj,'topFigureMaterial','vsadnik_1');
+            replaceMaterial(obj,'secondFigureMaterial','vsadnik_1');
+            replaceMaterial(obj,'mainFigureMaterial','vsadnik_1');
+        }else if (ind == 10 || ind == 13){
+            replaceMaterial(obj,'topFigureMaterial','luchnik_1');
+            replaceMaterial(obj,'secondFigureMaterial','luchnik_1');
+            replaceMaterial(obj,'mainFigureMaterial','luchnik_1');
+        }else if (ind == 11){
+            replaceMaterial(obj,'topFigureMaterial','knyaz_1');
+            replaceMaterial(obj,'secondFigureMaterial','knyaz_1');
+            replaceMaterial(obj,'mainFigureMaterial','knyaz_1');
+        }else if (ind == 12){
+            replaceMaterial(obj,'topFigureMaterial','volhv_1');
+            replaceMaterial(obj,'secondFigureMaterial','volhv_1');
+            replaceMaterial(obj,'mainFigureMaterial','volhv_1');
+        };
+    };
+    var replaceMaterial = function(object,matSourceName,matDestName){
+        var matDest = materials[matDestName].clone();
+        if (matDest === undefined) return;
+        for (var i in object.children) {
+            var mName = object.children[i].material.name;
+            if (mName === matSourceName) {
+                object.children[i].material = matDest;
+                object.children[i].material.needsUpdate = true;
+            };
         };
     };
     this.getMainObj = function() {
@@ -40,33 +103,47 @@ TAVRELI.init = function() {
     };
 
     this.getMaterialFromObj = function(object) {
-        var tmpMat = [];
         materials.grey = new THREE.MeshBasicMaterial({color: 0x111111});
         materials.yellow = new THREE.MeshLambertMaterial({color: new THREE.Color("yellow"), shading: THREE.FlatShading, overdraw: true}); 
         materials.yellow.name = 'yellow';
         materials.brown = new THREE.MeshLambertMaterial({color: new THREE.Color("brown"), shading: THREE.FlatShading, overdraw: true}); 
         materials.brown.name = 'brown';
         materials.one = new THREE.MeshBasicMaterial({color: 0x00ffff, wireframe: true, side: THREE.DoubleSide});
+        var originMaterial = null;
+        for (var i in originCube.children) {
+            var mName = originCube.children[i].material.name;
+            if (mName.length > 1) {
+                materials[mName] = originCube.children[i].material;
+            };
+            // if (mName === 'topFigureMaterial') {
+            //     originMaterial = originCube.children[i].material;
+            //     break;
+            // };
+        };
+        // var crateTxr = THREE.ImageUtils.loadTexture( 'model/volhv.png' );
+        // var material = new THREE.MeshBasicMaterial( { map: crateTxr } );
+        // var material = originMaterial.clone();
+        // material.map = crateTxr;
+
+        // materials.ratoborec_1 = material;
+        // for (mat in object.materialsInfo) {
+            // console.log(mat);
+            // var mm = originCube.material[1].clone();
+
+            // materials[mat] = mm;
+        // };
         if (object.children.length === 0)
             return;
         for (var i in object.children) {
             var mName = object.children[i].material.name;
-            // if (mName === "FrontColor") {
-            //     object.children[i].material.side = THREE.DoubleSide;
-//                materials.one=object.children[i].material.clone();
-            // }
-            tmpMat[mName] = true;
+            console.log(mName);
+        //     // materials.push(object.children[i].material);
         }
-        var k = 0;
-        materials.name = [];
-        for (var j in tmpMat) {
-            materials.name[k] = j;
-            k += 1;
-        }
+        this.createBoardSquares();
+        resetBoardFigure();
     };
 
     this.createModel = function(obj) {
-        this.getMaterialFromObj(obj);
         var tmpObj=obj.clone();
         var rotAngle = Math.PI / 2.0;
         var axis = new THREE.Vector3(1, 0, 0);
@@ -77,9 +154,6 @@ TAVRELI.init = function() {
         originCubeScale = sc;
         tmpObj.scale.set(sc,sc,sc);
         originCube = tmpObj.clone();
-
-        this.createBoardSquares();
-        resetBoardFigure();
     };
 
     this.getBoundingBox = function(obj) {
