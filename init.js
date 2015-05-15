@@ -130,9 +130,9 @@ function onDocumentMouseMove( event ) {
                 if (INTERSECTED.name === "square"){
                     scene.main.setNullCubePosition(intersects[ 0 ].object);
                 }
-                if (INTERSECTED.name === "figure"){
-                    scene.main.setNullCubePosition(intersects[ 0 ].object);
-                }
+                // if (INTERSECTED.name === "figure"){
+                //     scene.main.setNullCubePosition(intersects[ 0 ].object);
+                // }
             }
         }
     } else {
@@ -141,7 +141,12 @@ function onDocumentMouseMove( event ) {
     }
 }
 document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
+function onDocumentMouseDown( event ) {
+    event.preventDefault();
+    LOGIC.main.ClickOnObject(scene.main.getNullCubePosition(),TAVRELI);
+};
 function onWindowResize() {
 
     SCREEN_WIDTH = window.innerWidth;
