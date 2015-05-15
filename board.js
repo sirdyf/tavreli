@@ -63,18 +63,24 @@ TAVRELI.init = function() {
             var chess = mainFigure.getMainObj().clone();
             chess.name = 'figure';
             chess.position.x = (i % 8) - 4 + .5;
+            chess.boardPosition = new THREE.Vector2();
+            chess.boardPosition.x = (i % 8);
             if (i <= 7){
                 chess.position.y = 1 - 4 + .5;
                 chess.position.z = .5;
+                chess.boardPosition.y = 1;
             }else if ((i >= 8)&&(i <= 15)){
                 chess.position.y = 0 - 4 + .5;
                 chess.position.z = .5;
+                chess.boardPosition.y = 0;
             }else if ((i >= 16)&&(i <= 23)){
                 chess.position.y = 6 - 4 + .5;
                 chess.position.z = .5;
+                chess.boardPosition.y = 6;
             }else if ((i >= 24)&&(i <= 31)){
                 chess.position.y = 7 - 4 + .5;
                 chess.position.z = .5;
+                chess.boardPosition.y = 7;
             }else{
                 return;
             }
@@ -94,20 +100,26 @@ TAVRELI.init = function() {
     };
     var makeTavreli = function(obj,ind,postfix){
         if (ind == 0 || ind == 7){
+            obj.main = new RatnikContainer();
+            obj.main.addMoveArrow(obj);
             replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
             replaceMaterial(obj,'secondFigureMaterial','ratoborec_'+postfix);
         }else if (ind == 1 || ind == 6){
             replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
             replaceMaterial(obj,'secondFigureMaterial','vsadnik_'+postfix);
+            obj.main = new RatnikContainer();
         }else if (ind == 2 || ind == 5){
             replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
             replaceMaterial(obj,'secondFigureMaterial','luchnik_'+postfix);
+            obj.main = new RatnikContainer();
         }else if (ind == 3){
             replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
             replaceMaterial(obj,'secondFigureMaterial','knyaz_'+postfix);
+            obj.main = new RatnikContainer();
         }else if (ind == 4){
             replaceMaterial(obj,'topFigureMaterial','ratnik_'+postfix);
             replaceMaterial(obj,'secondFigureMaterial','helgi_'+postfix);
+            obj.main = new RatnikContainer();
         }else if (ind == 8 || ind == 15){
             replaceMaterial(obj,'topFigureMaterial','ratoborec_'+postfix);
             replaceMaterial(obj,'secondFigureMaterial','ratoborec_'+postfix);
@@ -134,6 +146,7 @@ TAVRELI.init = function() {
         var matDest = materials[matDestName].clone();
         if (matDest === undefined) return;
         for (var i in object.children) {
+            if (object.children[i].material === undefined) continue;
             var mName = object.children[i].material.name;
             if (mName === matSourceName) {
                 object.children[i].material = matDest;
