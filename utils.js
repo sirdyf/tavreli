@@ -70,11 +70,11 @@ UTILS.removeAllArrow = function(figure){
 };
 UTILS.showAvailablePositions = function(posArray,figure){
     UTILS.removeAllArrow(figure);
-    var dirFlag_ = 1;
+    var dirFlag_ = -1;
     for (var i = 0; i < posArray.length; i++) {
         var arrow_ = figure.main.moveArrows[i];
         var vecDir_ = new THREE.Vector2().subVectors(posArray[i],figure.boardPosition);
-        if (figure.figureIndex <= 15) dirFlag_ = -1;//todo
+        if ((figure.figureIndex > 15)&&(figure.figureIndex <24)) dirFlag_ = 1;//WTF?
         arrow_.setDirection(new THREE.Vector3(vecDir_.x,0,vecDir_.y * dirFlag_).normalize());
         arrow_.setLength(vecDir_.length() * 4.0);
         figure.add(figure.main.moveArrows[i]);

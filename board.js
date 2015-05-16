@@ -81,7 +81,7 @@ TAVRELI.init = function() {
             chess.boardPosition = new THREE.Vector2();
             chess.boardPosition.x = (i % 8);
             chess.position.z = .5;
-            if (i == 8){
+            if (i == 88){
                 makeTestFigure(i);
                 continue;
             };

@@ -7,31 +7,45 @@ function LogicContainer() {
     var state = cSTATE.SOURCE;
     var selectedFigureIndex = null;
     var targetPosition = null;
+    var sourceArray = [];
+    var cPLAYER = {WHITE: 0, BLACK:1, NONE: 2};
+    var player = cPLAYER.WHITE;
 
     function zeroStep(obj,board){
         console.log('zero step');
+        UTILS.removeAllArrowWithArray(board.getAllFigure());
+        board.deSelectFigureWithIndex(selectedFigureIndex);
+        selectedFigureIndex = null;
     };
     function firstStep(obj,board){
-        var res = isFigure(obj,board.getWhite());
-        if (res === true){
-            UTILS.removeAllArrowWithArray(board.getAllFigure());
-            board.deSelectFigureWithIndex(selectedFigureIndex);
-            selectedFigureIndex = getFigureIndex(obj,board.getWhite());
-            board.selectFigureWithIndex(selectedFigureIndex);
-            state = cSTATE.TARGET;
-            var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
-            var availablePositions = UTILS.getMoveArray(figure_,board,false);
-            renderTmpObj(availablePositions);
-            UTILS.showAvailablePositions(availablePositions,figure_);
-        };
-        console.log('figure='+res);
-    };
-    function secondStep(obj,board){
-        var res =  null;
-        res = isFigure(obj,board.getBlack());
-        if (res === true) {
+        if (player == cPLAYER.NONE) return;
+        var res_ = isFigure(obj,board.getAllFigure());
+        if (res_ === false){
             return;
         };
+        var topFigure_ = getTopFigureAtPosition(obj,board.getAllFigure());
+        var resW = isFigureIndexContaints(topFigure_.figureIndex,board.getWhite());
+        var resB = isFigureIndexContaints(topFigure_.figureIndex,board.getBlack());
+        if ((player == cPLAYER.WHITE) && (resB === true)){
+            return;
+        };
+        if ((player == cPLAYER.BLACK) && (resW === true)){
+            return;
+        };
+        UTILS.removeAllArrowWithArray(board.getAllFigure());
+        board.deSelectFigureWithIndex(selectedFigureIndex);
+        selectedFigureIndex = topFigure_.figureIndex;//getFigureIndex(obj,board.getAllFigure());
+        board.selectFigureWithIndex(selectedFigureIndex);
+        state = cSTATE.TARGET;
+        var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+        var availablePositions = UTILS.getMoveArray(figure_,board,false);
+        renderTmpObj(availablePositions);
+        UTILS.showAvailablePositions(availablePositions,figure_);
+        console.log('figure='+topFigure_);
+    };
+    function secondStep(obj,board){
+        if (player == cPLAYER.NONE) return;
+        var res =  null;
         // if (figure_.position.equals(obj)){
         //  board.deSelectFigureWithIndex(selectedFigureIndex);
         //  state = cSTATE.NONE;
@@ -44,13 +58,17 @@ function LogicContainer() {
         // renderTmpObj(availablePositions);
         targetPosition = obj.clone();
         targetPosition.boardPosition = obj.boardPosition.clone();
-        res = isFigure(obj,board.getWhite());
+        var figures_ = board.getAllFigure();
+        sourceArray = getAllFiguresAtPosition(figure_.boardPosition,figures_);
+        res = isFigure(obj,board.getAllFigure());
         if (res === true){
-            // firstStep(obj,board);
-            // return;
-            var figures_ = board.getAllFigure();
-            var count_ = getFigureCountAtPosition(obj.boardPosition,figures_);
+            var countDest_ = getFigureCountAtPosition(obj.boardPosition,figures_);
+            var countSrc_ = getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
+            var count_ = countSrc_ + countDest_;
             targetPosition.position.z = 0.5 + count_ * 0.5;
+        }else{
+            var countSrc_ = getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
+            targetPosition.position.z = 0.5 + countSrc_ * 0.5;
         };
     };
     function getFigureCountAtPosition(pos2d,figures){
@@ -86,13 +104,41 @@ function LogicContainer() {
         };
         return null;
     };
-    function isFigure(obj,figureArray){
-        for (var i = 0; i < figureArray.length; i++) {
-            if (figureArray[i].boardPosition.equals(obj.boardPosition)) {
+    function isFigure(obj,figuresArray){
+        for (var i = 0; i < figuresArray.length; i++) {
+            if (figuresArray[i].boardPosition.equals(obj.boardPosition)) {
                 return true;
             };
         };
         return false;
+    };
+    function isFigureIndexContaints(figureIndex,figuresArray){
+        for (var i = 0; i < figuresArray.length; i++) {
+            if (figuresArray[i].figureIndex == figureIndex){
+                return true;
+            };
+        };
+        return false;
+    };
+    function getAllFiguresAtPosition(position,figuresArray){
+        var figures_ = [];
+        for (var i = 0; i < figuresArray.length; i++) {
+            if (figuresArray[i].boardPosition.equals(position)) {
+                figures_.push(figuresArray[i]);
+            };
+        };
+        return figures_;
+    };
+    function getTopFigureAtPosition(figure,figuresArray){
+        var figures_ = getAllFiguresAtPosition(figure.boardPosition,figuresArray);
+        if (figures_.length < 1) {return null;};
+        var maxZFigure_ = figures_[0];
+        for (var i = 1; i < figures_.length; i++) {
+            if (figures_[i].position.z > maxZFigure_.position.z){
+                maxZFigure_ = figures_[i];
+            };
+        };
+        return maxZFigure_;
     };
     this.Init = function(){
         funcArrays=[zeroStep, firstStep, secondStep, moveStep];
@@ -106,14 +152,44 @@ function LogicContainer() {
             var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
             var dist = figure_.position.distanceTo(targetPosition.position);
             if (dist < 0.1) {
-                state = cSTATE.NONE;
-                figure_.boardPosition.copy(targetPosition.boardPosition);
-                figure_.position.x = figure_.boardPosition.x - 4 + 0.5;
-                figure_.position.y = figure_.boardPosition.y - 4 + 0.5;
-                var count_ = getFigureCountAtPosition(figure_.boardPosition,board.getAllFigure());
-                figure_.position.z = 0.5 + (count_ - 1) * 0.5;
+                state = cSTATE.SOURCE;
+                normalizeFiguresArray(targetPosition,sourceArray,board);
+                zeroStep(null,board);
+                if (player == cPLAYER.WHITE) {
+                    player = cPLAYER.BLACK;
+                }else{
+                    player = cPLAYER.WHITE;
+                };
+                return;
             };
-            figure_.position.lerp(targetPosition.position,0.11);
+            // figure_.position.lerp(targetPosition.position,0.11);
+            moveFiguresArray(sourceArray,targetPosition,board);
+        };
+    };
+    function normalizeFiguresArray(target,figuresArray,board){
+        var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+        for (var i = 0; i < figuresArray.length; i++) {
+            figuresArray[i].boardPosition.copy(target.boardPosition);
+            figuresArray[i].position.x = figuresArray[i].boardPosition.x - 4 + 0.5;
+            figuresArray[i].position.y = figuresArray[i].boardPosition.y - 4 + 0.5;
+            var target_ = target.position.clone();
+            var delta_ = (figuresArray[i].position.z - figure_.position.z);
+            var scale_ = Math.floor(delta_ / 0.51 );
+            if (delta_ < 0) scale_ = Math.ceil(delta_ / 0.49 );
+            figuresArray[i].position.z = target.position.z + scale_ * 0.5;
+        };
+    };
+    function moveFiguresArray(figuresArray,target,board){
+        var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+        for (var i = 0; i < sourceArray.length; i++) {
+            var target_ = target.position.clone();
+            var delta_ = (sourceArray[i].position.z - figure_.position.z);
+            var scale_ = Math.floor(delta_ / 0.51);
+            if (delta_ < 0) scale_ = Math.ceil(delta_ / 0.49 );
+            console.log(delta_+' '+scale_);
+            target_.z = target.position.z + scale_ * 0.5;
+            // console.log(sourceArray[i].position.z - figure_.position.z);
+            sourceArray[i].position.lerp(target_,0.0611);
         };
     };
 };
