@@ -48,7 +48,22 @@ TAVRELI.init = function() {
             };
         };
     };
-
+    TAVRELI.deSelectFigureWithIndex = function(figureIndex){
+        for (var i = 0; i < figures.allFigure.length; i++) {
+            if (figures.allFigure[i].figureIndex == figureIndex){
+                renderDeselectFigure(figures.allFigure[i]);
+                break;
+            };
+        };
+    };
+    var renderDeselectFigure = function(figure3d){
+        for (var i = 0; i < figure3d.children.length; i++) {
+            if (figure3d.children[i].name == 'selected_figure'){
+                figure3d.remove(figure3d.children[i]);
+                return;
+            };
+        };
+    };
     var renderSelectFigure = function(figure3d){
         var sFigure = new THREE.Mesh(new THREE.BoxGeometry( 5, 5, 5, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true}));
         sFigure.name = 'selected_figure';
@@ -66,7 +81,7 @@ TAVRELI.init = function() {
             chess.boardPosition = new THREE.Vector2();
             chess.boardPosition.x = (i % 8);
             chess.position.z = .5;
-            if (i == 11){
+            if (i == 8){
                 makeTestFigure(i);
                 continue;
             };
@@ -249,9 +264,13 @@ TAVRELI.init = function() {
     };
     this.setNullCubePosition = function(obj) {
         nullCube.position.copy(obj.position);
+        nullCube.boardPosition = obj.boardPosition.clone();
     };
     this.getNullCubePosition = function(obj) {
         return nullCube.position;
+    };
+    this.getNullCube = function() {
+        return nullCube;
     };
     this.createBoardSquares = function(){
         mainBoard.squares = [];
@@ -264,6 +283,7 @@ TAVRELI.init = function() {
                 mSquare.position.x = i - .5;
                 mSquare.position.y = j - .5;
                 mSquare.position.z = .5;
+                mSquare.boardPosition = new THREE.Vector2(i+3,j+3);
                 // scene.add(mSquare);
                 mainBoard.add(mSquare);
                 mainBoard.squares.push(mSquare);

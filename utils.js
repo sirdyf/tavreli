@@ -8,16 +8,24 @@ UTILS.rotateAroundWorldAxis = function(object, axis, radians) {
     object.matrix = rotationMatrix;
     object.rotation.setFromRotationMatrix(rotationMatrix);
 };
-UTILS.getMoveArray = function(figure,board){
+UTILS.getMoveArray = function(figure,board,isAllPositionsNeed){
     var moveArray_ = [];
     var figureMoveRule_ = figure.main.getMoveRule();
     for (var i = 0; i < figureMoveRule_.length; i++) {
-        var endPos_ = UTILS.getBoundPosition(figure.boardPosition,figureMoveRule_[i],figure.main.isJump(),board.getAllFigure());
-        if (endPos_ != null) moveArray_.push(endPos_);
+        var endPos_ = UTILS.getBoundPosition(figure.boardPosition,figureMoveRule_[i],figure.main.isJump(),board.getAllFigure(),isAllPositionsNeed);
+        if (endPos_ != null) {
+            if (isAllPositionsNeed === true) {
+                moveArray_ = moveArray_.concat(endPos_);
+            } else{
+                moveArray_.push(endPos_);
+            };
+        };
     };
+
     return moveArray_;
 };
-UTILS.getBoundPosition = function(pos2dVec,arrow2dVec,isJump,figuresArray){
+UTILS.getBoundPosition = function(pos2dVec,arrow2dVec,isJump,figuresArray,isAllPositionsNeed){
+    var allPositions_ = [];
     var targetPos_ = new THREE.Vector2().addVectors(pos2dVec,arrow2dVec);
     var boundBox = new THREE.Box2(new THREE.Vector2(0,0),new THREE.Vector2(7,7));
     if (isJump === true) {
@@ -31,11 +39,15 @@ UTILS.getBoundPosition = function(pos2dVec,arrow2dVec,isJump,figuresArray){
     targetPos_.add(vNormal);
     var prev_ = targetPos_;
     while(boundBox.containsPoint(targetPos_)){
-        prev_ = targetPos_;
+        prev_ = targetPos_.clone();
+        allPositions_.push(targetPos_.clone());
         if (UTILS.isFigure(targetPos_,figuresArray) === true){
             break;
         };
         targetPos_.add(vNormal);
+    };
+    if (isAllPositionsNeed === true) {
+        return allPositions_.slice();
     };
     return prev_;
 };
@@ -52,6 +64,7 @@ UTILS.removeAllArrow = function(figure){
         var child_ = figure.children[i];
         if (child_.name == 'move_arrow'){
             figure.remove(child_);
+            i--;
         };
     };
 };
@@ -76,5 +89,10 @@ UTILS.addMoveArrow = function(figure){
         objectArrow.name = 'move_arrow';
         figure.main.moveArrows.push(objectArrow);
         // figure.add(objectArrow);
+    };
+};
+UTILS.removeAllArrowWithArray = function(figuresArray){
+    for (var i = 0; i < figuresArray.length; i++) {
+        UTILS.removeAllArrow(figuresArray[i]);
     };
 };

@@ -7,7 +7,7 @@ function chessFigures() {
 function RatnikContainer(){
 	var _moveRule = [];
 	var _attackRule = [];
-	var _isJump = false;
+	var _isJump = true;
 	var _figureType = chessFiguresType.RATNIK;
 
 	this.name = 'Ratnik';

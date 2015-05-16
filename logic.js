@@ -14,17 +14,28 @@ function LogicContainer() {
 	function firstStep(obj,board){
 		var res = isFigure(obj,board.getWhite());
 		if (res === true){
+			UTILS.removeAllArrowWithArray(board.getAllFigure());
+			board.deSelectFigureWithIndex(selectedFigureIndex);
 			selectedFigureIndex = getFigureIndex(obj,board.getWhite());
 			board.selectFigureWithIndex(selectedFigureIndex);
 			state = cSTATE.TARGET;
 			var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
-			var availablePositions = UTILS.getMoveArray(figure_,board);
+			var availablePositions = UTILS.getMoveArray(figure_,board,false);
+			renderTmpObj(availablePositions);
 			UTILS.showAvailablePositions(availablePositions,figure_);
 		};
 		console.log('figure='+res);
 	};
 	function secondStep(obj,board){
-		var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+		var res = isFigure(obj,board.getWhite());
+		if (res === true){
+			firstStep(obj,board);
+			return;
+		};
+		res = isFigure(obj,board.getBlack());
+		if (res === true) {
+			return;
+		};
 		// if (figure_.position.equals(obj)){
 		// 	board.deSelectFigureWithIndex(selectedFigureIndex);
 		// 	state = cSTATE.NONE;
@@ -32,7 +43,16 @@ function LogicContainer() {
 		// };
 		// TODO
 		state = cSTATE.MOVE;
-		var availablePosition = UTILS.getMoveArray(figure_,board);//moveArrow
+		var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+		var availablePositions = UTILS.getMoveArray(figure_,board,true);//moveArrow
+		// renderTmpObj(availablePositions);
+		targetPosition = obj.clone();
+		targetPosition.boardPosition = obj.boardPosition.clone();
+	};
+	function renderTmpObj(posArray){
+		for (var i = 0; i < posArray.length; i++) {
+			console.log(posArray[i].x + ' ' + posArray[i].y);
+		};
 	};
 	function moveStep(obj,board){
 		console.log('move step');
@@ -47,7 +67,7 @@ function LogicContainer() {
 	};
 	function getFigureIndex(obj,figureArray){
 		for (var i = 0; i < figureArray.length; i++) {
-			if (figureArray[i].position.equals(obj)) {
+			if (figureArray[i].boardPosition.equals(obj.boardPosition)) {
 				return figureArray[i].figureIndex;
 			};
 		};
@@ -55,7 +75,7 @@ function LogicContainer() {
 	};
 	function isFigure(obj,figureArray){
 		for (var i = 0; i < figureArray.length; i++) {
-			if (figureArray[i].position.equals(obj)) {
+			if (figureArray[i].boardPosition.equals(obj.boardPosition)) {
 				return true;
 			};
 		};
@@ -68,7 +88,22 @@ function LogicContainer() {
 		if (obj === undefined) return;
 		funcArrays[state](obj,board);
 	};
-	this.RenderStep = function(){};
+	this.RenderStep = function(board){
+		if (state == cSTATE.MOVE) {
+			var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+			var dist = figure_.position.distanceTo(targetPosition.position);
+			if (dist < 0.1) {
+				state = cSTATE.NONE;
+				figure_.boardPosition.copy(targetPosition.boardPosition);
+//             chess.position.x = (i % 8) - 4 + .5;
+//             chess.position.y = 1 - 4 + .5;
+console.log('y:'+figure_.boardPosition.y +'_'+ figure_.position.y +' ' + targetPosition.position.y)
+				figure_.position.x = figure_.boardPosition.x - 4 + 0.5;
+				figure_.position.y = figure_.boardPosition.y - 4 + 0.5;
+			};
+			figure_.position.lerp(targetPosition.position,0.11);
+		};
+	};
 };
 LOGIC.main = new LogicContainer();
 LOGIC.main.Init();
