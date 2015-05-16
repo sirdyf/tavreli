@@ -12,13 +12,6 @@ function RatnikContainer(){
 
 	this.name = 'Ratnik';
 
-	this.addMoveArrow = function(figure){
-	    // var objectAxis = new THREE.AxisHelper(4);
-	    var objectArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, -10), new THREE.Vector3(0, 1, 0), 10);
-	    objectArrow.name = 'move_arrow';
-		figure.add(objectArrow);
-	};
-
 	_moveRule.push(new THREE.Vector2(0, 1));
 
 	_attackRule.push(new THREE.Vector2(1, 1));
@@ -37,12 +30,12 @@ function RatoborecContainer(){
 
 	this.name = 'Ratoborec';
 
-	_moveRule.push(new THREE.Vector2( 8, 0));
-	_moveRule.push(new THREE.Vector2(-8, 0));
-	_moveRule.push(new THREE.Vector2( 0, 8));
-	_moveRule.push(new THREE.Vector2( 0,-8));
+	_moveRule.push(new THREE.Vector2( 1, 0));
+	_moveRule.push(new THREE.Vector2(-1, 0));
+	_moveRule.push(new THREE.Vector2( 0, 1));
+	_moveRule.push(new THREE.Vector2( 0,-1));
 
-	_attackRule = _moveRule.clone();
+	_attackRule = _moveRule.slice();
 
 	this.getMoveRule   = function(){ return _moveRule;   };
 	this.getAttackRule = function(){ return _attackRule; };
@@ -66,7 +59,7 @@ function VsadnikContainer(){
 	_moveRule.push(new THREE.Vector2(-2, 1));
 	_moveRule.push(new THREE.Vector2(-2,-1));
 
-	_attackRule = _moveRule.clone();
+	_attackRule = _moveRule.slice();
 
 	this.getMoveRule   = function(){ return _moveRule;   };
 	this.getAttackRule = function(){ return _attackRule; };
@@ -81,12 +74,12 @@ function LuchnikContainer(){
 
 	this.name = 'Luchnik';
 
-	_moveRule.push(new THREE.Vector2( 8, 8));
-	_moveRule.push(new THREE.Vector2(-8, 8));
-	_moveRule.push(new THREE.Vector2( 8,-8));
-	_moveRule.push(new THREE.Vector2(-8,-8));
+	_moveRule.push(new THREE.Vector2( 1, 1));
+	_moveRule.push(new THREE.Vector2(-1, 1));
+	_moveRule.push(new THREE.Vector2( 1,-1));
+	_moveRule.push(new THREE.Vector2(-1,-1));
 
-	_attackRule = _moveRule.clone();
+	_attackRule = _moveRule.slice();
 
 	this.getMoveRule   = function(){ return _moveRule;   };
 	this.getAttackRule = function(){ return _attackRule; };
@@ -101,10 +94,10 @@ function KnyazContainer(){
 
 	this.name = 'Knyaz';
 
-	_moveRule.push(new RatoborecContainer().getMoveRule());
-	_moveRule.push(new LuchnikContainer().getMoveRule());
-
-	_attackRule = _moveRule.clone();
+	var _moveRule1 = new RatoborecContainer().getMoveRule().slice();
+	var _moveRule2 = new LuchnikContainer().getMoveRule().slice();
+	_moveRule = _moveRule1.concat(_moveRule2)
+	_attackRule = _moveRule.slice();
 
 	this.getMoveRule   = function(){ return _moveRule;   };
 	this.getAttackRule = function(){ return _attackRule; };
@@ -128,7 +121,7 @@ function VolhvContainer(){
 	_moveRule.push(new THREE.Vector2(-1, 0));// -
 	_moveRule.push(new THREE.Vector2(-1, 1));// \
 
-	_attackRule = _moveRule.clone();
+	_attackRule = _moveRule.slice();
 
 	this.getMoveRule   = function(){ return _moveRule;   };
 	this.getAttackRule = function(){ return _attackRule; };

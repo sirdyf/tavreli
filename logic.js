@@ -18,7 +18,8 @@ function LogicContainer() {
 			board.selectFigureWithIndex(selectedFigureIndex);
 			state = cSTATE.TARGET;
 			var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
-			var availablePosition = UTILS.getMoveArray(figure_,board);
+			var availablePositions = UTILS.getMoveArray(figure_,board);
+			UTILS.showAvailablePositions(availablePositions,figure_);
 		};
 		console.log('figure='+res);
 	};
