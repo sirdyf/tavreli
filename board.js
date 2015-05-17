@@ -128,6 +128,8 @@ TAVRELI.init = function() {
                 var mv = obj.main.getMoveRule();
                 mv[0].y = -1;
                 mv[1].y = -1;
+                mv[2].y = -1;
+                mv[3].y = -1;
             };
         };
     };

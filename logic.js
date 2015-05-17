@@ -38,8 +38,11 @@ function LogicContainer() {
         board.selectFigureWithIndex(selectedFigureIndex);
         state = cSTATE.TARGET;
         var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+
         var availablePositions = UTILS.getMoveArray(figure_,board,false);
         availablePositions = addAdditionPositions(availablePositions,figure_);
+        availablePositions = removeAdditionPositions(availablePositions,figure_,board);
+
         renderTmpObj(availablePositions);
         UTILS.showAvailablePositions(availablePositions,figure_);
         console.log('figure='+topFigure_);
@@ -61,9 +64,11 @@ function LogicContainer() {
         if (player == cPLAYER.NONE) return;
         var res =  null;
         var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+
         var availablePositions = UTILS.getMoveArray(figure_,board,true);//moveArrow
         availablePositions = addAdditionPositions(availablePositions,figure_);
         availablePositions = removeAdditionPositions(availablePositions,figure_,board);
+
         var flag_ = false;
         for (var i = 0; i < availablePositions.length; i++) {
             if (obj.boardPosition.equals(availablePositions[i])){
@@ -93,6 +98,7 @@ function LogicContainer() {
         var retArray = [];
         var whiteVolhv = getFigureWithIndex(12,board.getWhite());
         var blackVolhv = getFigureWithIndex(28,board.getBlack());
+        var ind_ = figure.figureIndex;
         for (var i = 0; i < positionsArray.length; i++) {
             if (positionsArray[i].equals(whiteVolhv.boardPosition)){
                 continue;
@@ -100,6 +106,16 @@ function LogicContainer() {
             if (positionsArray[i].equals(blackVolhv.boardPosition)){
                 continue;
             };
+            if ((ind_ <= 7) || ((ind_ >= 16) && (ind_ <= 23))){ // ratnik
+                if (figure.boardPosition.x != positionsArray[i].x){
+                    var tmpObj = {};
+                    tmpObj.boardPosition = positionsArray[i];
+                    if (isFigure(tmpObj,board.getAllFigure()) === false){
+                        continue;//skip if no attack
+                    };
+                };
+            };
+
             retArray.push(positionsArray[i]);
         };
         return retArray;
