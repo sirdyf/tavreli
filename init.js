@@ -13,7 +13,7 @@ var mouseX = 0, mouseY = 0;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
-var controls, time = Date.now();
+var time = Date.now();
 var clock = new THREE.Clock();
 
 var mouseRay = { x: 0, y: 0 }, INTERSECTED;
@@ -39,9 +39,8 @@ function init() {
     camera.position.z = 15;
 
     controlsMouse = new THREE.OrbitControls(camera);
-    controlsMouse.rotateLeft(.2);
-    controlsMouse.rotateUp(-.8);
-    controls = new THREE.PointerLockControls(camera);
+    // controlsMouse.rotateLeft(.2);
+    controlsMouse.rotateUp(.8);
 
     scene.add(camera);
 
@@ -93,14 +92,14 @@ function init() {
 
 function animate() {
 
+    requestAnimationFrame(animate);
     controlsMouse.update();
-    controls.update();
+
     if (scene.main){
         // document.getElementById("val_right").innerHTML = scene.main.getMainCubeChildrenCount();
         LOGIC.main.RenderStep(TAVRELI);
     }
     render();
-    requestAnimationFrame(animate);
 }
 //    document.getElementById( "val_right" ).innerHTML = vv;
 function render() {

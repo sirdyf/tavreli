@@ -80,23 +80,23 @@ TAVRELI.init = function() {
             chess.position.x = (i % 8) - 4 + .5;
             chess.boardPosition = new THREE.Vector2();
             chess.boardPosition.x = (i % 8);
-            chess.position.z = .5;
-            if (i == 88){
+            chess.position.y = .5;
+            if (i == 10){
                 makeTestFigure(i);
                 continue;
             };
             if (i <= 7){
-                chess.position.y = 1 - 4 + .5;
-                chess.boardPosition.y = 1;
-            }else if ((i >= 8)&&(i <= 15)){
-                chess.position.y = 0 - 4 + .5;
-                chess.boardPosition.y = 0;
-            }else if ((i >= 16)&&(i <= 23)){
-                chess.position.y = 6 - 4 + .5;
+                chess.position.z = 6 - 4 + .5;
                 chess.boardPosition.y = 6;
-            }else if ((i >= 24)&&(i <= 31)){
-                chess.position.y = 7 - 4 + .5;
+            }else if ((i >= 8)&&(i <= 15)){
+                chess.position.z = 7 - 4 + .5;
                 chess.boardPosition.y = 7;
+            }else if ((i >= 16)&&(i <= 23)){
+                chess.position.z = 1 - 4 + .5;
+                chess.boardPosition.y = 1;
+            }else if ((i >= 24)&&(i <= 31)){
+                chess.position.z = 0 - 4 + .5;
+                chess.boardPosition.y = 0;
             }else{
                 return;
             }
@@ -111,8 +111,8 @@ TAVRELI.init = function() {
         chess.name = 'figure';
         chess.boardPosition = new THREE.Vector2(3,3);
         chess.position.x = (3 % 8) - 4 + .5;
-        chess.position.y = 3 - 4 + .5;
-        chess.position.z = .5;
+        chess.position.z = 3 - 4 + .5;
+        chess.position.y = .5;
         makeFigureWithIndex(chess,figureIndex);
         figures.allFigure.push(chess);
         scene.add(chess);
@@ -126,10 +126,10 @@ TAVRELI.init = function() {
             replaceMaterial(obj,'FrontColor','FrontColorBlack');
             if (index < 24){
                 var mv = obj.main.getMoveRule();
-                mv[0].y = -1;
-                mv[1].y = -1;
-                mv[2].y = -1;
-                mv[3].y = -1;
+                mv[0].y = 1;
+                mv[1].y = 1;
+                mv[2].y = 1;
+                mv[3].y = 1;
             };
         };
     };
@@ -248,7 +248,7 @@ TAVRELI.init = function() {
         var tmpObj=obj.clone();
         var rotAngle = Math.PI / 2.0;
         var axis = new THREE.Vector3(1, 0, 0);
-        UTILS.rotateAroundWorldAxis(tmpObj,axis,rotAngle);
+        // UTILS.rotateAroundWorldAxis(tmpObj,axis,rotAngle);
         var bBox = this.getBoundingBox(tmpObj);
         originCubeSize = bBox.size();
         var sc=1/originCubeSize.x;
@@ -284,12 +284,12 @@ TAVRELI.init = function() {
         var m = materials.brown;
         for (var i = -3; i < 5; i++) {
             for (var j = -3; j < 5; j++) {
-                var mSquare = new THREE.Mesh(new THREE.BoxGeometry( 1, 1, .1, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff00ff, wireframe: true}));
+                var mSquare = new THREE.Mesh(new THREE.BoxGeometry( 1, .1, 1, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff00ff, wireframe: true}));
                 mSquare.material = m;
                 mSquare.name = 'square';
                 mSquare.position.x = i - .5;
-                mSquare.position.y = j - .5;
-                mSquare.position.z = .5;
+                mSquare.position.y = .5;
+                mSquare.position.z = j - .5;
                 mSquare.boardPosition = new THREE.Vector2(i+3,j+3);
                 // scene.add(mSquare);
                 mainBoard.add(mSquare);
@@ -308,7 +308,7 @@ TAVRELI.init = function() {
         };
     };
     (this.creates = function() {
-        nullCube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, .2, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}));
+        nullCube = new THREE.Mesh(new THREE.BoxGeometry(1, .2, 1, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}));
         var objectAxis = new THREE.AxisHelper(4);
         var objectArrow = new THREE.ArrowHelper(new THREE.Vector3(1, 1, 0), new THREE.Vector3(0, 0, 0), 3);
         nullCube.arrow = objectArrow;
@@ -316,7 +316,8 @@ TAVRELI.init = function() {
         nullCube.add(objectAxis);
         scene.add(nullCube);
 
-        mainBoard = new THREE.Mesh(new THREE.BoxGeometry(8, 8, 1, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}));
+        mainBoard = new THREE.Mesh(new THREE.BoxGeometry(8, 1, 8, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}));
+
         scene.add(mainBoard);
     })();
 };

@@ -70,7 +70,7 @@ UTILS.removeAllArrow = function(figure){
 };
 UTILS.showAvailablePositions = function(posArray,figure){
     UTILS.removeAllArrow(figure);
-    var dirFlag_ = -1;
+    var dirFlag_ = 1;
     for (var i = 0; i < posArray.length; i++) {
         var arrow_ = figure.main.moveArrows[i];
         var vecDir_ = new THREE.Vector2().subVectors(posArray[i],figure.boardPosition);

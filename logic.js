@@ -50,13 +50,13 @@ function LogicContainer() {
     function addAdditionPositions(positionsArray,figure){
         var retArray = positionsArray.slice();
         var ind_ = figure.figureIndex;
-        if ((ind_ <= 7) && (figure.boardPosition.y == 1)){
-            // first step ratnik move at 2 position
-            retArray[1].y = figure.boardPosition.y + 2;
-        };
-        if (((ind_ >= 16)&&(ind_ <= 23)) && (figure.boardPosition.y == 6)){
+        if ((ind_ <= 7) && (figure.boardPosition.y == 6)){
             // first step ratnik move at 2 position
             retArray[1].y = figure.boardPosition.y - 2;
+        };
+        if (((ind_ >= 16)&&(ind_ <= 23)) && (figure.boardPosition.y == 1)){
+            // first step ratnik move at 2 position
+            retArray[1].y = figure.boardPosition.y + 2;
         };
         return retArray;
     };
@@ -88,10 +88,10 @@ function LogicContainer() {
             var countDest_ = getFigureCountAtPosition(obj.boardPosition,figures_);
             var countSrc_ = getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
             var count_ = countSrc_ + countDest_;
-            targetPosition.position.z = 0.5 + count_ * 0.5;
+            targetPosition.position.y = 0.5 + count_ * 0.5;
         }else{
             var countSrc_ = getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
-            targetPosition.position.z = 0.5 + countSrc_ * 0.5;
+            targetPosition.position.y = 0.5 + countSrc_ * 0.5;
         };
     };
     function removeAdditionPositions(positionsArray,figure,board){
@@ -131,7 +131,7 @@ function LogicContainer() {
     };
     function renderTmpObj(posArray){
         for (var i = 0; i < posArray.length; i++) {
-            console.log(posArray[i].x + ' ' + posArray[i].y);
+            console.log(posArray[i].x + ' ' + posArray[i].z);
         };
     };
     function moveStep(obj,board){
@@ -183,7 +183,7 @@ function LogicContainer() {
         if (figures_.length < 1) {return null;};
         var maxZFigure_ = figures_[0];
         for (var i = 1; i < figures_.length; i++) {
-            if (figures_[i].position.z > maxZFigure_.position.z){
+            if (figures_[i].position.y > maxZFigure_.position.y){
                 maxZFigure_ = figures_[i];
             };
         };
@@ -220,23 +220,23 @@ function LogicContainer() {
         for (var i = 0; i < figuresArray.length; i++) {
             figuresArray[i].boardPosition.copy(target.boardPosition);
             figuresArray[i].position.x = figuresArray[i].boardPosition.x - 4 + 0.5;
-            figuresArray[i].position.y = figuresArray[i].boardPosition.y - 4 + 0.5;
+            figuresArray[i].position.z = figuresArray[i].boardPosition.y - 4 + 0.5;
             var target_ = target.position.clone();
-            var delta_ = (figuresArray[i].position.z - figure_.position.z);
+            var delta_ = (figuresArray[i].position.y - figure_.position.y);
             var scale_ = Math.floor(delta_ / 0.51 );
             if (delta_ < 0) scale_ = Math.ceil(delta_ / 0.49 );
-            figuresArray[i].position.z = target.position.z + scale_ * 0.5;
+            figuresArray[i].position.y = target.position.y + scale_ * 0.5;
         };
     };
     function moveFiguresArray(figuresArray,target,board){
         var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
         for (var i = 0; i < sourceArray.length; i++) {
             var target_ = target.position.clone();
-            var delta_ = (sourceArray[i].position.z - figure_.position.z);
+            var delta_ = (sourceArray[i].position.y - figure_.position.y);
             var scale_ = Math.floor(delta_ / 0.51);
             if (delta_ < 0) scale_ = Math.ceil(delta_ / 0.49 );
             console.log(delta_+' '+scale_);
-            target_.z = target.position.z + scale_ * 0.5;
+            target_.y = target.position.y + scale_ * 0.5;
             // console.log(sourceArray[i].position.z - figure_.position.z);
             sourceArray[i].position.lerp(target_,0.0611);
         };
