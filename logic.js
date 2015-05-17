@@ -39,22 +39,40 @@ function LogicContainer() {
         state = cSTATE.TARGET;
         var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
         var availablePositions = UTILS.getMoveArray(figure_,board,false);
+        availablePositions = addAdditionPositions(availablePositions,figure_);
         renderTmpObj(availablePositions);
         UTILS.showAvailablePositions(availablePositions,figure_);
         console.log('figure='+topFigure_);
     };
+    function addAdditionPositions(positionsArray,figure){
+        var retArray = positionsArray.slice();
+        var ind_ = figure.figureIndex;
+        if ((ind_ <= 7) && (figure.boardPosition.y == 1)){
+            // first step ratnik move at 2 position
+            retArray[1].y = figure.boardPosition.y + 2;
+        };
+        if (((ind_ >= 16)&&(ind_ <= 23)) && (figure.boardPosition.y == 6)){
+            // first step ratnik move at 2 position
+            retArray[1].y = figure.boardPosition.y - 2;
+        };
+        return retArray;
+    };
     function secondStep(obj,board){
         if (player == cPLAYER.NONE) return;
         var res =  null;
-        // if (figure_.position.equals(obj)){
-        //  board.deSelectFigureWithIndex(selectedFigureIndex);
-        //  state = cSTATE.NONE;
-        //  return;
-        // };
-        // TODO
-        state = cSTATE.MOVE;
         var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
         var availablePositions = UTILS.getMoveArray(figure_,board,true);//moveArrow
+        availablePositions = addAdditionPositions(availablePositions,figure_);
+        availablePositions = removeAdditionPositions(availablePositions,figure_,board);
+        var flag_ = false;
+        for (var i = 0; i < availablePositions.length; i++) {
+            if (obj.boardPosition.equals(availablePositions[i])){
+                flag_ = true;
+                break;
+            };
+        };
+        if (flag_ === false) return;
+        state = cSTATE.MOVE;
         // renderTmpObj(availablePositions);
         targetPosition = obj.clone();
         targetPosition.boardPosition = obj.boardPosition.clone();
@@ -70,6 +88,21 @@ function LogicContainer() {
             var countSrc_ = getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
             targetPosition.position.z = 0.5 + countSrc_ * 0.5;
         };
+    };
+    function removeAdditionPositions(positionsArray,figure,board){
+        var retArray = [];
+        var whiteVolhv = getFigureWithIndex(12,board.getWhite());
+        var blackVolhv = getFigureWithIndex(28,board.getBlack());
+        for (var i = 0; i < positionsArray.length; i++) {
+            if (positionsArray[i].equals(whiteVolhv.boardPosition)){
+                continue;
+            };
+            if (positionsArray[i].equals(blackVolhv.boardPosition)){
+                continue;
+            };
+            retArray.push(positionsArray[i]);
+        };
+        return retArray;
     };
     function getFigureCountAtPosition(pos2d,figures){
         var count_ = 0;

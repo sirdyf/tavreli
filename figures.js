@@ -13,6 +13,7 @@ function RatnikContainer(){
 	this.name = 'Ratnik';
 
 	_moveRule.push(new THREE.Vector2(0, 1));
+	_moveRule.push(new THREE.Vector2(0, 1));
 
 	_attackRule.push(new THREE.Vector2(1, 1));
 	_attackRule.push(new THREE.Vector2(1,-1));

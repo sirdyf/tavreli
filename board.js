@@ -124,6 +124,11 @@ TAVRELI.init = function() {
         }else{
             makeTavreli(obj,index-16,'black');
             replaceMaterial(obj,'FrontColor','FrontColorBlack');
+            if (index < 24){
+                var mv = obj.main.getMoveRule();
+                mv[0].y = -1;
+                mv[1].y = -1;
+            };
         };
     };
     var makeTavreli = function(obj,ind,postfix){
