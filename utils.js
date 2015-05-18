@@ -74,7 +74,6 @@ UTILS.showAvailablePositions = function(posArray,figure){
     for (var i = 0; i < posArray.length; i++) {
         var arrow_ = figure.main.moveArrows[i];
         var vecDir_ = new THREE.Vector2().subVectors(posArray[i],figure.boardPosition);
-        // if ((figure.figureIndex > 15)&&(figure.figureIndex < 24)) dirFlag_ = 1;//WTF?
         arrow_.setDirection(new THREE.Vector3(vecDir_.x,0,vecDir_.y * dirFlag_).normalize());
         arrow_.setLength(vecDir_.length() * 4.0);
         figure.add(figure.main.moveArrows[i]);
@@ -95,4 +94,21 @@ UTILS.removeAllArrowWithArray = function(figuresArray){
     for (var i = 0; i < figuresArray.length; i++) {
         UTILS.removeAllArrow(figuresArray[i]);
     };
+};
+UTILS.getFigureCountAtPosition = function(pos2d,figures){
+    var count_ = 0;
+    for (var i = 0; i < figures.length; i++) {
+        if (figures[i].boardPosition.equals(pos2d)){
+            count_ ++;
+        };
+    };
+    return count_;
+};
+UTILS.getFigureWithIndex = function(index,figureArray){
+    for (var i = 0; i < figureArray.length; i++) {
+        if (figureArray[i].figureIndex == index) {
+            return figureArray[i];
+        };
+    };
+    return null;
 };

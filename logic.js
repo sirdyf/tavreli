@@ -32,20 +32,25 @@ function LogicContainer() {
         if ((player == cPLAYER.BLACK) && (resW === true)){
             return;
         };
-        UTILS.removeAllArrowWithArray(board.getAllFigure());
+        var figures_ = board.getAllFigure();
+        UTILS.removeAllArrowWithArray(figures_);
         board.deSelectFigureWithIndex(selectedFigureIndex);
         selectedFigureIndex = topFigure_.figureIndex;//getFigureIndex(obj,board.getAllFigure());
         board.selectFigureWithIndex(selectedFigureIndex);
         state = cSTATE.TARGET;
-        var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+        var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
 
         var availablePositions = UTILS.getMoveArray(figure_,board,false);
         availablePositions = addAdditionPositions(availablePositions,figure_);
         availablePositions = removeAdditionPositions(availablePositions,figure_,board);
 
-        renderTmpObj(availablePositions);
+        // renderTmpObj(availablePositions);
         UTILS.showAvailablePositions(availablePositions,figure_);
         console.log('figure='+topFigure_);
+        var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
+        if (countSrc_ > 0) {
+            RENDER.main.showTowerWithPosition(figure_,board);
+        };
     };
     function addAdditionPositions(positionsArray,figure){
         var retArray = positionsArray.slice();
@@ -63,7 +68,7 @@ function LogicContainer() {
     function secondStep(obj,board){
         if (player == cPLAYER.NONE) return;
         var res =  null;
-        var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+        var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
 
         var availablePositions = UTILS.getMoveArray(figure_,board,true);//moveArrow
         availablePositions = addAdditionPositions(availablePositions,figure_);
@@ -85,19 +90,20 @@ function LogicContainer() {
         sourceArray = getAllFiguresAtPosition(figure_.boardPosition,figures_);
         res = isFigure(obj,board.getAllFigure());
         if (res === true){
-            var countDest_ = getFigureCountAtPosition(obj.boardPosition,figures_);
-            var countSrc_ = getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
+            var countDest_ = UTILS.getFigureCountAtPosition(obj.boardPosition,figures_);
+            var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
             var count_ = countSrc_ + countDest_;
             targetPosition.position.y = 0.5 + count_ * 0.5;
         }else{
-            var countSrc_ = getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
+            var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
             targetPosition.position.y = 0.5 + countSrc_ * 0.5;
         };
+        RENDER.main.hideTower(board);
     };
     function removeAdditionPositions(positionsArray,figure,board){
         var retArray = [];
-        var whiteVolhv = getFigureWithIndex(12,board.getWhite());
-        var blackVolhv = getFigureWithIndex(28,board.getBlack());
+        var whiteVolhv = UTILS.getFigureWithIndex(12,board.getWhite());
+        var blackVolhv = UTILS.getFigureWithIndex(28,board.getBlack());
         var ind_ = figure.figureIndex;
         for (var i = 0; i < positionsArray.length; i++) {
             if (positionsArray[i].equals(whiteVolhv.boardPosition)){
@@ -120,15 +126,6 @@ function LogicContainer() {
         };
         return retArray;
     };
-    function getFigureCountAtPosition(pos2d,figures){
-        var count_ = 0;
-        for (var i = 0; i < figures.length; i++) {
-            if (figures[i].boardPosition.equals(pos2d)){
-                count_ ++;
-            };
-        };
-        return count_;
-    };
     function renderTmpObj(posArray){
         for (var i = 0; i < posArray.length; i++) {
             console.log(posArray[i].x + ' ' + posArray[i].z);
@@ -136,14 +133,6 @@ function LogicContainer() {
     };
     function moveStep(obj,board){
         console.log('move step');
-    };
-    function getFigureWithIndex(index,figureArray){
-        for (var i = 0; i < figureArray.length; i++) {
-            if (figureArray[i].figureIndex == index) {
-                return figureArray[i];
-            };
-        };
-        return null;
     };
     function getFigureIndex(obj,figureArray){
         for (var i = 0; i < figureArray.length; i++) {
@@ -198,7 +187,7 @@ function LogicContainer() {
     };
     this.RenderStep = function(board){
         if (state == cSTATE.MOVE) {
-            var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+            var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
             var dist = figure_.position.distanceTo(targetPosition.position);
             if (dist < 0.1) {
                 state = cSTATE.SOURCE;
@@ -216,7 +205,7 @@ function LogicContainer() {
         };
     };
     function normalizeFiguresArray(target,figuresArray,board){
-        var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+        var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
         for (var i = 0; i < figuresArray.length; i++) {
             figuresArray[i].boardPosition.copy(target.boardPosition);
             figuresArray[i].position.x = figuresArray[i].boardPosition.x - 4 + 0.5;
@@ -229,7 +218,7 @@ function LogicContainer() {
         };
     };
     function moveFiguresArray(figuresArray,target,board){
-        var figure_ = getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+        var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
         for (var i = 0; i < sourceArray.length; i++) {
             var target_ = target.position.clone();
             var delta_ = (sourceArray[i].position.y - figure_.position.y);
@@ -238,7 +227,7 @@ function LogicContainer() {
             console.log(delta_+' '+scale_);
             target_.y = target.position.y + scale_ * 0.5;
             // console.log(sourceArray[i].position.z - figure_.position.z);
-            sourceArray[i].position.lerp(target_,0.0611);
+            sourceArray[i].position.lerp(target_,0.0911);
         };
     };
 };

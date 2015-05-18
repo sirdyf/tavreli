@@ -145,6 +145,15 @@ document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
 function onDocumentMouseDown( event ) {
     event.preventDefault();
+
+    var intersects = raycaster.intersectObjects( camera.children,true);
+    if ( intersects.length > 0 ) {
+        // console.log(intersects[0].object.parent);
+        if (intersects[0].object.parent.name == "tower"){
+            RENDER.main.selectTowerWith(intersects[0].object.parent);
+            return;
+        }
+    }    
     LOGIC.main.ClickOnObject(scene.main.getNullCube(),TAVRELI);
 };
 function onWindowResize() {

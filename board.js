@@ -43,7 +43,7 @@ TAVRELI.init = function() {
     TAVRELI.selectFigureWithIndex = function(figureIndex){
         for (var i = 0; i < figures.allFigure.length; i++) {
             if (figures.allFigure[i].figureIndex == figureIndex){
-                renderSelectFigure(figures.allFigure[i]);
+                RENDER.main.renderSelectFigure(figures.allFigure[i]);
                 break;
             };
         };
@@ -51,26 +51,11 @@ TAVRELI.init = function() {
     TAVRELI.deSelectFigureWithIndex = function(figureIndex){
         for (var i = 0; i < figures.allFigure.length; i++) {
             if (figures.allFigure[i].figureIndex == figureIndex){
-                renderDeselectFigure(figures.allFigure[i]);
+                RENDER.main.renderDeselectFigure(figures.allFigure[i]);
                 break;
             };
         };
     };
-    var renderDeselectFigure = function(figure3d){
-        for (var i = 0; i < figure3d.children.length; i++) {
-            if (figure3d.children[i].name == 'selected_figure'){
-                figure3d.remove(figure3d.children[i]);
-                return;
-            };
-        };
-    };
-    var renderSelectFigure = function(figure3d){
-        var sFigure = new THREE.Mesh(new THREE.BoxGeometry( 5, 5, 5, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true}));
-        sFigure.name = 'selected_figure';
-        // figure3d.position.copy(sFigure.position);
-        figure3d.add(sFigure);
-    };
-
     var resetBoardFigure = function() {
         figures.allFigure = [];
         mainFigure = new Chess(originCube);
@@ -305,6 +290,13 @@ TAVRELI.init = function() {
                 }else{
                     m = materials.brown;
                 };
+        };
+    };
+    TAVRELI.getSquareAtPosition = function(pos2d){
+        for (var i = 0; i < mainBoard.children.length; i++) {
+            if ((mainBoard.children[i].name == 'square') && (mainBoard.children[i].boardPosition.equals(pos2d))){
+                return mainBoard.children[i].clone();
+            };
         };
     };
     (this.creates = function() {
