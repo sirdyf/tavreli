@@ -72,6 +72,28 @@ function RenderContainer() {
             };
         };
     };
+    this.getTowerUpFigures = function(figuresArray){
+        if (figuresArray.length < 2) return figuresArray;
+        var retArray_ = [];
+        for (var i = 0; i < figuresArray.length; i++) {
+            if (isFigureDown(figuresArray[i]) === false){
+                retArray_.push(figuresArray[i]);
+            };
+        };
+        return retArray_;
+    };
+    function isFigureDown(figure){
+        for (var i = 0; i < _tower.length; i++) {
+            if (_tower[i].figureIndex == figure.figureIndex) {
+                if (_tower[i].indexY < _towerIndex){
+                    return true;
+                }else{
+                    break;
+                };
+            };
+        };
+        return false;
+    };
     this.renderDeselectFigure = function(figure3d){
         for (var i = 0; i < figure3d.children.length; i++) {
             if (figure3d.children[i].name == 'selected_figure'){
@@ -86,7 +108,9 @@ function RenderContainer() {
         // figure3d.position.copy(sFigure.position);
         figure3d.add(sFigure);
     };
-
+    this.getTowerIndex = function(){
+        return _towerIndex;
+    };
 };
 RENDER.main = new RenderContainer();
 RENDER.main.Init();

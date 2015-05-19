@@ -87,15 +87,20 @@ function LogicContainer() {
         targetPosition = obj.clone();
         targetPosition.boardPosition = obj.boardPosition.clone();
         var figures_ = board.getAllFigure();
+
         sourceArray = getAllFiguresAtPosition(figure_.boardPosition,figures_);
+        sourceArray = RENDER.main.getTowerUpFigures(sourceArray);
+        
         res = isFigure(obj,board.getAllFigure());
         if (res === true){
             var countDest_ = UTILS.getFigureCountAtPosition(obj.boardPosition,figures_);
             var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
+            countSrc_ -= RENDER.main.getTowerIndex();
             var count_ = countSrc_ + countDest_;
             targetPosition.position.y = 0.5 + count_ * 0.5;
         }else{
             var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition,figures_) - 1;
+            countSrc_ -= RENDER.main.getTowerIndex();
             targetPosition.position.y = 0.5 + countSrc_ * 0.5;
         };
         RENDER.main.hideTower(board);
