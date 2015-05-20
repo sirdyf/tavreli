@@ -59,7 +59,7 @@ function LogicContainer() {
             // first step ratnik move at 2 position
             retArray[1].y = figure.boardPosition.y - 2;
         };
-        if (((ind_ >= 16)&&(ind_ <= 23)) && (figure.boardPosition.y == 1)){
+        if (((ind_ >= 100)&&(ind_ <= 108)) && (figure.boardPosition.y == 1)){//todo
             // first step ratnik move at 2 position
             retArray[1].y = figure.boardPosition.y + 2;
         };
@@ -67,8 +67,16 @@ function LogicContainer() {
     };
     function secondStep(obj,board){
         if (player == cPLAYER.NONE) return;
-        var res =  null;
         var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
+        var res = isFigure(obj,board.getAllFigure());
+        if (res === true) {
+            if (figure_.boardPosition.equals(obj.boardPosition)){
+                state = cSTATE.SOURCE;
+                zeroStep(null,board);
+                RENDER.main.hideTower(board);
+                return;
+            };
+        };
 
         var availablePositions = UTILS.getMoveArray(figure_,board,true);//moveArrow
         availablePositions = addAdditionPositions(availablePositions,figure_);
@@ -108,7 +116,7 @@ function LogicContainer() {
     function removeAdditionPositions(positionsArray,figure,board){
         var retArray = [];
         var whiteVolhv = UTILS.getFigureWithIndex(12,board.getWhite());
-        var blackVolhv = UTILS.getFigureWithIndex(28,board.getBlack());
+        var blackVolhv = UTILS.getFigureWithIndex(112,board.getBlack());
         var ind_ = figure.figureIndex;
         for (var i = 0; i < positionsArray.length; i++) {
             if (positionsArray[i].equals(whiteVolhv.boardPosition)){
@@ -117,7 +125,8 @@ function LogicContainer() {
             if (positionsArray[i].equals(blackVolhv.boardPosition)){
                 continue;
             };
-            if ((ind_ <= 7) || ((ind_ >= 16) && (ind_ <= 23))){ // ratnik
+            // if ((ind_ <= 7) || ((ind_ >= 16) && (ind_ <= 23))){ // ratnik
+            if (board.isFigureRatnik(ind_)){
                 if (figure.boardPosition.x != positionsArray[i].x){
                     var tmpObj = {};
                     tmpObj.boardPosition = positionsArray[i];
@@ -203,10 +212,29 @@ function LogicContainer() {
                 }else{
                     player = cPLAYER.WHITE;
                 };
+                checkRuleAfterStep(board);
                 return;
             };
             // figure_.position.lerp(targetPosition.position,0.11);
             moveFiguresArray(sourceArray,targetPosition,board);
+        };
+    };
+    function checkRuleAfterStep(board){
+        var figures_ = board.getAllFigure();
+        var maxWhiteIndex_ = board.getWhiteMaxIndex();
+        for (var i = 0; i < figures_.length; i++) {
+            if (board.isFigureRatnik(figures_[i].figureIndex)){
+                var ind_ = figures_[i].figureIndex;
+                if (ind_ < maxWhiteIndex_ ){
+                    if (figures_[i].boardPosition.y == 0){
+                        board.convertRatnikWithIndex(ind_);
+                    };
+                }else{
+                    if (figures_[i].boardPosition.y == 7){
+                        board.convertRatnikWithIndex(ind_);
+                    };
+                };
+            };
         };
     };
     function normalizeFiguresArray(target,figuresArray,board){

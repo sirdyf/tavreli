@@ -16,13 +16,29 @@ TAVRELI.init = function() {
     var originCube = null;
     var originCubeSize = null;
     var originCubeScale = null;
+    var _maxWhiteIndex = 99;
+    var _maxRatnikIndex = 8;
 
     materials.name = [];
 
+    TAVRELI.isFigureRatnik = function(figureIndex){
+        var ind_ = figureIndex;
+        if ((ind_ < _maxRatnikIndex) || ((ind_ > _maxWhiteIndex) && (ind_ < _maxWhiteIndex+_maxRatnikIndex)) ) return true;
+        return false;
+    };
+    TAVRELI.getWhiteMaxIndex = function(){
+        return _maxWhiteIndex;
+    };
+    TAVRELI.getWhiteRatnikMaxIndex = function(){
+        return 8;
+    };
+    TAVRELI.getBlackRatnikMaxIndex = function(){
+        return _maxWhiteIndex + 8;
+    };
     TAVRELI.getWhite = function(){
         var white = [];
         for (var i = 0; i < figures.allFigure.length; i++) {
-            if (figures.allFigure[i].figureIndex <= 15){
+            if (figures.allFigure[i].figureIndex <= _maxWhiteIndex){
                 white.push(figures.allFigure[i]);
             };
         };
@@ -31,7 +47,7 @@ TAVRELI.init = function() {
     TAVRELI.getBlack = function(){
         var black = []
         for (var i = 0; i < figures.allFigure.length; i++) {
-            if (figures.allFigure[i].figureIndex > 15){
+            if (figures.allFigure[i].figureIndex > _maxWhiteIndex){
                 black.push(figures.allFigure[i]);
             };
         };
@@ -59,17 +75,19 @@ TAVRELI.init = function() {
     var resetBoardFigure = function() {
         figures.allFigure = [];
         mainFigure = new Chess(originCube);
-        for (var i = 0; i < 8*4; i++) {
+        for (var i = 0; i < 8*4 ; i++) {
             var chess = mainFigure.getMainObj().clone();
             chess.name = 'figure';
             chess.position.x = (i % 8) - 4 + .5;
             chess.boardPosition = new THREE.Vector2();
             chess.boardPosition.x = (i % 8);
             chess.position.y = .5;
-            if (i == 10){
+            if (i == 88){
                 makeTestFigure(i);
                 continue;
             };
+            if (i == 27) continue;
+            if (i == 19) continue;
             if (i <= 7){
                 chess.position.z = 6 - 4 + .5;
                 chess.boardPosition.y = 6;
@@ -85,7 +103,11 @@ TAVRELI.init = function() {
             }else{
                 return;
             }
-            makeFigureWithIndex(chess,i);
+            if (i < 16){
+                makeFigureWithIndex(chess,i);
+            }else{
+                makeFigureWithIndex(chess,i - 16 + _maxWhiteIndex);
+            };
             figures.allFigure.push(chess);
             scene.add(chess);
         };
@@ -104,12 +126,12 @@ TAVRELI.init = function() {
     };
     var makeFigureWithIndex = function(obj,index){
         obj.figureIndex = index;
-        if (index<16){
+        if (index < _maxWhiteIndex){
             makeTavreli(obj,index,'white');
         }else{
-            makeTavreli(obj,index-16,'black');
+            makeTavreli(obj,index - _maxWhiteIndex,'black');
             replaceMaterial(obj,'FrontColor','FrontColorBlack');
-            if (index < 24){
+            if (index < _maxWhiteIndex + 8){
                 var mv = obj.main.getMoveRule();
                 mv[0].y = 1;
                 mv[1].y = 1;
@@ -291,6 +313,27 @@ TAVRELI.init = function() {
                     m = materials.brown;
                 };
         };
+    };
+    TAVRELI.convertRatnikWithIndex = function(figureIndex){
+        if (TAVRELI.isFigureRatnik(figureIndex) === false) return;
+        var figure_ = UTILS.getFigureWithIndex(figureIndex,figures.allFigure);
+        // figures.allFigure.remove(figure_);
+        var index_ = figures.allFigure.indexOf(figure_);
+        if (index_ > -1) {
+           figures.allFigure.splice(index_, 1);
+        }
+        scene.remove(figure_);
+
+        mainFigure = new Chess(originCube);
+        var chess = mainFigure.getMainObj().clone();
+        chess.name = 'figure';
+        chess.boardPosition = new THREE.Vector2();
+        chess.boardPosition.copy(figure_.boardPosition);
+        chess.position.copy(figure_.position);
+        makeFigureWithIndex(chess,figure_.figureIndex + 8);
+        chess.figureIndex = figure_.figureIndex + 8 + 8;
+        figures.allFigure.push(chess);
+        scene.add(chess);
     };
     TAVRELI.getSquareAtPosition = function(pos2d){
         for (var i = 0; i < mainBoard.children.length; i++) {
