@@ -35,6 +35,9 @@ TAVRELI.init = function() {
     TAVRELI.getBlackRatnikMaxIndex = function(){
         return _maxWhiteIndex + 8;
     };
+    TAVRELI.getSquares = function(){
+        return mainBoard.squares;
+    };
     TAVRELI.getWhite = function(){
         var white = [];
         for (var i = 0; i < figures.allFigure.length; i++) {
@@ -82,12 +85,12 @@ TAVRELI.init = function() {
             chess.boardPosition = new THREE.Vector2();
             chess.boardPosition.x = (i % 8);
             chess.position.y = .5;
-            if (i == 4){
-                makeTestFigure(4 + 8 + 8);
-                continue;
-            };
-            if (i == 27) continue;
-            if (i == 19) continue;
+            // if (i == 4){
+            //     makeTestFigure(4 + 8 + 8);
+            //     continue;
+            // };
+            // if (i == 27) continue;
+            // if (i == 19) continue;
             if (i <= 7){
                 chess.position.z = 6 - 4 + .5;
                 chess.boardPosition.y = 6;

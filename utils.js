@@ -1,5 +1,10 @@
 var UTILS = UTILS || {REVISION: '0.1'};
 
+var isNumeric = function( obj ) {
+    // http://stackoverflow.com/questions/18082/validate-decimal-numbers-in-javascript-isnumeric
+    return !jQuery.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
+}
+
 UTILS.rotateAroundWorldAxis = function(object, axis, radians) {
     var rotationMatrix = new THREE.Matrix4();
     rotationMatrix.makeRotationAxis(axis.normalize(), radians);
@@ -114,4 +119,25 @@ UTILS.getFigureWithIndex = function(index,figureArray){
         };
     };
     return null;
+};
+UTILS.setIndexFromNotation = function(notations,obj){
+    if (notations.length>3) return -1;
+    notation = notations.toLowerCase();
+    var symbol=0;
+    if (notation.charAt(0) === 'a') symbol = 0;
+    if (notation.charAt(0) === 'b') symbol = 1;
+    if (notation.charAt(0) === 'c') symbol = 2;
+    if (notation.charAt(0) === 'd') symbol = 3;
+    if (notation.charAt(0) === 'e') symbol = 4;
+    if (notation.charAt(0) === 'f') symbol = 5;
+    if (notation.charAt(0) === 'g') symbol = 6;
+    if (notation.charAt(0) === 'h') symbol = 7;
+
+    var horizontal=notation.charAt(1);
+    if (!isNumeric(horizontal)){
+        console.log('Error second symbol:'+horizontal+' must be number!');
+        return -1;
+    }
+    // return (horizontal - 1) * 8 + symbol;
+    obj.boardPosition = new THREE.Vector2(symbol,8 - horizontal);//todo revert board coordinate
 };

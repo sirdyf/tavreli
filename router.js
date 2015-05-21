@@ -6,18 +6,52 @@ function RouterContainer() {
     var cSTATE = {NONE: 0, MANUAL: 1, AUTO: 2};
     var _state = cSTATE.MANUAL;
     var _logic = null;
+    var _sampleArray = null;
+    var _currentStepNum = 0;
 
     function zeroStep(obj,board){
     };
     this.Init = function(){
         _logic = new LogicContainer();
         _logic.Init(funcArrays);
+        _state = cSTATE.AUTO;
+        var sampleStr_ = SAMPLES.main.getSampleString();
+        _sampleArray = PARSER.main.parseString(sampleStr_);
+        console.log(_sampleArray);
         // funcArrays=[zeroStep,wait,parser.getnextStep(),...];
     };
     this.ClickOnObject = function(obj,board){
         if (_state == cSTATE.MANUAL) {
             _logic.ClickOnObject(obj,board);
+        }else if (_state == cSTATE.AUTO) {
+            var state_ = _logic.getCurrentState();
+            if (state_ == 1){//cSTATE.SOURCE){ TODO
+                var obj_ = {};
+                var not_ = _sampleArray[_currentStepNum*2];
+                console.log(not_);
+                UTILS.setIndexFromNotation(not_,obj_);
+                _logic.ClickOnObject(obj_,board);
+            }else if (state_ == 2){
+                var obj_ = new THREE.Mesh(new THREE.BoxGeometry( 1, 1, 1, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff00ff, wireframe: true}));
+                var not_ = _sampleArray[_currentStepNum*2+1];
+                console.log(not_);
+                UTILS.setIndexFromNotation(not_,obj_);
+                var fig_ = getBoardSquare(obj_.boardPosition,board);
+                obj_.position = new THREE.Vector3();
+                obj_.position.copy(fig_.position);
+                _logic.ClickOnObject(obj_,board);
+                _currentStepNum++;
+            };
         };
+    };
+    function getBoardSquare(boardPosition, board){
+        var figures_ = board.getSquares();
+        for (var i = 0; i < figures_.length; i++) {
+            if (figures_[i].boardPosition.equals(boardPosition)){
+                return figures_[i];
+            };
+        };
+        return null;
     };
     this.RenderStep = function(board){
         _logic.RenderStep(board);

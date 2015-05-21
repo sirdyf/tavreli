@@ -11,6 +11,10 @@ function LogicContainer() {
     var cPLAYER = {WHITE: 0, BLACK:1, NONE: 2};
     var player = cPLAYER.WHITE;
 
+    this.getCurrentState = function(){
+        return state;
+    };
+
     function zeroStep(obj,board){
         console.log('zero step');
         UTILS.removeAllArrowWithArray(board.getAllFigure());
@@ -135,12 +139,12 @@ function LogicContainer() {
         var blackVolhv = UTILS.getFigureWithIndex(112,board.getBlack());
         var ind_ = figure.figureIndex;
         for (var i = 0; i < positionsArray.length; i++) {
-            if (positionsArray[i].equals(whiteVolhv.boardPosition)){
-                continue;
-            };
-            if (positionsArray[i].equals(blackVolhv.boardPosition)){
-                continue;
-            };
+            // if (positionsArray[i].equals(whiteVolhv.boardPosition)){
+            //     continue;
+            // };
+            // if (positionsArray[i].equals(blackVolhv.boardPosition)){
+            //     continue;
+            // };
             // if ((ind_ <= 7) || ((ind_ >= 16) && (ind_ <= 23))){ // ratnik
             if (board.isFigureRatnik(ind_)){
                 if (figure.boardPosition.x != positionsArray[i].x){
