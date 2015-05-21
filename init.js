@@ -97,7 +97,7 @@ function animate() {
 
     if (scene.main){
         // document.getElementById("val_right").innerHTML = scene.main.getMainCubeChildrenCount();
-        LOGIC.main.RenderStep(TAVRELI);
+        ROUTER.main.RenderStep(TAVRELI);
     }
     render();
 }
@@ -154,7 +154,7 @@ function onDocumentMouseDown( event ) {
             return;
         }
     }    
-    LOGIC.main.ClickOnObject(scene.main.getNullCube(),TAVRELI);
+    ROUTER.main.ClickOnObject(scene.main.getNullCube(),TAVRELI);
 };
 function onWindowResize() {
 

@@ -1,4 +1,4 @@
-var LOGIC = LOGIC || {revision: "v0.0.1"};
+var LOGIC = LOGIC || {revision: "v0.1.2"};
 
 function LogicContainer() {
     var funcArrays = null;
@@ -41,7 +41,7 @@ function LogicContainer() {
         var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
 
         var availablePositions = UTILS.getMoveArray(figure_,board,false);
-        availablePositions = addAdditionPositions(availablePositions,figure_);
+        availablePositions = addAdditionPositions(availablePositions,figure_,board,false);
         availablePositions = removeAdditionPositions(availablePositions,figure_,board);
 
         // renderTmpObj(availablePositions);
@@ -52,7 +52,7 @@ function LogicContainer() {
             RENDER.main.showTowerWithPosition(figure_,board);
         };
     };
-    function addAdditionPositions(positionsArray,figure){
+    function addAdditionPositions(positionsArray,figure,board,isAllPositionsNeed){
         var retArray = positionsArray.slice();
         var ind_ = figure.figureIndex;
         if ((ind_ <= 7) && (figure.boardPosition.y == 6)){
@@ -62,6 +62,22 @@ function LogicContainer() {
         if (((ind_ >= 100)&&(ind_ <= 108)) && (figure.boardPosition.y == 1)){//todo
             // first step ratnik move at 2 position
             retArray[1].y = figure.boardPosition.y + 2;
+        };
+        if ((ind_ == 20) || (ind_ == 120)) {
+            // var moves_ = figure_.main.getMoveRule();
+            var main_ = new VsadnikContainer();
+            var extendAvailablePosition = UTILS.getMoveArrayExt(main_,figure.boardPosition,board,false);
+            // retArray.concat(extendAvailablePosition);
+            if (isAllPositionsNeed === false){
+                for (var i = 8; i < retArray.length; i++) {
+                    retArray[i].copy(extendAvailablePosition[i-8]);
+                };
+            }else{
+                for (var i = 0; i < extendAvailablePosition.length; i++) {
+                    var nw_ = extendAvailablePosition[i].clone();
+                    retArray.push(nw_);
+                };
+            };
         };
         return retArray;
     };
@@ -79,7 +95,7 @@ function LogicContainer() {
         };
 
         var availablePositions = UTILS.getMoveArray(figure_,board,true);//moveArrow
-        availablePositions = addAdditionPositions(availablePositions,figure_);
+        availablePositions = addAdditionPositions(availablePositions,figure_,board,true);
         availablePositions = removeAdditionPositions(availablePositions,figure_,board);
 
         var flag_ = false;
@@ -264,6 +280,3 @@ function LogicContainer() {
         };
     };
 };
-LOGIC.main = new LogicContainer();
-LOGIC.main.Init();
-// console.log(LOGIC);

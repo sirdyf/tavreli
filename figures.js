@@ -100,4 +100,17 @@ function VolhvContainer(){
 	this.isJump        = function(){ return _isJump;     };
 	this.getFigureType = function(){ return _figureType; };
 };
-// TODO Helgi
+function HelgiContainer(){
+	var _moveRule = [];
+	var _isJump = false;
+	var _figureType = chessFiguresType.VOLHV;
+
+	this.name = 'Helgi';
+
+	var _moveRule1 = new KnyazContainer().getMoveRule().slice();
+	_moveRule = _moveRule1.concat(_moveRule1)
+
+	this.getMoveRule   = function(){ return _moveRule;   };
+	this.isJump        = function(){ return _isJump;     };
+	this.getFigureType = function(){ return _figureType; };
+};

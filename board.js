@@ -82,8 +82,8 @@ TAVRELI.init = function() {
             chess.boardPosition = new THREE.Vector2();
             chess.boardPosition.x = (i % 8);
             chess.position.y = .5;
-            if (i == 88){
-                makeTestFigure(i);
+            if (i == 4){
+                makeTestFigure(4 + 8 + 8);
                 continue;
             };
             if (i == 27) continue;
@@ -187,6 +187,11 @@ TAVRELI.init = function() {
             replaceMaterial(obj,'topFigureMaterial','volhv_'+postfix);
             replaceMaterial(obj,'secondFigureMaterial','volhv_'+postfix);
             replaceMaterial(obj,'mainFigureMaterial','volhv_'+postfix);
+        }else if (ind == 4 + 8 + 8){
+            obj.main = new HelgiContainer();
+            replaceMaterial(obj,'topFigureMaterial','helgi_'+postfix);
+            replaceMaterial(obj,'secondFigureMaterial','helgi_'+postfix);
+            replaceMaterial(obj,'mainFigureMaterial','helgi_'+postfix);
         };
         // obj.main.addMoveArrow(obj);
         UTILS.addMoveArrow(obj);
@@ -330,8 +335,13 @@ TAVRELI.init = function() {
         chess.boardPosition = new THREE.Vector2();
         chess.boardPosition.copy(figure_.boardPosition);
         chess.position.copy(figure_.position);
-        makeFigureWithIndex(chess,figure_.figureIndex + 8);
-        chess.figureIndex = figure_.figureIndex + 8 + 8;
+        if ((figure_.figureIndex == 4) || (figure_.figureIndex == 4 + _maxWhiteIndex)){
+            makeFigureWithIndex(chess,figure_.figureIndex + 8 + 8);
+            chess.figureIndex = figure_.figureIndex + 8 + 8 + 8;
+        }else{
+            makeFigureWithIndex(chess,figure_.figureIndex + 8);
+            chess.figureIndex = figure_.figureIndex + 8 + 8;
+        };
         figures.allFigure.push(chess);
         scene.add(chess);
     };

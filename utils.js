@@ -9,10 +9,13 @@ UTILS.rotateAroundWorldAxis = function(object, axis, radians) {
     object.rotation.setFromRotationMatrix(rotationMatrix);
 };
 UTILS.getMoveArray = function(figure,board,isAllPositionsNeed){
+    return UTILS.getMoveArrayExt(figure.main,figure.boardPosition,board,isAllPositionsNeed);
+};
+UTILS.getMoveArrayExt = function(figureContainer,figureBoardPosition,board,isAllPositionsNeed){
     var moveArray_ = [];
-    var figureMoveRule_ = figure.main.getMoveRule();
+    var figureMoveRule_ = figureContainer.getMoveRule();
     for (var i = 0; i < figureMoveRule_.length; i++) {
-        var endPos_ = UTILS.getBoundPosition(figure.boardPosition,figureMoveRule_[i],figure.main.isJump(),board.getAllFigure(),isAllPositionsNeed);
+        var endPos_ = UTILS.getBoundPosition(figureBoardPosition,figureMoveRule_[i],figureContainer.isJump(),board.getAllFigure(),isAllPositionsNeed);
         if (endPos_ != null) {
             if (isAllPositionsNeed === true) {
                 moveArray_ = moveArray_.concat(endPos_);
