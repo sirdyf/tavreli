@@ -9,7 +9,7 @@ function RouterContainer() {
     var _sampleArray = null;
     var _currentStepNum = 0;
     var _DEBUG = false;
-    var _pauseOnStep = 99;//28;
+    var _pauseOnStep = 28;
 
     function zeroStep(obj,board){
     };
