@@ -20,8 +20,10 @@ var mouseRay = { x: 0, y: 0 }, INTERSECTED;
 
 var raycaster = new THREE.Raycaster();
 
-init();
-animate();
+$(function () {
+    init();
+    animate();
+});
 
 function init() {
     this.init = true;
@@ -72,8 +74,6 @@ function init() {
     });
 
 
-    stats = new Stats();
-    container.appendChild(stats.domElement);
     // RENDERER
 
     renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -82,7 +82,6 @@ function init() {
     container.appendChild(renderer.domElement);
 
     // STATS1
-
     stats = new Stats();
     container.appendChild(stats.domElement);
 

@@ -28,7 +28,6 @@ function RenderContainer() {
         _platform.rotateOnAxis(axisX,angleX);
         _platform.rotateOnAxis(axisY,angleY);
         camera.add(_platform);
-        var baseY = 0.49;
         for (var i = 0; i < figures_.length; i++) {
             if (figures_[i].boardPosition.equals(figure.boardPosition) === true){
                 var figure_ = figures_[i].clone();
@@ -52,10 +51,15 @@ function RenderContainer() {
         _towerIndex = 0;
         this.selectTowerWith(getFigureWithYIndex(0));  
     };
+    this.getTowerFigureWithIndex = function(index){
+        var ind_ = _tower.length - index ;
+        return getFigureWithYIndex(ind_);
+    };
     function getFigureWithYIndex(yIndex){
         for (var i = 0; i < _tower.length; i++) {
             if (_tower[i].indexY == yIndex) return _tower[i];
         };
+        return null;
     };
     this.selectTowerWith = function(object){
         var ind_ = object.figureIndex;
@@ -73,14 +77,33 @@ function RenderContainer() {
         };
     };
     this.getTowerUpFigures = function(figuresArray){
-        if (figuresArray.length < 2) return figuresArray;
+        if (figuresArray.length < 2) {
+            figuresArray[0].indexY = 0;
+            return figuresArray;
+        };
         var retArray_ = [];
         for (var i = 0; i < figuresArray.length; i++) {
-            if (isFigureDown(figuresArray[i]) === false){
+            var indY_ = isFigureUp(figuresArray[i]);
+            if ( indY_ >= 0){
+                var upFiguresCount = figuresArray.length - _towerIndex - 1;
+                figuresArray[i].indexY = upFiguresCount - (indY_ - _towerIndex);
+                console.log("figuresArray" +figuresArray.length+"towerIndex =" + _towerIndex+"indY="+indY_+" indexY="+figuresArray[i].indexY);
                 retArray_.push(figuresArray[i]);
             };
         };
         return retArray_;
+    };
+    function isFigureUp(figure){
+        for (var i = 0; i < _tower.length; i++) {
+            if (_tower[i].figureIndex == figure.figureIndex) {
+                if (_tower[i].indexY >= _towerIndex){
+                    return _tower[i].indexY;
+                }else{
+                    break;
+                };
+            };
+        };
+        return -1;
     };
     function isFigureDown(figure){
         for (var i = 0; i < _tower.length; i++) {

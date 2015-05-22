@@ -257,6 +257,7 @@ function LogicContainer() {
             };
         };
     };
+
     function normalizeFiguresArray(target,figuresArray,board){
         var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
         for (var i = 0; i < figuresArray.length; i++) {
@@ -264,9 +265,10 @@ function LogicContainer() {
             figuresArray[i].position.x = figuresArray[i].boardPosition.x - 4 + 0.5;
             figuresArray[i].position.z = figuresArray[i].boardPosition.y - 4 + 0.5;
             var target_ = target.position.clone();
-            var delta_ = (figuresArray[i].position.y - figure_.position.y);
-            var scale_ = Math.floor(delta_ / 0.51 );
-            if (delta_ < 0) scale_ = Math.ceil(delta_ / 0.49 );
+            // var delta_ = (figuresArray[i].position.y - figure_.position.y);
+            // var scale_ = Math.ceil(Math.abs(delta_) / 0.501 );
+            // if (delta_ < 0) scale_ = -scale_
+            var scale_ = - sourceArray[i].indexY;
             figuresArray[i].position.y = target.position.y + scale_ * 0.5;
         };
     };
@@ -274,10 +276,11 @@ function LogicContainer() {
         var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
         for (var i = 0; i < sourceArray.length; i++) {
             var target_ = target.position.clone();
-            var delta_ = (sourceArray[i].position.y - figure_.position.y);
-            var scale_ = Math.floor(delta_ / 0.51);
-            if (delta_ < 0) scale_ = Math.ceil(delta_ / 0.49 );
-            console.log(delta_+' '+scale_);
+            // var revertIndex_ = figuresArray.length - sourceArray[i].indexY;
+            var scale_ = - sourceArray[i].indexY;
+            console.log(scale_);
+            // var scale_ = Math.floor(delta_ / 0.51);
+            // if (delta_ < 0) scale_ = Math.ceil(delta_ / 0.49 );
             target_.y = target.position.y + scale_ * 0.5;
             // console.log(sourceArray[i].position.z - figure_.position.z);
             sourceArray[i].position.lerp(target_,0.0911);
