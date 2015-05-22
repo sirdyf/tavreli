@@ -296,7 +296,7 @@ TAVRELI.init = function() {
     };
     this.createBoardSquares = function(){
         mainBoard.squares = [];
-        var m = materials.brown;
+        var m = materials.yellow;
         for (var i = -3; i < 5; i++) {
             for (var j = -3; j < 5; j++) {
                 var mSquare = new THREE.Mesh(new THREE.BoxGeometry( 1, .1, 1, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff00ff, wireframe: true}));
@@ -321,6 +321,7 @@ TAVRELI.init = function() {
                     m = materials.brown;
                 };
         };
+        this.setNullCubePosition(mainBoard.squares[0]);
     };
     TAVRELI.convertRatnikWithIndex = function(figureIndex){
         if (TAVRELI.isFigureRatnik(figureIndex) === false) return;
