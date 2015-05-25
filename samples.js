@@ -7,7 +7,7 @@ function SamplesContainer() {
         return _sample.steps;
     };
     this.Init = function(){
-        sample1();
+        sample3();
     };
     this.getDescriptionForStep = function(stepNum){
 
@@ -42,7 +42,7 @@ function SamplesContainer() {
         _sample.descriptions = desc;
     };
     function sample3(){
-        _sample.steps = "c1-d2 f8-e7 f1-e2 c8-d7 d1-d2 d8-d7 b1-c3 b8-c6 d2-e2 g8-f6 g1-f3 d7-d4 е2-d2 0-0-0 d2(3)-e3 e7-c5 e3(1)-g5 h8-e8 e3(1)-d2 f6-e4 g5-f5 c8-b8 a1-d1 d4-c4 b2-b3 c4-a6 d2(2)-e3 e4-c3 d2-d3 c5-e3 0-0 a6-b6 d1-d3 e3-f2 g1-h1 b6(1)-f2 f3-d4 f2(1)-f1 h1-h2 b6-d4 d3-f3 d4-e5 h2(1)-h3 e5-d4 f5-f7 f1-e2 f7-h5 e2-e6 g2-g4 f2-g1 f3(1)-f7 g1(1)-f2x";
+        _sample.steps = "c1-d2 f8-e7 f1-e2 c8-d7 d1-d2 d8-d7 b1-c3 b8-c6 d2-e2 g8-f6 g1-f3 d7-d4 e2-d2 0-0-0 d2(3)-e3 e7-c5 e3(1)-g5 h8-e8 e3(1)-d2 f6-e4 g5-f5 c8-b8 a1-d1 d4-c4 b2-b3 c4-a6 d2(2)-e3 e4-c3 d2-d3 c5-e3 0-0 a6-b6 d1-d3 e3-f2 g1-h1 b6(1)-f2 f3-d4 f2(1)-f1 h1-h2 b6-d4 d3-f3 d4-e5 h2(1)-h3 e5-d4 f5-f7 f1-e2 f7-h5 e2-e6 g2-g4 f2-g1 f3(1)-f7 g1(1)-f2x";
         var desc = {};
         desc['default'] = "А.Потапов - О.Свирин, Москва, 1998 год";
         desc.step6 = "оба соперника развивают фигуры, стремясь построить башни с включением князя и лучников";

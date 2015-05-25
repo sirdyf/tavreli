@@ -9,7 +9,7 @@ function RouterContainer() {
     var _sampleArray = null;
     var _currentStepNum = 0;
     var _DEBUG = false;
-    var _pauseOnStep = 28;
+    var _pauseOnStep = 1112;
 
     function zeroStep(obj,board){
     };
@@ -47,6 +47,16 @@ function RouterContainer() {
                 var obj_ = {};
                 var not_ = _sampleArray[_currentStepNum*2];
                 console.log(not_);
+                var max_ = board.getWhiteMaxIndex();
+                if ((not_ == '0') || (not_ == 0)){
+                    if (_currentStepNum % 2 == 0) {
+                        obj_ = UTILS.getFigureWithIndex(12,board.getAllFigure());
+                    }else{
+                        obj_ = UTILS.getFigureWithIndex(max_ + 12,board.getAllFigure());
+                    };
+                    _logic.ClickOnObject(obj_,board);
+                    return;
+                }
                 if (not_.length >2){
                     var towerIndex_ = not_.substring(3);
                     var intValue = parseInt(towerIndex_,10)
@@ -63,10 +73,32 @@ function RouterContainer() {
                 };
             }else if (state_ == 2){
                 var obj_ = new THREE.Mesh(new THREE.BoxGeometry( 1, 1, 1, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff00ff, wireframe: true}));
-                var not_ = _sampleArray[_currentStepNum*2+1];
-                console.log(not_);
-                UTILS.setIndexFromNotation(not_,obj_);
-                var fig_ = getBoardSquare(obj_.boardPosition,board);
+                var not_ = _sampleArray[_currentStepNum*2];
+                
+                var fig_ = null;
+                var max_ = board.getWhiteMaxIndex();
+                if ((not_ == '0') || (not_ == '0-0')){
+                    var volhvFigureIndex_ = 12;
+                    if (_currentStepNum % 2 != 0) {
+                        volhvFigureIndex_ = max_ + 12;
+                    };
+                    var volhv_ = UTILS.getFigureWithIndex(volhvFigureIndex_,board.getAllFigure());
+                    var delta_ = 0;
+                    not_ = _sampleArray[_currentStepNum*2+1];
+                    if ((not_ == '0-0')){
+                        delta_ = -2;
+                    }else{
+                        delta_ = 2;
+                    };
+                    obj_.boardPosition = new THREE.Vector2();
+                    obj_.boardPosition.x = volhv_.boardPosition.x + delta_;
+                    obj_.boardPosition.y = volhv_.boardPosition.y;
+                }else{
+                    not_ = _sampleArray[_currentStepNum*2+1];
+                    console.log(not_);
+                    UTILS.setIndexFromNotation(not_,obj_);
+                };
+                fig_ = getBoardSquare(obj_.boardPosition,board);
                 obj_.position = new THREE.Vector3();
                 obj_.position.copy(fig_.position);
                 _logic.ClickOnObject(obj_,board);

@@ -59,15 +59,16 @@ function LogicContainer() {
     function addAdditionPositions(positionsArray,figure,board,isAllPositionsNeed){
         var retArray = positionsArray.slice();
         var ind_ = figure.figureIndex;
+        var max_ = board.getWhiteMaxIndex();
         if ((ind_ <= 7) && (figure.boardPosition.y == 6)){
             // first step ratnik move at 2 position
             retArray[1].y = figure.boardPosition.y - 2;
         };
-        if (((ind_ >= 100)&&(ind_ <= 108)) && (figure.boardPosition.y == 1)){//todo
+        if (((ind_ >= max_)&&(ind_ <= max_ + 7)) && (figure.boardPosition.y == 1)){//todo
             // first step ratnik move at 2 position
             retArray[1].y = figure.boardPosition.y + 2;
         };
-        if ((ind_ == 20) || (ind_ == 120)) {
+        if ((ind_ == 20) || (ind_ == max_ + 20)) {//helgi
             // var moves_ = figure_.main.getMoveRule();
             var main_ = new VsadnikContainer();
             var extendAvailablePosition = UTILS.getMoveArrayExt(main_,figure.boardPosition,board,false);
@@ -83,7 +84,38 @@ function LogicContainer() {
                 };
             };
         };
+        if ((ind_ == 12) || (ind_ == max_ + 12)){//volhv
+            if (isRokirovkaAvailable(board,false) === true){
+                retArray.push(new THREE.Vector2(figure.boardPosition.x + 2,figure.boardPosition.y));
+            };
+            if (isRokirovkaAvailable(board,true) === true){
+                retArray.push(new THREE.Vector2(figure.boardPosition.x - 2,figure.boardPosition.y));
+            };
+        };
         return retArray;
+    };
+    function isRokirovkaAvailable(board, isShort){
+        var delta_ = 0,horizontal_ = 7;
+        var max_ = board.getWhiteMaxIndex();
+        if (player == cPLAYER.BLACK ) {
+            delta_ = max_;
+            horizontal_ = 0;
+        };
+        var volhv_ = UTILS.getFigureWithIndex(delta_ + 12, board.getAllFigure());
+        var volhvPos_ = volhv_.boardPosition;
+        if ((volhvPos_.x == 4) && (volhvPos_.y == horizontal_)){
+            var availablePositions_ = getHorizontalAvailablePositions(volhv_,board);
+            var short_ = 8;
+            if (isShort === false) short_ = 15;
+            var flag_ = isFigureIndexContaintsAtPositionsArray(delta_ + short_,availablePositions_,board);
+            return flag_;
+        };
+        return false;
+    };
+    function getHorizontalAvailablePositions(figure, board){
+        var horizontal_ = new HorizontalContainer();
+        var availablePositions_ = UTILS.getMoveArrayExt(horizontal_,figure.boardPosition,board,false);
+        return availablePositions_;
     };
     function secondStep(obj,board){
         if (player == cPLAYER.NONE) return;
@@ -111,6 +143,30 @@ function LogicContainer() {
         };
         if (flag_ === false) return;
         state = cSTATE.MOVE;
+
+        // rokirovka
+        var max_ = board.getWhiteMaxIndex();
+        var figureDelta_ = 0;
+        var ind_ = figure_.figureIndex;
+        if (ind_ > max_) figureDelta_ = max_;
+        if ((ind_ == 12) || (ind_ == max_ + 12)){//volhv
+            var delta_ = obj.boardPosition.x - figure_.boardPosition.x;
+            if (Math.abs(delta_) == 2){
+                var fIndex_ = 8;
+                if (delta_ > 0) {
+                    fIndex_ = 15;
+                };
+                var targetFigure_ = UTILS.getFigureWithIndex(fIndex_ + figureDelta_,board.getAllFigure());
+                var figures_ = getAllFiguresAtPosition(targetFigure_.boardPosition,board.getAllFigure());
+                for (var i = 0; i < figures_.length; i++) {
+                    figures_[i].position.x = figure_.position.x + (delta_ / 2.0);
+                    figures_[i].boardPosition.x = figure_.boardPosition.x + (delta_ / 2.0);
+                };
+            };
+        };
+
+
+
         // renderTmpObj(availablePositions);
         targetPosition = obj.clone();
         targetPosition.boardPosition = obj.boardPosition.clone();
@@ -135,8 +191,9 @@ function LogicContainer() {
     };
     function removeAdditionPositions(positionsArray,figure,board){
         var retArray = [];
+        var max_ = board.getWhiteMaxIndex();
         var whiteVolhv = UTILS.getFigureWithIndex(12,board.getWhite());
-        var blackVolhv = UTILS.getFigureWithIndex(112,board.getBlack());
+        var blackVolhv = UTILS.getFigureWithIndex(max_ + 12,board.getBlack());
         var ind_ = figure.figureIndex;
         for (var i = 0; i < positionsArray.length; i++) {
             // if (positionsArray[i].equals(whiteVolhv.boardPosition)){
@@ -187,6 +244,15 @@ function LogicContainer() {
     function isFigureIndexContaints(figureIndex,figuresArray){
         for (var i = 0; i < figuresArray.length; i++) {
             if (figuresArray[i].figureIndex == figureIndex){
+                return true;
+            };
+        };
+        return false;
+    };
+    function isFigureIndexContaintsAtPositionsArray(figureIndex,figuresPositionsArray,board){
+        var figure_ = UTILS.getFigureWithIndex(figureIndex,board.getAllFigure());
+        for (var i = 0; i < figuresPositionsArray.length; i++) {
+            if (figuresPositionsArray[i].equals(figure_.boardPosition)){
                 return true;
             };
         };
@@ -265,9 +331,6 @@ function LogicContainer() {
             figuresArray[i].position.x = figuresArray[i].boardPosition.x - 4 + 0.5;
             figuresArray[i].position.z = figuresArray[i].boardPosition.y - 4 + 0.5;
             var target_ = target.position.clone();
-            // var delta_ = (figuresArray[i].position.y - figure_.position.y);
-            // var scale_ = Math.ceil(Math.abs(delta_) / 0.501 );
-            // if (delta_ < 0) scale_ = -scale_
             var scale_ = - sourceArray[i].indexY;
             figuresArray[i].position.y = target.position.y + scale_ * 0.5;
         };
@@ -276,13 +339,9 @@ function LogicContainer() {
         var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
         for (var i = 0; i < sourceArray.length; i++) {
             var target_ = target.position.clone();
-            // var revertIndex_ = figuresArray.length - sourceArray[i].indexY;
             var scale_ = - sourceArray[i].indexY;
-            console.log(scale_);
-            // var scale_ = Math.floor(delta_ / 0.51);
-            // if (delta_ < 0) scale_ = Math.ceil(delta_ / 0.49 );
+            // console.log(scale_);
             target_.y = target.position.y + scale_ * 0.5;
-            // console.log(sourceArray[i].position.z - figure_.position.z);
             sourceArray[i].position.lerp(target_,0.0911);
         };
     };

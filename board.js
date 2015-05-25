@@ -89,8 +89,11 @@ TAVRELI.init = function() {
             //     makeTestFigure(4 + 8 + 8);
             //     continue;
             // };
-            // if (i == 27) continue;
-            // if (i == 19) continue;
+            // if (i == 9) continue;
+            // if (i == 10) continue;
+            // if (i == 11) continue;
+            // if (i == 13) continue;
+            // if (i == 14) continue;
             if (i <= 7){
                 chess.position.z = 6 - 4 + .5;
                 chess.boardPosition.y = 6;

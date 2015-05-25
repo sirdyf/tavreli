@@ -1,4 +1,4 @@
-var chessFiguresType = {RATNIK: 0, RATOBOREC: 1, VSADNIK: 2, LUCHNIK: 3, KNYAZ: 4, VOLHV: 5, HELGI: 6};
+var chessFiguresType = {VIRTUAL: -1, RATNIK: 0, RATOBOREC: 1, VSADNIK: 2, LUCHNIK: 3, KNYAZ: 4, VOLHV: 5, HELGI: 6};
 
 function chessFigures() {
 	var _ratnik = new RatnikContainer();
@@ -95,6 +95,8 @@ function VolhvContainer(){
 	this.name = 'Volhv';
 
 	var _moveRule = new KnyazContainer().getMoveRule().slice();
+	_moveRule.push(new THREE.Vector2( 1, 0));//add for rocirovka
+	_moveRule.push(new THREE.Vector2(-1, 0));//add for rocirovka
 
 	this.getMoveRule   = function(){ return _moveRule;   };
 	this.isJump        = function(){ return _isJump;     };
@@ -109,6 +111,20 @@ function HelgiContainer(){
 
 	var _moveRule1 = new KnyazContainer().getMoveRule().slice();
 	_moveRule = _moveRule1.concat(_moveRule1)
+
+	this.getMoveRule   = function(){ return _moveRule;   };
+	this.isJump        = function(){ return _isJump;     };
+	this.getFigureType = function(){ return _figureType; };
+};
+function HorizontalContainer(){
+	var _moveRule = [];
+	var _isJump = false;
+	var _figureType = chessFiguresType.VIRTUAL;
+
+	this.name = 'Horizontal';
+
+	_moveRule.push(new THREE.Vector2( 1,  0));
+	_moveRule.push(new THREE.Vector2(-1,  0));
 
 	this.getMoveRule   = function(){ return _moveRule;   };
 	this.isJump        = function(){ return _isJump;     };
