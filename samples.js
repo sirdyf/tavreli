@@ -7,7 +7,7 @@ function SamplesContainer() {
         return _sample.steps;
     };
     this.Init = function(){
-        sample3();
+        sample4();
     };
     this.getDescriptionForStep = function(stepNum){
 
@@ -65,6 +65,16 @@ function SamplesContainer() {
         desc.step32 = "d1-d3 пункт f2 все равно не защитим";
         desc.step37 = "f2(1)-f1+ проще выиграть f2(6)-f1+, дальнейшая борьба проходила в обоюдном цейтноте";
         desc.step51 = "g1(1)-f2x хелги g1 объявила мат белому волхву";
+        _sample.descriptions = desc;
+    };
+    function sample4(){
+        _sample.steps = "d1-c1 d8-e7 c1-c2 g8-f6 c2-c7 b8-c6 c7(2)-b8? c6-b8x";
+        var desc = {};
+        desc['default'] = "А.Леонтьев - М.Улыбин, Смоленск, 1999 год";
+        desc.step0 = "Вероятность ошибки в русских шахматах более высока, чем в классических. Это подтверждает самая короткая результативная партия третьего Чемпионата России среди мужчин.";
+        desc.step2 = "с1-с2 создавая две угрозы: с2(1)-h7, c2-c7";
+        desc.step6 = "после 4. c7(1)-b8 e7-b4 5. b8-a8 b4-b2 или 5. b2-b3 b4-b7 преимущество у черных, а после 4. b1-c3 вся борьба впереди";
+        desc.step7 = "Теперь же черные берут в плен князя и лучника c6-b8 и белые сдались";
         _sample.descriptions = desc;
     };
 };

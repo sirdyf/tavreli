@@ -17,7 +17,7 @@ function RouterContainer() {
         _logic = new LogicContainer();
         _logic.Init(funcArrays);
         _state = cSTATE.AUTO;
-        _DEBUG = true;
+        // _DEBUG = true;
         var sampleStr_ = SAMPLES.main.getSampleString();
         _sampleArray = PARSER.main.parseString(sampleStr_);
         console.log(_sampleArray);

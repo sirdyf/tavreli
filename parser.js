@@ -15,7 +15,10 @@ function ParserContainer() {
         };
         return retArray_.slice();
     };
-
+    this.getNotationFromStep = function(pos2d){
+        var symbol= String.fromCharCode(pos2d.x + 65);
+        return  symbol.toUpperCase() + (8 - pos2d.y);
+    };
     this.Init = function(){
     };
 };

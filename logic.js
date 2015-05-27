@@ -10,6 +10,9 @@ function LogicContainer() {
     var sourceArray = [];
     var cPLAYER = {WHITE: 0, BLACK:1, NONE: 2};
     var player = cPLAYER.WHITE;
+    var curStep = null;
+
+    var _steps = [];
 
     this.getCurrentState = function(){
         return state;
@@ -55,6 +58,8 @@ function LogicContainer() {
         if (countSrc_ > 0) {
             RENDER.main.showTowerWithPosition(figure_,board);
         };
+        console.log(PARSER.main.getNotationFromStep(figure_.boardPosition));
+        curStep = PARSER.main.getNotationFromStep(figure_.boardPosition);
     };
     function addAdditionPositions(positionsArray,figure,board,isAllPositionsNeed){
         var retArray = positionsArray.slice();
@@ -165,8 +170,6 @@ function LogicContainer() {
             };
         };
 
-
-
         // renderTmpObj(availablePositions);
         targetPosition = obj.clone();
         targetPosition.boardPosition = obj.boardPosition.clone();
@@ -187,7 +190,13 @@ function LogicContainer() {
             countSrc_ -= RENDER.main.getTowerIndex();
             targetPosition.position.y = 0.5 + countSrc_ * 0.5;
         };
+        if (RENDER.main.getTowerIndex() > 0){
+            curStep += "("+RENDER.main.getTowerIndex() + ")";
+        };
         RENDER.main.hideTower(board);
+        var step2_ = PARSER.main.getNotationFromStep(obj.boardPosition); 
+        console.log(curStep + "-"  + step2_);
+        _steps.push(curStep + "-"  + step2_);
     };
     function removeAdditionPositions(positionsArray,figure,board){
         var retArray = [];
