@@ -3,7 +3,7 @@ var LOGIC = LOGIC || {revision: "v0.1.2"};
 function LogicContainer() {
     var funcArrays = null;
     var that = this;
-    var cSTATE = {NONE: 0, SOURCE: 1, TARGET: 2, MOVE: 3};
+    var cSTATE = {NONE: 0, SOURCE: 1, TARGET: 2, MOVE: 3, EXTERNAL: 4};
     var state = cSTATE.SOURCE;
     var selectedFigureIndex = null;
     var targetPosition = null;
@@ -14,10 +14,24 @@ function LogicContainer() {
 
     var _steps = [];
 
+    this.getLastStep = function(){
+        if (_steps.length < 1 ) return "";
+        return _steps[_steps.length - 1];
+    };
+    this.getCurrentStepNum = function(){
+        return _steps.length;
+    };
     this.getCurrentState = function(){
         return state;
     };
-
+    this.getCurrentPlayer = function(){
+        if (player == cPLAYER.WHITE ) {
+            return "White";
+        }else if (player == cPLAYER.BLACK){
+            return "Black";
+        }
+        return cPLAYER.NONE;
+    };
     function zeroStep(obj,board){
         console.log('zero step');
         UTILS.removeAllArrowWithArray(board.getAllFigure());
@@ -191,12 +205,14 @@ function LogicContainer() {
             targetPosition.position.y = 0.5 + countSrc_ * 0.5;
         };
         if (RENDER.main.getTowerIndex() > 0){
-            curStep += "("+RENDER.main.getTowerIndex() + ")";
+            var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition,figures_);
+            curStep += "(" + (countSrc_ - RENDER.main.getTowerIndex()) + ")";
         };
         RENDER.main.hideTower(board);
         var step2_ = PARSER.main.getNotationFromStep(obj.boardPosition); 
-        console.log(curStep + "-"  + step2_);
         _steps.push(curStep + "-"  + step2_);
+        console.log("Push: " + curStep + "-"  + step2_);
+        console.log("current step = " + that.getCurrentStepNum());
     };
     function removeAdditionPositions(positionsArray,figure,board){
         var retArray = [];
@@ -287,8 +303,8 @@ function LogicContainer() {
         };
         return maxZFigure_;
     };
-    this.Init = function(){
-        funcArrays=[zeroStep, firstStep, secondStep, moveStep];
+    this.Init = function(externalFunc){
+        funcArrays=[zeroStep, firstStep, secondStep, moveStep, externalFunc];
     };
     this.ClickOnObject = function(obj,board){
         if (obj === undefined) return;
@@ -299,6 +315,7 @@ function LogicContainer() {
             var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex,board.getAllFigure());
             var dist = figure_.position.distanceTo(targetPosition.position);
             if (dist < 0.1) {
+                funcArrays[cSTATE.EXTERNAL]();
                 state = cSTATE.SOURCE;
                 normalizeFiguresArray(targetPosition,sourceArray,board);
                 zeroStep(null,board);

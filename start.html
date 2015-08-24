@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>three.js webgl</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body {
+                color: #000;
+                font-family:Monospace;
+                font-size:13px;
+                text-align:center;
+
+                background-color: rgb(50,50,50);
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+            }
+
+            #info {
+                position: absolute;
+                top: 0px; width: 100%;
+                padding: 5px;
+                z-index:100;
+            }
+
+            .lbl { color:#fff; font-size:16px; font-weight:bold; position: absolute; bottom:0px; z-index:100; text-shadow:#000 1px 1px 1px; background-color:rgba(0,0,0,0.85); padding:1em }
+            #lbl_left { text-align:left; left:0px }
+            #lbl_right { text-align:left; right:0px }
+
+            .g { color:#aaa }
+            .c { color:#fa0 }
+
+            a { color:red }
+
+            #stats { position: absolute; top:0; left: 0 }
+            #stats #fps { background: transparent !important }
+            #stats #fps #fpsText { color: #777 !important }
+            #stats #fps #fpsGraph { display: none }
+
+            #description { position: absolute; top:50px; left: 10px; color: #0FF !important; z-index:100;}
+        </style>
+    </head>
+
+    <body>
+        <div id="info">
+            <a> ТАВРЕЛИ </a>
+        </div>
+        <div id="description"></div>
+
+        <div id="lbl_left" class="lbl">
+            anisotropy: <span class="c" id="val_left"></span><br/>
+        </div>
+        <div id="lbl_right" class="lbl">
+            tmp_value: <span class="c" id="val_right"></span><br/>
+        </div>
+        <!-- r71-1-gd49bb0e -->
+        <script src="js/three.min.js"></script>
+        <script src="js/jquery-1.11.2.min.js"></script>
+
+        <script src="js/utils/GeometryUtils.js"></script>
+
+        <script src="js/shaders/ConvolutionShader.js"></script>
+        <script src="js/shaders/CopyShader.js"></script>
+        <script src="js/shaders/FilmShader.js"></script>
+        <script src="js/shaders/FXAAShader.js"></script>
+
+        <script src="js/postprocessing/EffectComposer.js"></script>
+        <script src="js/postprocessing/RenderPass.js"></script>
+        <script src="js/postprocessing/ShaderPass.js"></script>
+        <script src="js/postprocessing/MaskPass.js"></script>
+        <script src="js/postprocessing/BloomPass.js"></script>
+        <script src="js/postprocessing/FilmPass.js"></script>
+
+        <script src="js/Detector.js"></script>
+        <script src="js/libs/stats.min.js"></script>
+
+        <!-- load the font files -->
+
+        <script src="fonts/gentilis_bold.typeface.js"></script>
+        <script src="fonts/gentilis_regular.typeface.js"></script>
+        <script src="fonts/optimer_bold.typeface.js"></script>
+        <script src="fonts/optimer_regular.typeface.js"></script>
+        <script src="fonts/helvetiker_bold.typeface.js"></script>
+        <script src="fonts/helvetiker_regular.typeface.js"></script>
+        <script src="fonts/droid/droid_sans_regular.typeface.js"></script>
+        <script src="fonts/droid/droid_sans_bold.typeface.js"></script>
+        <script src="fonts/droid/droid_serif_regular.typeface.js"></script>
+        <script src="fonts/droid/droid_serif_bold.typeface.js"></script>
+
+        <script type="text/javascript">
+            if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+            var raycaster = new THREE.Raycaster();
+            var mouseRay = { x: 0, y: 0 }, INTERSECTED;
+            var menuItems = [];
+            var text = "ТАВРЕЛИ",
+
+                height = 20,
+                size = 30,
+                hover = 10,
+
+                curveSegments = 4,
+
+                bevelThickness = 2,
+                bevelSize = 1.5,
+                bevelSegments = 3,
+                bevelEnabled = true,
+
+                font = "droid serif", // helvetiker, optimer, gentilis, droid sans, droid serif
+                weight = "bold", // normal bold
+                style = "normal"; // normal italic
+            var mirror = false;
+
+            var fontMap = {
+
+                "helvetiker": 0,
+                "optimer": 1,
+                "gentilis": 2,
+                "droid sans": 3,
+                "droid serif": 4
+
+            };
+
+            var weightMap = {
+
+                "normal": 0,
+                "bold": 1
+
+            };
+
+            var reverseFontMap = {};
+            var reverseWeightMap = {};
+
+            for ( var i in fontMap ) reverseFontMap[ fontMap[i] ] = i;
+            for ( var i in weightMap ) reverseWeightMap[ weightMap[i] ] = i;
+
+            var targetRotation = 0;
+            var targetRotationOnMouseDown = 0;
+
+            var mouseX = 0;
+            var mouseXOnMouseDown = 0;
+
+            var windowHalfX = window.innerWidth / 2;
+            var windowHalfY = window.innerHeight / 2;
+
+            var postprocessing = { enabled : false };
+            var glow = 0.9;
+
+            init();
+            animate();
+            function decimalToHex( d ) {
+
+                var hex = Number( d ).toString( 16 );
+                hex = "000000".substr( 0, 6 - hex.length ) + hex;
+                return hex.toUpperCase();
+
+            }
+            function init() {
+
+                container = document.createElement( 'div' );
+                document.body.appendChild( container );
+
+                permalink = document.getElementById( "permalink" );
+
+                // CAMERA
+
+                camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 1500 );
+                camera.position.set( 0, 400, 700 );
+
+                cameraTarget = new THREE.Vector3( 0, 150, 0 );
+
+                // SCENE
+
+                scene = new THREE.Scene();
+                scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
+
+                // LIGHTS
+
+                var dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
+                dirLight.position.set( 0, 0, 1 ).normalize();
+                scene.add( dirLight );
+
+                var pointLight = new THREE.PointLight( 0xffffff, 1.5 );
+                pointLight.position.set( 0, 100, 90 );
+                scene.add( pointLight );
+
+                //text = capitalize( font ) + " " + capitalize( weight );
+                //text = "abcdefghijklmnopqrstuvwxyz0123456789";
+                //text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+                // Get text from hash
+
+                var hash = document.location.hash.substr( 1 );
+
+                if ( hash.length !== 0 ) {
+
+                    var colorhash  = hash.substring( 0, 6 );
+                    var fonthash   = hash.substring( 6, 7 );
+                    var weighthash = hash.substring( 7, 8 );
+                    var pphash     = hash.substring( 8, 9 );
+                    var bevelhash  = hash.substring( 9, 10 );
+                    var texthash   = hash.substring( 10 );
+
+                    hex = colorhash;
+                    pointLight.color.setHex( parseInt( colorhash, 16 ) );
+
+                    font = reverseFontMap[ parseInt( fonthash ) ];
+                    weight = reverseWeightMap[ parseInt( weighthash ) ];
+
+                    postprocessing.enabled = parseInt( pphash );
+                    bevelEnabled = parseInt( bevelhash );
+
+                    text = decodeURI( texthash );
+
+                    updatePermalink();
+
+                } else {
+                    var rnd = 0.5155978;//298280388;//Math.random();
+                    console.log("rnd="+rnd);
+                    pointLight.color.setHSL( rnd, 1, 0.5 );
+                    hex = decimalToHex( pointLight.color.getHex() );
+
+                }
+
+                material = new THREE.MeshFaceMaterial( [
+                    new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } ), // front
+                    new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.SmoothShading } ) // side
+                ] );
+                // Create title
+                group = new THREE.Group();
+                group.position.y = 280;//100
+
+                scene.add( group );
+
+                createText("ТАВРЕЛИ",30,group);
+
+                // Create menu
+                group2 = new THREE.Group();
+                group2.position.y = 200;//100
+                scene.add( group2 );
+                menuItems.push(group2)
+                createText("Новая игра",20,group2);
+
+                group3 = new THREE.Group();
+                group3.position.y = 150;//100
+                scene.add( group3 );
+                menuItems.push(group3)
+                createText("Выбрать стол",20,group3);
+
+                group4 = new THREE.Group();
+                group4.position.y = 100;//100
+                scene.add( group4 );
+                menuItems.push(group4)
+                createText("Правила",20,group4);
+
+                group5 = new THREE.Group();
+                group5.position.y = 50;//100
+                scene.add( group5 );
+                menuItems.push(group5)
+                createText("Примеры",20,group5);
+
+                var texture1 = THREE.ImageUtils.loadTexture('model/textures-wood-298617-1600x1200.jpg');
+                var material1 = new THREE.MeshBasicMaterial({map: texture1});
+                // var material1 = new THREE.MeshPhongMaterial({ map:texture1, side:THREE.DoubleSide });
+                var plane = new THREE.Mesh(
+                    new THREE.PlaneBufferGeometry( 1000, 1000 ),
+                    // new THREE.MeshBasicMaterial( { color: 0xff00ff, opacity: 0.5, transparent: true } )
+                    new THREE.MeshBasicMaterial({map: texture1, side:THREE.DoubleSide})
+                );
+                plane.position.y = 100;//100
+                plane.rotation.x = - Math.PI / 2. + Math.PI / 6.;
+                plane.position.z = -50;
+                scene.add( plane );
+
+                // RENDERER
+
+                renderer = new THREE.WebGLRenderer( { antialias: true } );
+                renderer.setClearColor( scene.fog.color );
+                renderer.setPixelRatio( window.devicePixelRatio );
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                container.appendChild( renderer.domElement );
+
+                // STATS
+
+                stats = new Stats();
+                stats.domElement.style.position = 'absolute';
+                stats.domElement.style.top = '0px';
+                //container.appendChild( stats.domElement );
+
+                // EVENTS
+
+                // document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+                document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+                // document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+                // document.addEventListener( 'touchend', onDocumentTouchEnd, false );
+                // document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+                // document.addEventListener( 'keypress', onDocumentKeyPress, false );
+                // document.addEventListener( 'keydown', onDocumentKeyDown, false );
+
+                // POSTPROCESSING
+
+                renderer.autoClear = false;
+
+                var renderModel = new THREE.RenderPass( scene, camera );
+                var effectBloom = new THREE.BloomPass( 0.25 );
+                var effectFilm = new THREE.FilmPass( 0.5, 0.125, 2048, false );
+
+                effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+
+                var width = window.innerWidth || 2;
+                var height = window.innerHeight || 2;
+
+                effectFXAA.uniforms[ 'resolution' ].value.set( 1 / width, 1 / height );
+
+                effectFilm.renderToScreen = true;
+
+                composer = new THREE.EffectComposer( renderer );
+
+                composer.addPass( renderModel );
+                composer.addPass( effectFXAA );
+                composer.addPass( effectBloom );
+                composer.addPass( effectFilm );
+
+                //
+
+                window.addEventListener( 'resize', onWindowResize, false );
+
+            }
+            function onDocumentMouseUp( event ) {
+                event.preventDefault();
+                mouseRay.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+                mouseRay.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+                // scene.main.mouseMove(event.clientX,event.clientY);
+
+                raycaster.setFromCamera( mouseRay, camera );
+
+                var intersects = raycaster.intersectObjects( group2.children,true);
+                var serverUrl = "http://dyf-tavreli.rhcloud.com/";
+                if ( intersects.length > 0 ) {
+                    console.log(intersects[0].object.name);
+                    // if (intersects[0].object.parent.name == "tower"){
+                    // similar behavior as an HTTP redirect
+                    // window.location.replace("http://stackoverflow.com");
+
+                    // similar behavior as clicking on a link
+                    // _serverUrl = window.GameServerUrl;
+                    window.location.href = serverUrl+"network";
+                }    
+                var intersects = raycaster.intersectObjects( group3.children,true);
+                if ( intersects.length > 0 ) {
+                    console.log(intersects[0].object.name);
+                    window.location.href = serverUrl + "list";
+                }    
+            };
+            function onWindowResize() {
+
+                windowHalfX = window.innerWidth / 2;
+                windowHalfY = window.innerHeight / 2;
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize( window.innerWidth, window.innerHeight );
+
+                composer.reset();
+
+                effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
+
+            }
+            function createText(text,fontSize,parent) {
+
+                textGeo = new THREE.TextGeometry( text, {
+
+                    size: fontSize,
+                    height: height,
+                    curveSegments: curveSegments,
+
+                    font: font,
+                    weight: weight,
+                    style: style,
+
+                    bevelThickness: bevelThickness,
+                    bevelSize: bevelSize,
+                    bevelEnabled: bevelEnabled,
+
+                    material: 0,
+                    extrudeMaterial: 1
+
+                });
+
+                textGeo.computeBoundingBox();
+                textGeo.computeVertexNormals();
+
+                // "fix" side normals by removing z-component of normals for side faces
+                // (this doesn't work well for beveled geometry as then we lose nice curvature around z-axis)
+
+                if ( ! bevelEnabled ) {
+
+                    var triangleAreaHeuristics = 0.1 * ( height * size );
+
+                    for ( var i = 0; i < textGeo.faces.length; i ++ ) {
+
+                        var face = textGeo.faces[ i ];
+
+                        if ( face.materialIndex == 1 ) {
+
+                            for ( var j = 0; j < face.vertexNormals.length; j ++ ) {
+
+                                face.vertexNormals[ j ].z = 0;
+                                face.vertexNormals[ j ].normalize();
+
+                            }
+
+                            var va = textGeo.vertices[ face.a ];
+                            var vb = textGeo.vertices[ face.b ];
+                            var vc = textGeo.vertices[ face.c ];
+
+                            var s = THREE.GeometryUtils.triangleArea( va, vb, vc );
+
+                            if ( s > triangleAreaHeuristics ) {
+
+                                for ( var j = 0; j < face.vertexNormals.length; j ++ ) {
+
+                                    face.vertexNormals[ j ].copy( face.normal );
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+
+                textMesh1 = new THREE.Mesh( textGeo, material );
+
+                textMesh1.position.x = centerOffset;
+                textMesh1.position.y = hover ;
+                textMesh1.position.z = 0;
+
+                textMesh1.rotation.x = 0;
+                textMesh1.rotation.y = Math.PI * 2;
+
+                parent.add( textMesh1 );
+
+                if ( mirror ) {
+
+                    textMesh2 = new THREE.Mesh( textGeo, material );
+
+                    textMesh2.position.x = centerOffset;
+                    textMesh2.position.y = -hover ;
+                    textMesh2.position.z = height;
+
+                    textMesh2.rotation.x = Math.PI;
+                    textMesh2.rotation.y = Math.PI * 2;
+
+                    prent.add( textMesh2 );
+
+                }
+
+            }
+
+            // function refreshText() {
+
+            //     updatePermalink();
+
+            //     group.remove( textMesh1 );
+            //     if ( mirror ) group.remove( textMesh2 );
+
+            //     if ( !text ) return;
+
+            //     createText();
+
+            // }
+
+            function animate() {
+
+                requestAnimationFrame( animate );
+
+                render();
+                stats.update();
+
+            }
+
+            function render() {
+
+                group.rotation.y += ( targetRotation - group.rotation.y ) * 0.05;
+
+                camera.lookAt( cameraTarget );
+
+                renderer.clear();
+
+                if ( postprocessing.enabled ) {
+
+                    composer.render( 0.05 );
+
+                } else {
+
+                    renderer.render( scene, camera );
+
+                }
+
+            }
+            </script>
+    </body>
+</html>

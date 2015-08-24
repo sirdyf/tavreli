@@ -56,7 +56,7 @@ function init() {
 
     if (maxAnisotropy > 0) {
 
-        document.getElementById("val_left").innerHTML = maxAnisotropy;
+        // document.getElementById("val_left").innerHTML = maxAnisotropy;
 
     } else {
 

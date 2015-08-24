@@ -1,0 +1,37 @@
+description format:
+
+	SERVER ROOM:
+1.currentStepNum
+2.'White'.playerName
+3.'Black'.playerName
+4.'White'.sessionId
+5.'Black'.sessionId
+6.roomNum
+--------
+	CLIENT_TO_SERVER
+1.curStepNum
+2.sessionId
+3.name
+4.stepNotification
+5.roomNum
+6.clientType
+
+	CLIENT_FROM_SERVER
+1.curStepNum
+2.sessionId
+3.name
+4.stepNotification
+5.roomNum
+6.clientType
+------
+	CLIENT_TO_SERVER_LOGON
+1.clientType
+2.sessionId
+3.roomNum
+4.name
+
+	CLIENT_FROM_SERVER_LOGON
+1.clientType
+2.sessionId
+3.roomNum
+4.currentStepNum

@@ -7,7 +7,16 @@ function SamplesContainer() {
         return _sample.steps;
     };
     this.Init = function(){
-        sample4();
+        num = window.GameDemoNum;
+        if (num == 1) {
+            sample1();
+        }else if (num == 2){
+            sample2();
+        }else if (num == 3){
+            sample3();
+        }else {
+            sample4();
+        };
     };
     this.getDescriptionForStep = function(stepNum){
 

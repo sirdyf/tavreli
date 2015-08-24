@@ -259,6 +259,10 @@ TAVRELI.init = function() {
         //     // materials.push(object.children[i].material);
         }
         this.createBoardSquares();
+        // this.createBoardSquaresAxisX(-4);
+        this.createBoardSquaresAxisX(5);
+        this.createBoardSquaresAxisY(-4);
+        // this.createBoardSquaresAxisY(5);
         resetBoardFigure();
     };
 
@@ -325,6 +329,85 @@ TAVRELI.init = function() {
                 };
         };
         this.setNullCubePosition(mainBoard.squares[0]);
+    };
+    this.createBoardSquaresAxisX = function(posY){
+        var m = materials.yellow;
+        var j = posY;
+        var sign = j > 0 ? 1 : -1;
+
+        var rectLength = 1, rectWidth = .5;
+        var rectShape = new THREE.Shape();
+        rectShape.moveTo( 0,0 );
+        rectShape.lineTo( 0, rectWidth );
+        rectShape.lineTo( rectLength, rectWidth );
+        rectShape.lineTo( rectLength, 0 );
+        rectShape.lineTo( 0, 0 );
+        var rectGeom = new THREE.ShapeGeometry( rectShape );
+        // rectGeom.rotation.x = - Math.PI / 2;
+        var rectMesh = new THREE.Mesh( rectGeom, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) ;
+        rectMesh.rotation.x = - Math.PI / 2;
+
+        for (var i = -3; i < 5; i++) {
+                // var mSquare = new THREE.Mesh(new THREE.BoxGeometry( .7, .5, .5, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff00ff, wireframe: true}));
+                var mSquare = rectMesh.clone();
+                mSquare.name = 'axisX';
+                mSquare.position.x = i - 1;
+                mSquare.position.y = 0.5;
+                mSquare.position.z = j - 0.5;//- .2 * sign;
+                mSquare.boardPosition = new THREE.Vector2(i+3,j+3);
+                // scene.add(mSquare);
+                var mm = this.getTextureForText( String.fromCharCode(65+i+3),'black',null,undefined,50 + 36);
+                mSquare.material = mm;
+                mainBoard.add(mSquare);
+        };
+    };
+    this.createBoardSquaresAxisY = function(posX){
+        var m = materials.yellow;
+        var j = posX;
+        var sign = j > 0 ? 1 : -1;
+
+        var rectLength = 0.5, rectWidth = 1;
+        var rectShape = new THREE.Shape();
+        rectShape.moveTo( 0,0 );
+        rectShape.lineTo( 0, rectWidth );
+        rectShape.lineTo( rectLength, rectWidth );
+        rectShape.lineTo( rectLength, 0 );
+        rectShape.lineTo( 0, 0 );
+        var rectGeom = new THREE.ShapeGeometry( rectShape );
+        // rectGeom.rotation.x = - Math.PI / 2;
+        var rectMesh = new THREE.Mesh( rectGeom, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) ;
+        rectMesh.rotation.x = - Math.PI / 2;
+        
+
+        for (var i = -3; i < 5; i++) {
+                // var mSquare = new THREE.Mesh(new THREE.BoxGeometry( .5, .5, .7, 1, 1, 1), new THREE.MeshBasicMaterial({color: 0xff00ff, wireframe: true}));
+                var mSquare = rectMesh.clone();
+                mSquare.name = 'axisY';
+                mSquare.position.x = j - .5 ;//- .2 * sign;
+                mSquare.position.y = .5;
+                mSquare.position.z = i ;
+                mSquare.boardPosition = new THREE.Vector2(i+3,j+3);
+                // scene.add(mSquare);
+                var mm = this.getTextureForText(5 - i,'black',null, 18, 50+18);
+                mSquare.material = mm;
+                mainBoard.add(mSquare);
+        };
+    };
+    this.getTextureForText = function(text,color,background,width,height){
+        var dynamicTexture  = new THREEx.DynamicTexture(100,100);
+        dynamicTexture.context.font = "bold "+(36)+"px Arial";
+        dynamicTexture.texture.anisotropy = renderer.getMaxAnisotropy();
+        // update the text
+        dynamicTexture.clear('grey');//'cyan');
+        dynamicTexture.drawText(text,width , height, color);
+        // dynamicTexture.drawTextCooked({
+        //     text        : 'Hello World, super wow',
+        //     lineHeight  : 0.2,
+        // });
+        var material    = new THREE.MeshBasicMaterial({
+            map : dynamicTexture.texture
+        });
+        return material;
     };
     TAVRELI.convertRatnikWithIndex = function(figureIndex){
         if (TAVRELI.isFigureRatnik(figureIndex) === false) return;
