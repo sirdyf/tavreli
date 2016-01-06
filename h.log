@@ -1,0 +1,500 @@
+   21  sudo mysql stop
+   22  mysql start
+   23  sudo mkdir /var/mysql
+   24  sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock
+   25  mysql start
+   26  ls /var/
+   27  ls /tmp
+   28  mysql -v
+   29  mysql -v
+   30  sudo /usr/local/mysql/support-files/mysql.server start
+   31  mysql -v
+   32  sudo /usr/local/mysql/support-files/mysql.server stop
+   33  sudo /usr/local/mysql/support-files/mysql.server start --skip-grant-tables
+   34  flush privileges
+   35  mysql
+   36  chmod o+rw config.inc.php
+   37  chmod o-rw config.inc.php
+   38  mysql
+   39  chmod o+rw config.inc.php
+   40  chmod o-rw config.inc.php
+   41  sudo /usr/local/mysql/support-files/mysql.server stop
+   42  sudo /usr/local/mysql/support-files/mysql.server start
+   43  mysql
+   44  sudo mysql
+   45  chmod o+rw config.inc.php
+   46  chmod o-rw config.inc.php
+   47  sudo /usr/local/mysql/support-files/mysql.server stop
+   48  sudo /usr/local/mysql/support-files/mysql.server start
+   49  mysql
+   50  mysql
+   51  sudo /usr/local/mysql/support-files/mysql.server start --skip-grant-tables
+   52  mysql
+   53  sudo /usr/local/mysql/support-files/mysql.server stop
+   54  mysql
+   55  mysql -p root
+   56  sudo mysql
+   57  sudo mysql
+   58  mysql --help
+   59  mysql -u root
+   60  mysql -u root -p 3(Joredwk4gL
+   61  mysql -u root -p '3(Joredwk4gL'
+   62  mysql -u user -p '3(Joredwk4gL'
+   63  mysql -u user
+   64  sudo /usr/local/mysql/support-files/mysql.server start --skip-grant-tables
+   65  mysql
+   66  sudo /usr/local/mysql/support-files/mysql.server restart
+   67  mysql
+   68  mysql -u root
+   69  mysql -u root -p '1111'
+   70  chmod o+rw config.inc.php
+   71  cd ~/Documents/bitbucket/boxbilling/src
+   72  cd phpMyAdmin/
+   73  chmod o+rw config.inc.php
+   74  chmod o-rw config.inc.php
+   75  mysql
+   76  mysql -u root
+   77  mysql -u root -p '1111'
+   78  mysql -u root -p 
+   79  chmod o+rw config.inc.php
+   80  chmod o-rw config.inc.php
+   81  chmod o+rw config.inc.php
+   82  chmod o-rw config.inc.php
+   83  chmod o+rw config.inc.php
+   84  chmod o-rw config.inc.php
+   85  chmod o+rw config.inc.php
+   86  mysql -v
+   87  mysql -v -u root -p
+   88  mysql -v -u root -p
+   89  mysql -v -u root -p
+   90  chmod o+rw config.inc.php
+   91  ls
+   92  chmod o-rw config.inc.php
+   93  mysql
+   94  sudo /usr/local/mysql/support-files/mysql.server start
+   95  mysql
+   96  sudo /usr/local/mysql/support-files/mysql.server stop
+   97  sudo /usr/local/mysql/support-files/mysql.server start
+   98  sudo /usr/local/mysql/support-files/mysql.server start
+   99  subl 
+  100  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-library/Box/Database.php
+  101  mysql --help | grep "Default options" -A 1
+  102  subl ~/.my.cnf
+  103  subl /usr/local/mysql/etc/my.cnf
+  104  subl /etc/mysql/my.cnf
+  105  subl /etc/my.cnf
+  106  ls /etc
+  107  mysql
+  108  down
+  109  mysql
+  110  mysql -p
+  111  subl /etc/hosts
+  112  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-themes/huraga/html/partial_menu.phtml
+  113  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-themes/huraga/html/partial_menu.phtml
+  114  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-modules/Index/html_client/mod_index_dashboard.phtml
+  115  mysql -p
+  116  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-modules/Index/html_client/mod_index_dashboard.phtml
+  117  cd /Users/user/Documents/bitbucket/boxbilling/bbtopush 
+  118  ls
+  119  python bbtopush.py 
+  120  python bbtopush.py start
+  121  python bbtopush.py stop
+  122  python bbtopush.py start
+  123  python bbtopush.py stop
+  124  down
+  125  mysql -p
+  126  subl my.cnf
+  127  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-themes/huraga/html/partial_menu.phtml
+  128  cd ~/Documents/radiostream_ios6/trunk/
+  129  svn st -q
+  130  svn update
+  131  ls
+  132  cd tools/clients/
+  133  ls
+  134  subl ./ios-make-products.sh 
+  135  ./ios-make-products.sh 
+  136  ls
+  137  python ios-generate.py 
+  138  python ios-generate.py -v 1.0.4283 -cfg .configs/077-strana-fm/config.xml 
+  139  python ios-generate.py -v 1.0.4283 -cfg .configs/10004-shanson-tv/config.xml 
+  140  cd ~/Documents/radiostream_ios6/trunk/iOs/
+  141  svn st -q
+  142  svn commit -m"ios social bug fix"
+  143  cd ../tools/clients/
+  144  ls
+  145  ./ios-make-products.sh 
+  146  ls
+  147  python ios-generate.py -v 1.0.4284 -cfg .configs/077-strana-fm/config.xml 
+  148  ./ios-make-products.sh 
+  149  python ios-generate.py -v 1.0.4285 -cfg .configs/077-strana-fm/config.xml 
+  150  ./ios-make-products.sh 
+  151  python ios-generate.py -v 1.0.4286 -cfg .configs/077-strana-fm/config.xml 
+  152  ./ios-make-products.sh 
+  153  python ios-generate.py -v 1.0.4288 -cfg .configs/10004-shanson-tv/config.xml 
+  154  cd ~/Documents/radiostream_ios6/trunk/iOs/
+  155  svn st -q
+  156  svn commit -m"ios social instagram bug fix"
+  157  svn st -q
+  158  svn revert Framework/demo/AppDelegate.m
+  159  svn di
+  160  svn commit -m"ios katub schedule entity bug fix"
+  161  svn st -q
+  162  cd Framework/
+  163  svn di
+  164  svn commit -m"ios schedule item fisrt in burger update bug fix"
+  165  cd ..
+  166  cd Framework/
+  167  svn st -q
+  168  svn di
+  169  svn commit -m"ios radio share swap artist-radio info"
+  170  cd ..
+  171  svn di
+  172  svn st -q
+  173  svn revert katub/Framework/demo/settings.plist
+  174  svn di
+  175  svn st -q
+  176  svn commit -m"ios burger with first item video bug fix"
+  177  cd ~/Documents/radiostream_ios6/trunk/iOs/
+  178  svn st -q
+  179  cd ~/Documents/radiostream_ios6/trunk/
+  180  svn update
+  181  ssh 52.19.153.211 -l dmitry -p 22
+  182  ssh 52.19.153.211 -l dmitry -p 22
+  183  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-themes/huraga/html/partial_menu.phtml
+  184  ssh 52.19.153.211 -l dmitry -p 22
+  185  ssh 52.19.153.211 -l dmitry -p 22
+  186  cd ~/Documents/radiostream_ios6/trunk/iOs/
+  187  svn st -q
+  188  svn di
+  189  svn commit -m"ios video controller bug fix"
+  190  cd ~/Documents/bitbucket/
+  191  ls
+  192  cd boxbilling
+  193  ls
+  194  scp --help
+  195  scp -p 22 src.zip 52.19.153.211@dmitry
+  196  scp -p 22 src.zip dmitry@52.19.153.211
+  197  scp -P 22 src.zip dmitry@52.19.153.211
+  198  scp -P 22 ./src.zip dmitry@52.19.153.211
+  199  scp  ./src.zip dmitry@52.19.153.211
+  200  scp -P 22 ./src.zip dmitry@52.19.153.211:
+  201  chown --help
+  202  ping radiostream-stage.gaincode.net
+  203  ping -a 52.19.153.211
+  204  ping --help
+  205  scp -P 22 ./src.zip dmitry@52.19.153.211:
+  206  subl /etc/hosts
+  207  subl /etc/hosts
+  208  subl /etc/php.ini
+  209  ls
+  210  cd ~/Documents/radiostream_ios6/trunk/iOs/
+  211  svn st -q
+  212  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/en_US/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  213  svn st -q
+  214  svn commit -m"ios localize,schedule width,calendar bugs fix"
+  215  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-themes/huraga/html/partial_menu.phtml
+  216  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale.zip dmitry@52.19.153.211:
+  217  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/pn.zip dmitry@52.19.153.211:
+  218  cd ~/Documents/radiostream_ios6/trunk/iOs/
+  219  svn st -q
+  220  svn commit -m"ios history section name bug fix"
+  221  cd ..
+  222  svn update
+  223  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Order/html_client/mod_order_manage.phtml dmitry@52.19.153.211:
+  224  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Nodeping.zip dmitry@52.19.153.211:
+  225  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring.zip dmitry@52.19.153.211:
+  226  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale.zip dmitry@52.19.153.211:
+  227  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/huraga/html/partial_menu.phtml dmitry@52.19.153.211:
+  228  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale.zip dmitry@52.19.153.211:
+  229  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale.zip dmitry@52.19.153.211:
+  230  ssh 52.19.153.211 -l dmitry -p 22
+  231  ssh 52.19.153.211 -l dmitry -p 22
+  232  php --info
+  233  php --info | grep log
+  234  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Push/Service.php dmitry@52.19.153.211:
+  235  cd ~/Documents/bitbucket/boxbilling
+  236  ls
+  237  cd src
+  238  ls
+  239  php composer install
+  240  php composer.json install
+  241  php composer.phar install
+  242  php composer.json install
+  243  php composer.json 
+  244  php -r "readfile('https://getcomposer.org/installer');" | php
+  245  php composer.phar install
+  246  php composer.phar install
+  247  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  248  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  249  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Push/html_client/mod_push_tickets.phtml dmitry@52.19.153.211:
+  250  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/huraga/html/macro_functions.phtml dmitry@52.19.153.211:
+  251  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-library/Box/TwigExtensions.php dmitry@52.19.153.211:
+  252  ssh 52.19.153.211 -l dmitry -p 22
+  253  ssh 52.19.153.211 -l dmitry -p 22
+  254  ssh 52.19.153.211 -l dmitry -p 22
+  255  ssh 52.19.153.211 -l dmitry -p 22
+  256  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Formbuilder/html_client/mod_formbuilder_build.phtml dmitry@52.19.153.211:
+  257  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  258  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  259  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/Api/jsonp_graph.php dmitry@52.19.153.211:
+  260  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/html_client/mod_monitoring_application.phtml dmitry@52.19.153.211:
+  261  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/huraga.zip dmitry@52.19.153.211:
+  262  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  263  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  264  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-modules/Servicecustom/Service.php
+  265  subl /Users/user/Documents/bitbucket/boxbilling/src/bb-library/Box/App.php
+  266  ls -la ~/Documents/bitbucket/boxbilling/src/bb-modules/Order/html_client/
+  267  ls -la ~/Documents/bitbucket/boxbilling/src/bb-modules/Order/Controller/
+  268  ls -la ~/Documents/bitbucket/boxbilling/src/bb-modules/Order/Api/
+  269  cd ~/Documents/github/arduino/
+  270  ls
+  271  cd RoboCar2W/
+  272  ls
+  273  mv RoboCar2W.ino.txt RoboCar2W.ino
+  274  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-load.php dmitry@52.19.153.211:
+  275  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  276  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/huraga/html/404.phtml dmitry@52.19.153.211:
+  277  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  278  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  279  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  280  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/Api/jsonp_graph.php dmitry@52.19.153.211:
+  281  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/Api/jsonp_graph_summary.php.php dmitry@52.19.153.211:
+  282  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/html_client/mod_monitoring_application.phtml dmitry@52.19.153.211:
+  283  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/Api/jsonp_graph_summary.php dmitry@52.19.153.211:
+  284  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/Controller/Client.php dmitry@52.19.153.211:
+  285  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules.zip dmitry@52.19.153.211:
+  286  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale.zip dmitry@52.19.153.211:
+  287  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes.zip dmitry@52.19.153.211:
+  288  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-library.zip dmitry@52.19.153.211:
+  289  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  290  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  291  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  292  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  293  scp -P 22 ~/Documents/bitbucket/boxbilling/src.zip dmitry@52.19.153.211:
+  294  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale.zip dmitry@52.19.153.211:
+  295  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring.zip dmitry@52.19.153.211:
+  296  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  297  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  298  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  299  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  300  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/Api/jsonp_graph_summary.php dmitry@52.19.153.211:
+  301  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/html_client/mod_monitoring_application.phtml dmitry@52.19.153.211:
+  302  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/Api/jsonp_graph_summary.php dmitry@52.19.153.211:
+  303  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/Api/jsonp_graph_summary.php dmitry@52.19.153.211:
+  304  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Monitoring/html_client/mod_monitoring_application.phtml dmitry@52.19.153.211:
+  305  ssh 52.19.153.211 -l dmitry -p 22
+  306  ssh 52.19.153.211 -l dmitry -p 22
+  307  cd ~/Documents/radiostream_ios6/trunk/
+  308  svn update
+  309  cd iOs/
+  310  svn st -q
+  311  svn di > tmp.log
+  312  subl ./tmp.log
+  313  subl ./tmp.log
+  314  svn commit -m"ios FW with about,email from appInfo"
+  315  svn di > tmp.log
+  316  subl ./tmp.log
+  317  svn commit -m"ios schedule for arkhyz"
+  318  svn st -q
+  319  svn di
+  320  svn commit -m"ios FW for shanson"
+  321  ls
+  322  ssh 52.19.153.211 -l dmitry -p 22
+  323  ssh 52.19.153.211 -l dmitry -p 22
+  324  ssh 52.19.153.211 -l dmitry -p 22
+  325  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/admin_default/html/mod_order_index.phtml dmitry@52.19.153.211:
+  326  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/admin_default/html/mod_order_manage.phtml dmitry@52.19.153.211:
+  327  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/admin_default/html/mod_order_manage.phtml dmitry@52.19.153.211:
+  328  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/admin_default/html/mod_order_manage.phtml dmitry@52.19.153.211:
+  329  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Push/html_client/mod_push_ticket.phtml dmitry@52.19.153.211:
+  330  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/admin_default/html/mod_order_index.phtml dmitry@52.19.153.211:
+  331  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  332  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  333  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  334  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/ru_RU/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  335  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/en_EN/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  336  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/en_US/LC_MESSAGES/messages.po dmitry@52.19.153.211:
+  337  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-locale/en_US/LC_MESSAGES/messages.mo dmitry@52.19.153.211:
+  338  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Order/html_client/mod_order_list.phtml dmitry@52.19.153.211:
+  339  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-modules/Push/html_client/mod_push_ticket.phtml dmitry@52.19.153.211:
+  340  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/admin_default/html/mod_order_manage.phtml dmitry@52.19.153.211:
+  341  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/admin_default/html/mod_order_index.phtml dmitry@52.19.153.211:
+  342  scp -P 22 ~/Documents/bitbucket/boxbilling/src/bb-themes/admin_default/html/mod_order_index.phtml dmitry@52.19.153.211:
+  343  cd ~/Documents/radiostream_ios6/trunk/
+  344  svn update
+  345  svn st -q
+  346  cd iOs/
+  347  svn di > tmp.log
+  348  subl ./tmp.log
+  349  svn di > tmp.log
+  350  svn commit -m"ios pip close, app link on share bug fixs"
+  351  ping www.ya.ru
+  352  svn st -q
+  353  svn commit -m"ios schedule arkhyz"
+  354  svn st -q
+  355  svn commit -m"ios history section heigh bug fix'
+  356  svn commit -m"ios history section heigh bug fix"
+  357  showtime --help
+  358  cd ~/Documents/radiostream_ios6/trunk/iOs/
+  359  svn st -q
+  360  cd Framework/RadioGC/Source/lockscreen/
+  361  svn st -q
+  362  svn commit -m"ios FW lockscreen bug fix"
+  363  cd ~/Documents/radiostream_ios6/trunk/iOs/
+  364  svn di > tmp.log
+  365  subl tmp.log
+  366  svn st -q
+  367  svn commit -m"ios stop video with system view bug fix, two video, splash"
+  368  cd ~/Documents/radiostream_ios6/trunk/iOs/
+  369  svn st -q
+  370  svn revert katub/Framework/Katub/Supporting\ Files/burger/burger.storyboard
+  371  svn st -q
+  372  svn revert Framework/RadioGC/Supporting\ Files/burger/burger.storyboard
+  373  svn st -q
+  374  svn st -q
+  375  svn revert katub/Framework/Katub/Supporting\ Files/burger/playerpanel.storyboard
+  376  svn st -q
+  377  cd ~/Documents/bitbucket/boxbilling/for-install/
+  378  ls
+  379  scp -P 22 ./bb-install.zip dmitry@52.19.153.211:
+  380  ping 52.19.153.211
+  381  ftp ftp://ftpuser2/radio.katub.com/
+  382  ftp ftp://ftpuser2@radio.katub.com/
+  383  ftp ftp://ftpuser2@radio.katub.com/
+  384  ssh 52.19.153.211 -l dmitry -p 22
+  385  ssh 52.19.153.211 -l dmitry -p 22
+  386  ftp ftp://ftpuser2@radio.katub.com/
+  387  ssh 52.19.153.211 -l dmitry -p 22
+  388  ftp ftp://ftpuser2@radio.katub.com/
+  389  ftp ftp://ftpuser2@radio.katub.com/
+  390  ftp ftp://ftpuser3@radio.katub.com/
+  391  ftp ftp://ftpuser3@radio.katub.com/
+  392  ping 8.8.8.8
+  393  ping 8.8.8.8
+  394  ping ya.ru
+  395  ping 4.4.4.4
+  396  ping 8.8.8.8
+  397  ping 8.8.8.8
+  398  ping 8.8.8.8
+  399  ping 8.8.8.8
+  400  ping ya.ru
+  401  ping 8.8.8.8
+  402  ping ya.ru
+  403  ping ya.ru
+  404  ping ya.ru
+  405  ping ya.ru
+  406  ping ya.ru
+  407  subl /etc/php.ini
+  408  ping 8.8.8.8
+  409  ping 8.8.8.8
+  410  ipconfig
+  411  ifconfig
+  412  cd ~/Documents/bitbucket/dyf/
+  413  ls
+  414  node server.js
+  415  node server.js
+  416  node server.js
+  417  brew update
+  418  brew install mongodb
+  419  node server.js
+  420  ls
+  421  npm update
+  422  node server.js
+  423  rhc ssh
+  424  rhc setup
+  425  rhc ssh
+  426  rhc setup
+  427  rhc ssh dyf
+  428  rhc port-forward dyf
+  429  rhc port-forward dyf
+  430  rhc port-forward dyf
+  431  cd ~/Documents/bitbucket/dyf
+  432  rhc ssh dyf
+  433  rhc ssh mongo
+  434  rhcsh mongo
+  435  rhc ssh dyf rhcsh mongo
+  436  npm install debug
+  437  rhc dyf show
+  438  rhc app show
+  439  rhc app-show dyf
+  440  ping ya.ru
+  441  rhc ssh
+  442  ruby -e 'puts "Welcome to Ruby"'
+  443  gem install rhc
+  444  sudo gem install rhc
+  445  sudo gem update
+  446  cd ~/Documents/bitbucket/dyf
+  447  node server.js
+  448  npm update --save
+  449  node server.js
+  450  node server.js
+  451  node server.js
+  452  node server.js
+  453  node server.js
+  454  node server.js
+  455  node server.js
+  456  node server.js
+  457  node server.js
+  458  node server.js
+  459  node server.js
+  460  node server.js
+  461  node server.js
+  462  node server.js
+  463  node server.js
+  464  node server.js
+  465  node server.js
+  466  node server.js
+  467  node server.js
+  468  node server.js
+  469  node server.js
+  470  DEBUG="monk:*" node server.js
+  471  DEBUG="monk:*" node server.js
+  472  DEBUG="monk:*" node server.js
+  473  DEBUG="monk:*" node server.js
+  474  DEBUG="monk:*" node server.js
+  475  DEBUG="monk:*" node server.js
+  476  DEBUG="monk:*" node server.js
+  477  DEBUG="monk:*" node server.js
+  478  mongo -u admin -p 7VMJ3k2YGaDU --host 127.0.0.1 --port 27017 dyf
+  479  DEBUG="monk:*" node server.js
+  480  DEBUG="monk:*" node server.js
+  481  DEBUG="monk:*" node server.js
+  482  DEBUG="monk:*" node server.js
+  483  DEBUG="monk:*" node server.js
+  484  DEBUG="monk:*" node server.js
+  485  DEBUG="monk:*" node server.js
+  486  DEBUG="monk:*" node server.js
+  487  DEBUG="monk:*" node server.js
+  488  DEBUG="monk:*" node server.js
+  489  DEBUG="monk:*" node server.js
+  490  DEBUG="monk:*" node server.js
+  491  DEBUG="monk:*" node server.js
+  492  DEBUG="monk:*" node server.js
+  493  DEBUG="monk:*" node server.js
+  494  DEBUG="monk:*" node server.js
+  495  DEBUG="monk:*" node server.js
+  496  DEBUG="monk:*" node server.js
+  497  DEBUG="monk:*" node server.js
+  498  DEBUG="monk:*" node server.js
+  499  DEBUG="monk:*" node server.js
+  500  cd bitbucket/dyf
+  501  cd bitbucket/
+  502  ls
+  503  cd ~/Documents/bitbucket/dyf
+  504  ls
+  505  rhc ssh dyf
+  506  node server.js
+  507  ls
+  508  node server.js
+  509  node server.js
+  510  node server.js
+  511  node server.js
+  512  node server.js
+  513  node server.js
+  514  node server.js
+  515  node server.js
+  516  node server.js
+  517  node server.js
+  518  ls
+  519  ls test
+  520  history > h.log

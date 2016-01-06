@@ -1,0 +1,28 @@
+{
+  "data":"",
+  "misc":{
+    "date_start":"",
+    "date_last_update":"",
+    "name_white":"",
+    "name_black":"",
+    "winner":"",
+    "steps_count":""
+  },
+  "desc":{
+    "default":"",
+    "steps":[
+      {
+        "id":"0",
+        "text":""
+      },
+      {
+        "id":"1",
+        "text":""
+      },
+      {
+        "id":"2",
+        "text":""
+      }
+    ]
+  }
+}

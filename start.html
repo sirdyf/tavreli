@@ -1,59 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>three.js webgl</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-        <style>
-            body {
-                color: #000;
-                font-family:Monospace;
-                font-size:13px;
-                text-align:center;
-
-                background-color: rgb(50,50,50);
-                margin: 0px;
-                padding: 0px;
-                overflow: hidden;
-            }
-
-            #info {
-                position: absolute;
-                top: 0px; width: 100%;
-                padding: 5px;
-                z-index:100;
-            }
-
-            .lbl { color:#fff; font-size:16px; font-weight:bold; position: absolute; bottom:0px; z-index:100; text-shadow:#000 1px 1px 1px; background-color:rgba(0,0,0,0.85); padding:1em }
-            #lbl_left { text-align:left; left:0px }
-            #lbl_right { text-align:left; right:0px }
-
-            .g { color:#aaa }
-            .c { color:#fa0 }
-
-            a { color:red }
-
-            #stats { position: absolute; top:0; left: 0 }
-            #stats #fps { background: transparent !important }
-            #stats #fps #fpsText { color: #777 !important }
-            #stats #fps #fpsGraph { display: none }
-
-            #description { position: absolute; top:50px; left: 10px; color: #0FF !important; z-index:100;}
-        </style>
-    </head>
-
-    <body>
-        <div id="info">
-            <a> ТАВРЕЛИ </a>
-        </div>
-        <div id="description"></div>
-
-        <div id="lbl_left" class="lbl">
-            anisotropy: <span class="c" id="val_left"></span><br/>
-        </div>
-        <div id="lbl_right" class="lbl">
-            tmp_value: <span class="c" id="val_right"></span><br/>
-        </div>
         <!-- r71-1-gd49bb0e -->
         <script src="js/three.min.js"></script>
         <script src="js/jquery-1.11.2.min.js"></script>
@@ -74,7 +18,7 @@
 
         <script src="js/Detector.js"></script>
         <script src="js/libs/stats.min.js"></script>
-
+        <script src="js/js.cookie.js"></script>
         <!-- load the font files -->
 
         <script src="fonts/gentilis_bold.typeface.js"></script>
@@ -335,7 +279,7 @@
                 raycaster.setFromCamera( mouseRay, camera );
 
                 var intersects = raycaster.intersectObjects( group2.children,true);
-                var serverUrl = "http://dyf-tavreli.rhcloud.com/";
+                var serverUrl = this.GameServerUrl;
                 if ( intersects.length > 0 ) {
                     console.log(intersects[0].object.name);
                     // if (intersects[0].object.parent.name == "tower"){
@@ -344,6 +288,7 @@
 
                     // similar behavior as clicking on a link
                     // _serverUrl = window.GameServerUrl;
+                    Cookies.remove('roomNumber');
                     window.location.href = serverUrl+"network";
                 }    
                 var intersects = raycaster.intersectObjects( group3.children,true);

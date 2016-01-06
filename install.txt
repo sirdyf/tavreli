@@ -1,0 +1,22 @@
+https://docs.mongodb.org/v3.0/tutorial/install-mongodb-on-os-x/
+-)brew update
+-)brew install mongodb
+
+http://stackoverflow.com/questions/16073603/how-do-i-update-each-dependency-in-package-json-to-the-latest-version
+Simply change every dependency's version to *, then run 
+npm update --save
+
+https://developers.openshift.com/en/getting-started-osx.html#client-tools
+
+https://github.com/Automattic/monk
+
+rhc ssh dyf rhcsh mongo
+use local
+db.stats();
+
+rhc app-show dyf
+
+DEBUG="monk:*" node server.js
+
+rhc ssh dyf
+rhc port-forward dyf

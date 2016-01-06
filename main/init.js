@@ -65,6 +65,7 @@ function init() {
 
     }
     scene.main = new TAVRELI.init();
+    scene.main.creates();
     
     // model
     var loader = new THREE.OBJMTLLoader();
@@ -96,7 +97,7 @@ function animate() {
 
     if (scene.main){
         // document.getElementById("val_right").innerHTML = scene.main.getMainCubeChildrenCount();
-        ROUTER.main.RenderStep(TAVRELI);
+        ROUTER.main.RenderStep(scene.main);
     }
     render();
 }
@@ -153,7 +154,7 @@ function onDocumentMouseDown( event ) {
             return;
         }
     }    
-    ROUTER.main.ClickOnObject(scene.main.getNullCube(),TAVRELI);
+    ROUTER.main.ClickOnObject(scene.main.getNullCube(),scene.main);
 };
 function onWindowResize() {
 

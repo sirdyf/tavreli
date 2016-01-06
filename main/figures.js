@@ -1,13 +1,19 @@
-var chessFiguresType = {VIRTUAL: -1, RATNIK: 0, RATOBOREC: 1, VSADNIK: 2, LUCHNIK: 3, KNYAZ: 4, VOLHV: 5, HELGI: 6};
+var FIGURES = FIGURES || {revision: "v0.0.1"};
+
+if ( typeof module === 'object' ) {
+    module.exports = FIGURES;
+}
+
+FIGURES.chessFiguresType = {VIRTUAL: -1, RATNIK: 0, RATOBOREC: 1, VSADNIK: 2, LUCHNIK: 3, KNYAZ: 4, VOLHV: 5, HELGI: 6};
 
 function chessFigures() {
 	var _ratnik = new RatnikContainer();
 };
 
-function RatnikContainer(){
+FIGURES.RatnikContainer = function(){
 	var _moveRule = [];
 	var _isJump = true;
-	var _figureType = chessFiguresType.RATNIK;
+	var _figureType = FIGURES.chessFiguresType.RATNIK;
 
 	this.name = 'Ratnik';
 
@@ -20,10 +26,10 @@ function RatnikContainer(){
 	this.isJump        = function(){ return _isJump;     };
 	this.getFigureType = function(){ return _figureType; };
 };
-function RatoborecContainer(){
+FIGURES.RatoborecContainer = function(){
 	var _moveRule = [];
 	var _isJump = false;
-	var _figureType = chessFiguresType.RATOBOREC;
+	var _figureType = FIGURES.chessFiguresType.RATOBOREC;
 
 	this.name = 'Ratoborec';
 
@@ -36,10 +42,10 @@ function RatoborecContainer(){
 	this.isJump        = function(){ return _isJump;     };
 	this.getFigureType = function(){ return _figureType; };
 };
-function VsadnikContainer(){
+FIGURES.VsadnikContainer = function(){
 	var _moveRule = [];
 	var _isJump = true;
-	var _figureType = chessFiguresType.VSADNIK;
+	var _figureType = FIGURES.chessFiguresType.VSADNIK;
 
 	this.name = 'Vsadnik';
 
@@ -56,10 +62,10 @@ function VsadnikContainer(){
 	this.isJump        = function(){ return _isJump;     };
 	this.getFigureType = function(){ return _figureType; };
 };
-function LuchnikContainer(){
+FIGURES.LuchnikContainer = function(){
 	var _moveRule = [];
 	var _isJump = false;
-	var _figureType = chessFiguresType.LUCHNIK;
+	var _figureType = FIGURES.chessFiguresType.LUCHNIK;
 
 	this.name = 'Luchnik';
 
@@ -72,29 +78,29 @@ function LuchnikContainer(){
 	this.isJump        = function(){ return _isJump;     };
 	this.getFigureType = function(){ return _figureType; };
 };
-function KnyazContainer(){
+FIGURES.KnyazContainer = function(){
 	var _moveRule = [];
 	var _isJump = false;
-	var _figureType = chessFiguresType.KNYAZ;
+	var _figureType = FIGURES.chessFiguresType.KNYAZ;
 
 	this.name = 'Knyaz';
 
-	var _moveRule1 = new RatoborecContainer().getMoveRule().slice();
-	var _moveRule2 = new LuchnikContainer().getMoveRule().slice();
+	var _moveRule1 = new FIGURES.RatoborecContainer().getMoveRule().slice();
+	var _moveRule2 = new FIGURES.LuchnikContainer().getMoveRule().slice();
 	_moveRule = _moveRule1.concat(_moveRule2)
 
 	this.getMoveRule   = function(){ return _moveRule;   };
 	this.isJump        = function(){ return _isJump;     };
 	this.getFigureType = function(){ return _figureType; };
 };
-function VolhvContainer(){
+FIGURES.VolhvContainer = function(){
 	var _moveRule = [];
 	var _isJump = true;
-	var _figureType = chessFiguresType.VOLHV;
+	var _figureType = FIGURES.chessFiguresType.VOLHV;
 
 	this.name = 'Volhv';
 
-	var _moveRule = new KnyazContainer().getMoveRule().slice();
+	var _moveRule = new FIGURES.KnyazContainer().getMoveRule().slice();
 	_moveRule.push(new THREE.Vector2( 1, 0));//add for rocirovka
 	_moveRule.push(new THREE.Vector2(-1, 0));//add for rocirovka
 
@@ -102,24 +108,24 @@ function VolhvContainer(){
 	this.isJump        = function(){ return _isJump;     };
 	this.getFigureType = function(){ return _figureType; };
 };
-function HelgiContainer(){
+FIGURES.HelgiContainer = function(){
 	var _moveRule = [];
 	var _isJump = false;
-	var _figureType = chessFiguresType.VOLHV;
+	var _figureType = FIGURES.chessFiguresType.HELGI;
 
 	this.name = 'Helgi';
 
-	var _moveRule1 = new KnyazContainer().getMoveRule().slice();
+	var _moveRule1 = new FIGURES.KnyazContainer().getMoveRule().slice();
 	_moveRule = _moveRule1.concat(_moveRule1)
 
 	this.getMoveRule   = function(){ return _moveRule;   };
 	this.isJump        = function(){ return _isJump;     };
 	this.getFigureType = function(){ return _figureType; };
 };
-function HorizontalContainer(){
+FIGURES.HorizontalContainer = function(){
 	var _moveRule = [];
 	var _isJump = false;
-	var _figureType = chessFiguresType.VIRTUAL;
+	var _figureType = FIGURES.chessFiguresType.VIRTUAL;
 
 	this.name = 'Horizontal';
 

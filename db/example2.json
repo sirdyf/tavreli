@@ -1,0 +1,20 @@
+{
+  "data":"c1-d2 d8-e7 d2-c3 a8-a7 g1-f3 h8-h7 b1-c3 h7-h6 e2-e3 g8-f6 c3(1)-b5 a7-b7 a1-a2 h6-h5 d1-d3 f6-d5 a2-a8 d5-c3 b2-c3 c7-c6 c3(2)-c4 c6-b5 c4-b5 f8-g7 c3(1)-g7 h5-b5 d3-b5 e7-e4 b5(6)-e5+ e4-e5 g7-e5 b8-d7 a8(1)-c8 e8-f7 f1-c4+ f7(1)-g6 c8-g8+ g6-f5 b5-d6x",
+  "misc":{
+    "date_start":"",
+    "date_last_update":"",
+    "name_white":"А.Карпов",
+    "name_black":"В.Купрейчик",
+    "winner":"black",
+    "steps_count":"39"
+  },
+  "desc":{
+    "default":"А.Карпов - В.Купрейчик, Москва, 1997 год",
+    "steps":[
+      {
+        "id":"0",
+        "text":""
+      }
+    ]
+  }
+}

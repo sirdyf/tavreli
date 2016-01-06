@@ -1,5 +1,9 @@
 var UTILS = UTILS || {REVISION: '0.1'};
 
+if ( typeof module === 'object' ) {
+    module.exports = UTILS;
+}
+
 var isNumeric = function( obj ) {
     // http://stackoverflow.com/questions/18082/validate-decimal-numbers-in-javascript-isnumeric
     return !jQuery.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
@@ -19,8 +23,14 @@ UTILS.getMoveArray = function(figure,board,isAllPositionsNeed){
 UTILS.getMoveArrayExt = function(figureContainer,figureBoardPosition,board,isAllPositionsNeed){
     var moveArray_ = [];
     var figureMoveRule_ = figureContainer.getMoveRule();
+    // console.log("=======figureMoveRule_");
+    // console.log(figureMoveRule_);
     for (var i = 0; i < figureMoveRule_.length; i++) {
+    // console.log("=======getBoundPosition");
+    // console.log(figureBoardPosition,figureMoveRule_[i],figureContainer.isJump(),isAllPositionsNeed);
         var endPos_ = UTILS.getBoundPosition(figureBoardPosition,figureMoveRule_[i],figureContainer.isJump(),board.getAllFigure(),isAllPositionsNeed);
+    // console.log("=======endPos_");
+    // console.log(endPos_);
         if (endPos_ != null) {
             if (isAllPositionsNeed === true) {
                 moveArray_ = moveArray_.concat(endPos_);
@@ -29,7 +39,8 @@ UTILS.getMoveArrayExt = function(figureContainer,figureBoardPosition,board,isAll
             };
         };
     };
-
+    // console.log("=======figureMoveRule_");
+    // console.log(moveArray_);
     return moveArray_;
 };
 UTILS.getBoundPosition = function(pos2dVec,arrow2dVec,isJump,figuresArray,isAllPositionsNeed){
@@ -37,6 +48,7 @@ UTILS.getBoundPosition = function(pos2dVec,arrow2dVec,isJump,figuresArray,isAllP
     var targetPos_ = new THREE.Vector2().addVectors(pos2dVec,arrow2dVec);
     var boundBox = new THREE.Box2(new THREE.Vector2(0,0),new THREE.Vector2(7,7));
     if (isJump === true) {
+        // console.log(boundBox,targetPos_);
         if (boundBox.containsPoint(targetPos_)) {
             return targetPos_;
         };
