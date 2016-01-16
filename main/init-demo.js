@@ -1,39 +1,46 @@
-if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+if (!Detector.webgl) Detector.addGetWebGLMessage();
 
 var SCREEN_WIDTH = window.innerWidth;
 var SCREEN_HEIGHT = window.innerHeight;
 
 var container, stats;
 
-var camera, scene, renderer,projector;
+var camera, scene, renderer, projector;
 
 var num = 0;
 
-var mouseX = 0, mouseY = 0;
+var mouseX = 0,
+    mouseY = 0;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 var time = Date.now();
 var clock = new THREE.Clock();
 
-var mouseRay = { x: 0, y: 0 }, INTERSECTED;
+var mouseRay = {
+        x: 0,
+        y: 0
+    },
+    INTERSECTED;
 
 var raycaster = new THREE.Raycaster();
 
-$(function () {
+$(function() {
     init();
     animate();
 });
 
 function init() {
     this.init = true;
-    
+
     projector = new THREE.Projector();
-    
+
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer = new THREE.WebGLRenderer({
+        antialias: true
+    });
 
     scene = new THREE.Scene();
 
@@ -66,12 +73,14 @@ function init() {
     }
     scene.main = new TAVRELI.init();
     scene.main.creates();
-    
+
     // model
     var loader = new THREE.OBJMTLLoader();
-    loader.load( '../model/ratnik-1.obj', '../model/ratnik-1.mtl', function ( object ){
+    loader.load('../model/ratnik-1.obj', '../model/ratnik-1.mtl', function(object) {
         scene.main.createModel(object);
-        scene.main.getMaterialFromObj(object);
+        scene.main.getMaterialFromObj(object, window.GameState);
+        ROUTER.main.Init(window.GameState, null, scene.main);
+        RENDER.main = new RENDER.RenderContainer();
     });
 
 
@@ -88,6 +97,9 @@ function init() {
 
     var width = window.innerWidth || 2;
     var height = window.innerHeight || 2;
+
+    ROUTER.main = new ROUTER.RouterContainer();
+    // ROUTER.main.Init(window.GameState, null, scene.main);
 }
 
 function animate() {
@@ -95,7 +107,8 @@ function animate() {
     requestAnimationFrame(animate);
     controlsMouse.update();
 
-    if (scene.main){
+    if (scene.main) {
+        // if (window.GameState == 99) return;
         // document.getElementById("val_right").innerHTML = scene.main.getMainCubeChildrenCount();
         ROUTER.main.RenderStep(scene.main);
     }
@@ -110,25 +123,26 @@ function render() {
 
     stats.update();
 }
-function onDocumentMouseMove( event ) {
+
+function onDocumentMouseMove(event) {
 
     event.preventDefault();
 
-    mouseRay.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mouseRay.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    mouseRay.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseRay.y = -(event.clientY / window.innerHeight) * 2 + 1;
     // scene.main.mouseMove(event.clientX,event.clientY);
 
-    raycaster.setFromCamera( mouseRay, camera );
+    raycaster.setFromCamera(mouseRay, camera);
 
     var child = scene.main.getMainObj();
-    var intersects = raycaster.intersectObjects( child.children,true);
+    var intersects = raycaster.intersectObjects(child.children, true);
 
-    if ( intersects.length > 0 ) {
-        if ( INTERSECTED != intersects[ 0 ].object ) {
-            INTERSECTED = intersects[ 0 ].object;
-            if (scene.main){
-                if (INTERSECTED.name === "square"){
-                    scene.main.setNullCubePosition(intersects[ 0 ].object);
+    if (intersects.length > 0) {
+        if (INTERSECTED != intersects[0].object) {
+            INTERSECTED = intersects[0].object;
+            if (scene.main) {
+                if (INTERSECTED.name === "square") {
+                    scene.main.setNullCubePosition(intersects[0].object);
                 }
                 // if (INTERSECTED.name === "figure"){
                 //     scene.main.setNullCubePosition(intersects[ 0 ].object);
@@ -140,22 +154,23 @@ function onDocumentMouseMove( event ) {
         INTERSECTED = null;
     }
 }
-document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+document.addEventListener('mousemove', onDocumentMouseMove, false);
+document.addEventListener('mousedown', onDocumentMouseDown, false);
 
-function onDocumentMouseDown( event ) {
+function onDocumentMouseDown(event) {
     event.preventDefault();
 
-    var intersects = raycaster.intersectObjects( camera.children,true);
-    if ( intersects.length > 0 ) {
+    var intersects = raycaster.intersectObjects(camera.children, true);
+    if (intersects.length > 0) {
         // console.log(intersects[0].object.parent);
-        if (intersects[0].object.parent.name == "tower"){
+        if (intersects[0].object.parent.name == "tower") {
             RENDER.main.selectTowerWith(intersects[0].object.parent);
             return;
         }
-    }    
-    ROUTER.main.ClickOnObject(scene.main.getNullCube(),scene.main);
+    }
+    ROUTER.main.ClickOnObject(scene.main.getNullCube(), scene.main);
 };
+
 function onWindowResize() {
 
     SCREEN_WIDTH = window.innerWidth;
@@ -169,4 +184,3 @@ function onWindowResize() {
 }
 
 window.addEventListener('resize', onWindowResize, false);
-

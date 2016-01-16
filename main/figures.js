@@ -1,4 +1,4 @@
-var FIGURES = FIGURES || {revision: "v0.0.1"};
+var FIGURES = FIGURES || {revision: "v0.0.2"};
 
 if ( typeof module === 'object' ) {
     module.exports = FIGURES;

@@ -1,5 +1,5 @@
 var PARSER = PARSER || {
-    revision: "v0.0.1"
+    revision: "v0.0.2"
 };
 if (typeof module === 'object') {
     module.exports = PARSER;
@@ -25,5 +25,5 @@ PARSER.ParserContainer = function() {
     };
     this.Init = function() {};
 };
-// PARSER.main = new ParserContainer();
-// PARSER.main.Init();
+PARSER.main = new PARSER.ParserContainer();
+PARSER.main.Init();

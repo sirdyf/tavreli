@@ -2,7 +2,7 @@
  * autor: DYF
  */
 var TAVRELI = TAVRELI || {
-    revision: "v0.0.1"
+    revision: "v0.0.2"
 };
 // browserify support
 
@@ -10,6 +10,7 @@ if (typeof module === 'object') {
     module.exports = TAVRELI;
 }
 TAVRELI.init = function() {
+    var _testMode = false;
     var nullCube = null;
     var mainBoard = null;
     var mainFigure = null;
@@ -23,6 +24,7 @@ TAVRELI.init = function() {
     var originCubeScale = null;
     var _maxWhiteIndex = 99;
     var _maxRatnikIndex = 8;
+    var that = this;
 
     materials.name = [];
 
@@ -136,7 +138,29 @@ TAVRELI.init = function() {
             };
         };
     };
-    var resetBoardFigure = function() {
+    this.setBoardFigures = function(boardFigures) {
+        // TODO: remove old figures
+        figures.allFigure = [];
+        mainFigure = new Chess(originCube);
+        for (var i = 0; i < boardFigures.length; i++) {
+            // boardFigures[i]
+            var chess = mainFigure.getMainObj().clone();
+            chess.position.x = boardFigures[i].position.x;
+            chess.position.y = boardFigures[i].position.y;
+            chess.position.z = boardFigures[i].position.z;
+            chess.boardPosition = new THREE.Vector2();
+            chess.boardPosition.x = boardFigures[i].boardPosition.x;
+            chess.boardPosition.y = boardFigures[i].boardPosition.y;
+            makeFigureWithIndex(chess, boardFigures[i].figureIndex);
+            figures.allFigure.push(chess);
+            scene.add(chess);
+        };
+    };
+    var resetBoardFigure = function(mode) {
+        if (mode == 99) {
+            console.log('Skip resetBoardFigure');
+            return;
+        };
         figures.allFigure = [];
         mainFigure = new Chess(originCube);
         for (var i = 0; i < 8 * 4; i++) {
@@ -145,16 +169,6 @@ TAVRELI.init = function() {
             chess.boardPosition = new THREE.Vector2();
             chess.boardPosition.x = (i % 8);
             chess.position.y = .5;
-            // if (i == 4){
-            //     makeTestFigure(4 + 8 + 8);
-            //     continue;
-            // };
-            // if (i == 9) continue;
-            // if (i == 10) continue;
-            // if (i == 11) continue;
-            // if (i == 13) continue;
-            // if (i == 14) continue;
-            // if (i<7) continue;
             if (i <= 7) {
                 chess.position.z = 6 - 4 + .5;
                 chess.boardPosition.y = 6;
@@ -180,6 +194,7 @@ TAVRELI.init = function() {
         };
     };
     this.makeTestFigure = function(figureIndex, pos, towerPos) {
+        // console.log('BOARD.makeTestFigure(%d)',figureIndex);
         mainFigure = originCube.clone(); //new CHESS.Chess(originCube);
         var chess = mainFigure.clone(); //getMainObj().clone();
         chess.name = 'figure';
@@ -198,14 +213,36 @@ TAVRELI.init = function() {
         return chess;
     };
     this.addTestFigure = function(figureIndex, pos, towerPos) {
-        var fig = this.makeTestFigure(figureIndex, pos, towerPos);
+        // console.log('BOARD.addTestFigure(%d) towerPos=%d',figureIndex, towerPos);
+        var fig = null;
+        if (figureIndex < _maxWhiteIndex) {
+            if (figureIndex > _maxRatnikIndex + 8 + 8) {
+                console.log('BOARD make WHITE figure with BIG index = %d', figureIndex - 8);
+                fig = that.makeTestFigure(figureIndex - 8, pos, towerPos);
+                fig.figureIndex = figureIndex; //restore figure index
+            } else {
+                fig = that.makeTestFigure(figureIndex, pos, towerPos);
+            };
+        } else {
+            if (figureIndex > _maxWhiteIndex + _maxRatnikIndex + 8 + 8) {
+                console.log('BOARD make BLACK figure with BIG index = %d', figureIndex - 8);
+                fig = that.makeTestFigure(figureIndex - 8, pos, towerPos);
+                fig.figureIndex = figureIndex; //restore figure index
+            } else {
+                fig = that.makeTestFigure(figureIndex, pos, towerPos);
+            };
+        };
+        fig.indexY = towerPos;
         // console.log("-----");
         // console.log(fig);
+        // console.log('PUSH figure with index=%d towerPos=%d BOARD.addTestFigure()',figureIndex, towerPos);
         figures.allFigure.push(fig);
     };
     var makeFigureWithIndex = function(obj, index) {
+        // console.log('BOARD.makeFigureWithIndex(%d)',index);
         obj.name = 'figure';
         obj.figureIndex = index;
+        obj.indexY = 0;
         if (index < _maxWhiteIndex) {
             makeTavreli(obj, index, 'white');
         } else {
@@ -267,11 +304,13 @@ TAVRELI.init = function() {
             replaceMaterial(obj, 'topFigureMaterial', 'volhv_' + postfix);
             replaceMaterial(obj, 'secondFigureMaterial', 'volhv_' + postfix);
             replaceMaterial(obj, 'mainFigureMaterial', 'volhv_' + postfix);
-        } else if (ind == 4 + 8 + 8) {
+        } else if (ind == 4 + 8 + 8) { //20
             obj.main = new FIGURES.HelgiContainer();
             replaceMaterial(obj, 'topFigureMaterial', 'helgi_' + postfix);
             replaceMaterial(obj, 'secondFigureMaterial', 'helgi_' + postfix);
             replaceMaterial(obj, 'mainFigureMaterial', 'helgi_' + postfix);
+        } else {
+            console.log('Eror figure index=%d !!!!!!', ind);
         };
         // obj.main.addMoveArrow(obj);
         if (UTILS === undefined) return;
@@ -298,7 +337,7 @@ TAVRELI.init = function() {
 
     this.render = function() {};
 
-    this.getMaterialFromObj = function(object) {
+    this.getMaterialFromObj = function(object, mode) {
         materials.grey = new THREE.MeshBasicMaterial({
             color: 0x111111
         });
@@ -346,18 +385,17 @@ TAVRELI.init = function() {
             return;
         for (var i in object.children) {
             var mName = object.children[i].material.name;
-            console.log(mName);
+            // console.log(mName);
             //     // materials.push(object.children[i].material);
         }
         this.createBoardSquares();
-        // this.createBoardSquaresAxisX(-4);
         this.createBoardSquaresAxisX(5);
         this.createBoardSquaresAxisY(-4);
-        // this.createBoardSquaresAxisY(5);
-        resetBoardFigure();
+        resetBoardFigure(mode);
     };
 
     this.createModel = function(obj) {
+        console.log('wwwwwwwwwwwwwwwwwww', obj);
         var tmpObj = obj.clone();
         var rotAngle = Math.PI / 2.0;
         var axis = new THREE.Vector3(1, 0, 0);
@@ -392,12 +430,33 @@ TAVRELI.init = function() {
     this.getNullCube = function() {
         return nullCube;
     };
-    this.createBoardSquares = function() {
+    this.createBoardSquaresStub = function() {
+        console.log('BOARD.createBoardSquaresStub()');
         mainBoard.squares = [];
-        var m = materials.yellow;
+        var mSquare = null;
         for (var i = -3; i < 5; i++) {
             for (var j = -3; j < 5; j++) {
-                var mSquare = new THREE.Mesh(new THREE.BoxGeometry(1, .1, 1, 1, 1, 1), new THREE.MeshBasicMaterial({
+                mSquare = new THREE.Object3D();
+                mSquare.position = new THREE.Vector3();
+                mSquare.name = 'square';
+                mSquare.position.x = i - .5;
+                mSquare.position.y = .5;
+                mSquare.position.z = j - .5;
+                // console.log('ssssss',mSquare.position);
+                mSquare.boardPosition = new THREE.Vector2(i + 3, j + 3);
+                mainBoard.squares.push(mSquare);
+            };
+        };
+        this.setNullCubePosition(mainBoard.squares[0]);
+    };
+    this.createBoardSquares = function() {
+        console.log('BOARD.createBoardSquares()');
+        mainBoard.squares = [];
+        var m = materials.yellow;
+        var mSquare = null;
+        for (var i = -3; i < 5; i++) {
+            for (var j = -3; j < 5; j++) {
+                mSquare = new THREE.Mesh(new THREE.BoxGeometry(1, .1, 1, 1, 1, 1), new THREE.MeshBasicMaterial({
                     color: 0xff00ff,
                     wireframe: true
                 }));
@@ -510,30 +569,61 @@ TAVRELI.init = function() {
         return material;
     };
     this.convertRatnikWithIndex = function(figureIndex) {
-        if (this.isFigureRatnik(figureIndex) === false) return;
+        if (that.isFigureRatnik(figureIndex) === false) return;
         var figure_ = UTILS.getFigureWithIndex(figureIndex, figures.allFigure);
         // figures.allFigure.remove(figure_);
         var index_ = figures.allFigure.indexOf(figure_);
         if (index_ > -1) {
             figures.allFigure.splice(index_, 1);
         }
-        scene.remove(figure_);
-
-        mainFigure = new Chess(originCube);
-        var chess = mainFigure.getMainObj().clone();
+        console.log('BOARD.convertRatnikWithIndex=%d', figureIndex, scene);
+        if (scene) {
+            scene.remove(figure_);
+        };
+        var chess = null;
+        if (_testMode === true) {
+            mainFigure = originCube.clone(); //new CHESS.Chess(originCube);
+            chess = mainFigure.clone(); //getMainObj().clone();
+        } else {
+            mainFigure = new Chess(originCube);
+            chess = mainFigure.getMainObj().clone();
+        };
+        console.log(figure_);
         chess.name = 'figure';
         chess.boardPosition = new THREE.Vector2();
         chess.boardPosition.copy(figure_.boardPosition);
         chess.position.copy(figure_.position);
-        if ((figure_.figureIndex == 4) || (figure_.figureIndex == 4 + _maxWhiteIndex)) {
-            makeFigureWithIndex(chess, figure_.figureIndex + 8 + 8);
-            chess.figureIndex = figure_.figureIndex + 8 + 8 + 8;
+        var curFigureIndex = figure_.figureIndex;
+        if ((curFigureIndex == 4) || (curFigureIndex == 4 + _maxWhiteIndex)) {
+            // this.makeTestFigure = function(figureIndex, pos, towerPos) {
+            var figureIndexNew = curFigureIndex + 8 + 8; // helgi index
+            console.log('make HELGI! figure index=%d', figureIndexNew);
+            if (_testMode === true) {
+                chess = that.makeTestFigure(figureIndexNew, chess.boardPosition, figure_.indexY);
+            } else {
+                that.makeFigureWithIndex(chess, figureIndexNew);
+            };
+            // make Helgi
+            chess.figureIndex = figureIndexNew + 8; // add 8 for create new unique figure index
         } else {
-            makeFigureWithIndex(chess, figure_.figureIndex + 8);
-            chess.figureIndex = figure_.figureIndex + 8 + 8;
+            var figureIndexNew = curFigureIndex + 8; // new figure index
+            console.log('make figure index=%d', figureIndexNew);
+            if (_testMode === true) {
+                chess = that.makeTestFigure(figureIndexNew, chess.boardPosition, figure_.indexY);
+            } else {
+                that.makeFigureWithIndex(chess, figureIndexNew);
+            };
+            chess.figureIndex = figureIndexNew + 8; // add 8 for create new unique figure index
         };
+        chess.indexY = figure_.indexY;
+        chess.position.y = chess.indexY * 0.5 + 0.5;
+        console.log('BOARD figures.allFigure count=', figures.allFigure.length);
         figures.allFigure.push(chess);
-        scene.add(chess);
+        console.log(chess);
+        console.log('BOARD figures.allFigure count=', figures.allFigure.length);
+        if (scene) {
+            scene.add(chess);
+        }
     };
     this.getSquareAtPosition = function(pos2d) {
         for (var i = 0; i < mainBoard.children.length; i++) {
@@ -542,7 +632,21 @@ TAVRELI.init = function() {
             };
         };
     };
+    this.createStub = function() {
+        console.log("--- create stub ---");
+        nullCube = new THREE.Object3D();
+        nullCube.position = new THREE.Vector3(0, 0, 0);
+        originCube = nullCube.clone();
+        mainBoard = new THREE.Vector3(0, 0, 0);
+        _testMode = true;
+    };
     this.creates = function(isSkip) {
+        if (isSkip) {
+            console.log('DEPRECATED! use createStub()!');
+            that.createStub();
+            _testMode = true;
+            return;
+        };
         nullCube = new THREE.Mesh(new THREE.BoxGeometry(1, .2, 1, 1, 1, 1), new THREE.MeshBasicMaterial({
             color: 0xffffff,
             wireframe: true
@@ -561,8 +665,6 @@ TAVRELI.init = function() {
         if (isSkip === undefined) {
             scene.add(nullCube);
             scene.add(mainBoard);
-        } else {
-            console.log("Skip to add scene");
         };
     };
     this.createStartPositionsWithTestFigures = function() {
@@ -579,9 +681,9 @@ TAVRELI.init = function() {
                 boardPosition.y = 0;
             }
             if (i < 16) {
-                this.addTestFigure(i, boardPosition);
+                this.addTestFigure(i, boardPosition, 0);
             } else {
-                this.addTestFigure(i - 16 + _maxWhiteIndex, boardPosition);
+                this.addTestFigure(i - 16 + _maxWhiteIndex, boardPosition, 0);
             };
         };
     };

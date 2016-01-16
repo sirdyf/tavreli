@@ -1,17 +1,21 @@
 var ROUTER = ROUTER || {
-    revision: "v0.0.1"
+    revision: "v0.0.2"
 };
-
-function RouterContainer() {
+if (typeof module === 'object') {
+    module.exports = ROUTER;
+}
+ROUTER.RouterContainer = function() {
     var that = this;
-    var cSTATE = {
+    var rSTATE = {
         NONE: 0,
         MANUAL: 1,
         AUTO: 2,
-        NETWORK: 3
+        NETWORK: 3,
+        TEST: 4
     };
-    var _state = cSTATE.NETWORK;
+    var _state = rSTATE.NETWORK;
     var _logic = null;
+    var _board = null;
     var _sampleArray = null;
     var _currentStepNum = 0;
     var _DEBUG = false;
@@ -99,7 +103,8 @@ function RouterContainer() {
     };
 
     this.zeroStep = function() {
-        if (_state != cSTATE.NETWORK) return;
+        if (_state == rSTATE.NONE) return;
+        if (_state != rSTATE.NETWORK) return;
         // if (isOurStep() == false){ 
         //     return;
         // }
@@ -222,32 +227,38 @@ function RouterContainer() {
         };
     };
 
-    function processNetworkStep() {
+    function processNetworkStep(board) {
         // TODO: process response
         console.log("processNetworkStep with notation:" + _network.stepNotation);
-        processNotation(_network.stepNotation);
-        processNotation(_network.stepNotation);
+        processNotation(_network.stepNotation, board);
+        processNotation(_network.stepNotation, board);
     };
 
-    function processNotation(stepNotation) {
-        var state_ = _logic.getCurrentState();
-        var board = scene.main; //TAVRELI;
-        if (state_ == 1) { //cSTATE.SOURCE){ TODO
-            var arr_ = PARSER.main.parseString(stepNotation);
-            console.log("Try parse:");
-            console.log(arr_);
-            processNotationWithFirstStep(arr_[0], board);
-        } else if (state_ == 2) {
-            var arr_ = PARSER.main.parseString(stepNotation);
-            console.log("Try parse:");
-            console.log(arr_);
-            processNotationWithSecondStep(arr_[0], board);
+    this.processNotation = function(stepNotation, board) {
+        console.log('--- processNotation:%s ---', stepNotation);
+        var logicState_ = _logic.getCurrentState();
+        // TODO: !!!! scene.main !!!!
+        // var board = scene.main; //TAVRELI;
+        var arr_ = PARSER.main.parseString(stepNotation);
+        console.log("Try parse:");
+        console.log(arr_);
+        if (logicState_ == 1) { //rSTATE.SOURCE){ TODO
+            that.processNotationWithFirstStep(arr_[0], board);
+        } else if (logicState_ == 2) {
+            if (stepNotation == '0-0') {
+                console.log('Long rokirovka!');
+                that.processNotationWithSecondStep('0-0', board);
+            }else{
+                that.processNotationWithSecondStep(arr_[0], board);
+            };
         };
+        return _logic.getCurrentState();
     };
 
-    function processNotationWithFirstStep(stepNotation, board) {
+    this.processNotationWithFirstStep = function(stepNotation, board) {
+        console.log("--- processNotationWithFirstStep:%s ---", stepNotation);
         var state_ = _logic.getCurrentState();
-        if (state_ == 1) { //cSTATE.SOURCE){ TODO
+        if (state_ == 1) { //rSTATE.SOURCE){ TODO
             var obj_ = {};
             var not_ = stepNotation;
             console.log(not_);
@@ -261,15 +272,19 @@ function RouterContainer() {
                 _logic.ClickOnObject(obj_, board);
                 return;
             }
+            //************************************************************************
             if (not_.length > 2) {
                 var towerIndex_ = not_.substring(3);
                 var intValue = parseInt(towerIndex_, 10)
 
                 not_ = not_.substring(0, 2);
                 UTILS.setIndexFromNotation(not_, obj_);
+
                 _logic.ClickOnObject(obj_, board);
 
+                console.log('ROUTER tower Index=%d',intValue);
                 var towerFigure_ = RENDER.main.getTowerFigureWithIndex(intValue);
+                // console.log('ROUTER towerFigure_=', towerFigure_);
                 RENDER.main.selectTowerWith(towerFigure_);
             } else {
                 UTILS.setIndexFromNotation(not_, obj_);
@@ -279,10 +294,10 @@ function RouterContainer() {
         };
     };
 
-    function processNotationWithSecondStep(stepNotation, board) {
-        console.log("processNotationWithSecondStep:" + stepNotation);
+    this.processNotationWithSecondStep = function(stepNotation, board) {
+        console.log("--- processNotationWithSecondStep:%s ---", stepNotation);
         var state_ = _logic.getCurrentState();
-        if (state_ == 2) { //cSTATE.SOURCE){ TODO
+        if (state_ == 2) { //rSTATE.SOURCE){ TODO
             var obj_ = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 1, 1, 1), new THREE.MeshBasicMaterial({
                 color: 0xff00ff,
                 wireframe: true
@@ -298,10 +313,18 @@ function RouterContainer() {
                 var volhv_ = UTILS.getFigureWithIndex(volhvFigureIndex_, board.getAllFigure());
                 var delta_ = 0;
                 not_ = stepNotation; //_sampleArray[_currentStepNum*2+1];
-                if ((not_ == '0-0')) {
-                    delta_ = -2;
+                if (not_ == '0-0') {
+                    // if (_logic.getCurrentPlayer() == 'White' ) {
+                        delta_ = -2;
+                    // }else{
+                        // delta_ = 2;
+                    // };
                 } else {
-                    delta_ = 2;
+                    // if (_logic.getCurrentPlayer() == 'White' ) {
+                        delta_ = 2;
+                    // }else{
+                        // delta_ = -2;
+                    // };
                 };
                 obj_.boardPosition = new THREE.Vector2();
                 obj_.boardPosition.x = volhv_.boardPosition.x + delta_;
@@ -312,6 +335,8 @@ function RouterContainer() {
                 UTILS.setIndexFromNotation(not_, obj_);
             };
             fig_ = getBoardSquare(obj_.boardPosition, board);
+            console.log('ROUTER fig board pos=', fig_.boardPosition);
+            console.log('ROUTER fig position=', fig_.position);
             obj_.position = new THREE.Vector3();
             obj_.position.copy(fig_.position);
             _logic.ClickOnObject(obj_, board);
@@ -319,18 +344,23 @@ function RouterContainer() {
         };
     };
     this.ClickOnObject = function(obj, board) {
-        if (_state == cSTATE.MANUAL) {
+        if (_state == rSTATE.NONE) return;
+        console.log('ROUTER.ClickOnObject() WITH _state=%d', _state);
+        if (_state == rSTATE.TEST) {
             _logic.ClickOnObject(obj, board);
-        } else if (_state == cSTATE.NETWORK) {
+        } else if (_state == rSTATE.MANUAL) {
+            _logic.ClickOnObject(obj, board);
+        } else if (_state == rSTATE.NETWORK) {
             if (isOurStep() === true) {
                 _logic.ClickOnObject(obj, board);
             } else {
                 console.log('Wait oponents');
             };
-        } else if (_state == cSTATE.AUTO) {
+        } else if (_state == rSTATE.AUTO) {
+            console.log('jnjnjnjnjnjjnjnjnjn', _currentStepNum, _sampleArray);
             if (_currentStepNum * 2 >= _sampleArray.length) {
                 _DEBUG = false;
-                _state = cSTATE.NONE;
+                _state = rSTATE.NONE;
                 return;
             };
             var curStepNotation_ = _sampleArray[_currentStepNum * 2] + "-" + _sampleArray[_currentStepNum * 2 + 1];
@@ -340,10 +370,10 @@ function RouterContainer() {
             var state_ = _logic.getCurrentState();
             if (state_ == 1) {
                 var not_ = _sampleArray[_currentStepNum * 2];
-                processNotation(not_);
+                that.processNotation(not_, scene.main);
             } else if (state_ == 2) {
                 var not_ = _sampleArray[_currentStepNum * 2 + 1];
-                processNotation(not_);
+                that.processNotation(not_, scene.main);
             };
         };
     };
@@ -396,14 +426,31 @@ function RouterContainer() {
         };
         return null;
     };
-    this.RenderStep = function(board) {
-        _logic.RenderStep(board);
-        var state_ = _logic.getCurrentState();
-        if ((_DEBUG === true) && (state_ == 1)) { //cSTATE.SOURCE){ TODO
+    this.RenderStep = function(board, testMode) {
+        if (_state == rSTATE.NONE) return;
+        if (testMode === undefined) {
+            if ((_logic === undefined) || (_logic === null)) {
+                console.log('_logic => null');
+            } else {
+                _logic.RenderStep(board);
+            };
+        } else {
+            console.log('ROUTER.RenderStep()');
+            _logic.RenderStep(board, testMode);
+        };
+        var state_ = null;
+        if ((_logic === undefined) || (_logic === null)) {
+            console.log('_logic => null');
+        } else {
+            state_ = _logic.getCurrentState();
+        };
+
+        if ((_DEBUG === true) && (state_ == 1)) { //rSTATE.SOURCE){ TODO
             if (_currentStepNum < _pauseOnStep) {
                 startTimer();
             };
         };
+        return state_;
     };
 
     function startTimer() {
@@ -466,32 +513,83 @@ function RouterContainer() {
         }
         xmlhttp.send();
     };
-        
-    this.Init = function() {
+
+    function defaultSettings() {
+        _serverUrl = window.GameServerUrl;
+        _state = window.GameState;
+    }
+
+    function makeBoard(boardData, board) {
+        var resBoard = [];
+        for (var i = 0; i < boardData.length; i++) {
+            var savedFigure = {};
+            savedFigure.name = boardData[i].name;
+            savedFigure.position = {};
+            savedFigure.position.x = boardData[i].position.x;
+            savedFigure.position.y = boardData[i].position.y;
+            savedFigure.position.z = boardData[i].position.z;
+            savedFigure.boardPosition = {};
+            savedFigure.boardPosition.x = boardData[i].boardPosition.x;
+            savedFigure.boardPosition.y = boardData[i].boardPosition.y;
+            savedFigure.indexY = boardData[i].indexY;
+            savedFigure.figureIndex = boardData[i].figureIndex;
+            resBoard.push(savedFigure);
+        };
+        console.log(resBoard);
+        board.setBoardFigures(resBoard);
+    };
+
+    function getJsonErrorData(board) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", _serverUrl + "/showerror/1", true);
+        xmlhttp.setRequestHeader('Access-Control-Allow-Origin', "http://localhost");
+        xmlhttp.setRequestHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+        xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var resp = $.parseJSON(xmlhttp.responseText); //parse JSON
+                // console.log('Data from Server:' + resp);
+                makeBoard(resp, board);
+            }
+        }
+        xmlhttp.send();
+    };
+    this.Init = function(state, localLogic, board) {
+        console.log('--- Init(state=%d) ---', state);
+        if (state === rSTATE.TEST) {
+            _state = state;
+            console.log('* state set manual:%d', state);
+            _logic = localLogic;
+            return;
+        };
         _logic = new LOGIC.LogicContainer();
         _logic.Init(this.zeroStep);
-
         var sampleBoard = new TAVRELI.init();
         sampleBoard.creates("skip");
         _logic.setTestBoard(sampleBoard);
-
-        _state = window.GameState;
-        _serverUrl = window.GameServerUrl;
-        // _DEBUG = true;
-        if (_state == cSTATE.AUTO) {
+        defaultSettings();
+        SAMPLES.main = new SAMPLES.SamplesContainer();
+        SAMPLES.main.InitWithSample(window.GameDemoNum);
+        if (_state == 99) {
+            getJsonErrorData(board);
+            _state = rSTATE.NONE;
+        } else if (_state == rSTATE.AUTO) {
             var desc_ = SAMPLES.main.getDescriptionForStep(-1);
             $('#description').html(desc_);
-        } else if (_state == cSTATE.NETWORK) {
-            setTimeout(serverGetPlayer, 1000 * 5);
-            // TODO: get all previous steps
-        } else {
+            _state = window.GameState;
             var sampleStr_ = SAMPLES.main.getSampleString();
+            console.log('dddddddddddddddd', sampleStr_);
             _sampleArray = PARSER.main.parseString(sampleStr_);
             console.log(_sampleArray);
             clickMouse();
+        } else if (_state == rSTATE.NETWORK) {
+            setTimeout(serverGetPlayer, 1000 * 5);
+            // TODO: get all previous steps
+        } else {
+            console.log('???');
         };
-        // $('info').mousedown();
     };
+    // $('info').mousedown();
 };
-ROUTER.main = new RouterContainer();
-ROUTER.main.Init();
+// ROUTER.main = new ROUTER.RouterContainer();
+// ROUTER.main.Init();

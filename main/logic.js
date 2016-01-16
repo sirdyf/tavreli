@@ -1,6 +1,5 @@
-
 var LOGIC = LOGIC || {
-    revision: "v0.1.2"
+    revision: "v0.1.3"
 };
 
 if (typeof module === 'object') {
@@ -33,8 +32,8 @@ LOGIC.LogicContainer = function() {
     var _steps = [];
 
     var _testBoard = null;
-// TODO: var testBoard = board.copy(); 
-    this.setTestBoard = function(testBoard){
+    // TODO: var testBoard = board.copy(); 
+    this.setTestBoard = function(testBoard) {
         _testBoard = testBoard;
     };
 
@@ -66,28 +65,49 @@ LOGIC.LogicContainer = function() {
         board.deSelectFigureWithIndex(selectedFigureIndex);
         selectedFigureIndex = null;
     };
-
-    function firstStep(obj, board) {
-        if (player == cPLAYER.NONE) return;
+    this.isFirstStepAvailable = function(obj, board) {
         var res_ = isFigureAtPosition(obj.boardPosition, board.getAllFigure());
         if (res_ === false) {
-            return;
+            // if obj is not figure
+            return false;
         };
         var topFigure_ = that.getTopFigureAtPosition(obj, board.getAllFigure());
         var resW = isFigureIndexContaints(topFigure_.figureIndex, board.getWhite());
         var resB = isFigureIndexContaints(topFigure_.figureIndex, board.getBlack());
         if ((player == cPLAYER.WHITE) && (resB === true)) {
-            return;
+            // if obj is enemy figure
+            console.log('Error! Selected enemy figure!');
+            return false;
         };
         if ((player == cPLAYER.BLACK) && (resW === true)) {
+            // if obj is enemy figure
+            console.log('Error! Selected enemy figure!');
+            return false;
+        };
+        return true;
+    };
+
+    function firstStep(obj, board) {
+        console.log('LOGIC.firstStep()');
+        if (player == cPLAYER.NONE) {
+            console.log('Error! (player = none!)');
+            return;
+        };
+
+        if (that.isFirstStepAvailable(obj, board) === false) {
+            console.log('Obj can not be selected!');
             return;
         };
         var figures_ = board.getAllFigure();
+        console.log('figures count=',figures_.length);
+        var topFigure_ = that.getTopFigureAtPosition(obj, figures_);
+        console.log('Top figure index=%d, indexY=%d', topFigure_.figureIndex, topFigure_.indexY);
         UTILS.removeAllArrowWithArray(figures_);
         board.deSelectFigureWithIndex(selectedFigureIndex);
         selectedFigureIndex = topFigure_.figureIndex; //getFigureIndex(obj,board.getAllFigure());
         board.selectFigureWithIndex(selectedFigureIndex);
         state = cSTATE.TARGET;
+        console.log('LOGIC.firstStep() state=cSTATE.TARGET')
         var availablePositions = that.getAllPositionsForFigure(selectedFigureIndex, board);
         if (selectedFigureIndex === 12) {
             availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.WHITE, board);
@@ -219,9 +239,69 @@ LOGIC.LogicContainer = function() {
         var availablePositions_ = UTILS.getMoveArrayExt(horizontal_, figure.boardPosition, board, false);
         return availablePositions_;
     };
+    this.isSecondStepAvailable = function(obj, board, targetPositions, sampleBoard) {
+        // TODO: remove testBoard
+        var res = isFigure(obj, board.getAllFigure());
+        if (res === false) {
+            // if obj is not figure
+            return false;
+        };
+        var topFigure_ = that.getTopFigureAtPosition(obj, board.getAllFigure());
+        var availablePositions = UTILS.getMoveArray(topFigure_, board, true); //moveArrow
+        availablePositions = that.addAdditionPositions(availablePositions, topFigure_, board, true);
+        availablePositions = that.removeAdditionPositions(availablePositions, topFigure_, board);
+
+        if (topFigure_.figureIndex === 12) {
+            availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.WHITE, board);
+        };
+        var max_ = board.getWhiteMaxIndex();
+        if (topFigure_.figureIndex === 12 + max_) {
+            availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.BLACK, board);
+        };
+        var flag_ = false;
+        for (var i = 0; i < availablePositions.length; i++) {
+            if (targetPositions.equals(availablePositions[i])) {
+                flag_ = true;
+                break;
+            };
+        };
+        console.log('available positions:', availablePositions);
+        console.log('target board pos=', targetPositions);
+        if (flag_ === false) {
+            console.log('Error! Wrong second position!');
+            return false;
+        }
+        console.log('LOGIC.isSecondStepAvailable() Chack target position with use test board:');
+        sampleBoard.SetFigures([], []);
+        // console.log("***************** " + _testBoard.getWhite().length);
+        var allFree_ = board.getFreeAll();
+        for (var i = allFree_.length - 1; i >= 0; i--) {
+            var tmpIndex = allFree_[i].figureIndex;
+            var tmpPosition = allFree_[i].boardPosition.clone();
+            var tmpIndexY = allFree_[i].indexY;// NaN - WTF???
+            // sampleBoard.addTestFigure(tmpIndex, tmpPosition, tmpIndexY);// not work WTF?
+            sampleBoard.addTestFigure(tmpIndex, tmpPosition, 0);
+        };
+        var selectedFigureIndex = topFigure_.figureIndex;
+        // sampleBoard.SetFigures(board.getWhite(),board.getBlack());
+        var testFigure_ = UTILS.getFigureWithIndex(selectedFigureIndex, sampleBoard.getAllFigure());
+        testFigure_.boardPosition = targetPositions;//obj.boardPosition.clone();
+        testFigure_.indexY = 50; // must be top!
+        console.log('LOGIC.isSecondStepAvailable() check _CHECK_');
+        if (that.isCheck(sampleBoard, player)) {
+            console.log("Check!!");
+            return false;
+        };
+        console.log('LOGIC.isSecondStepAvailable() return TRUE!');
+        return true;
+    };
 
     function secondStep(obj, board) {
-        if (player == cPLAYER.NONE) return;
+        console.log('|-- LOGIC.secondStep()');
+        if (player == cPLAYER.NONE) {
+            console.log('Error! (player = none!)');
+            return;
+        };
         var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
         var res = isFigure(obj, board.getAllFigure());
         if (res === true) {
@@ -229,55 +309,65 @@ LOGIC.LogicContainer = function() {
                 state = cSTATE.SOURCE;
                 zeroStep(null, board);
                 RENDER.main.hideTower(board);
+                console.log('LOGIC => cancel select figure!');
                 return;
             };
         };
-
-        var availablePositions = UTILS.getMoveArray(figure_, board, true); //moveArrow
-        availablePositions = that.addAdditionPositions(availablePositions, figure_, board, true);
-        availablePositions = that.removeAdditionPositions(availablePositions, figure_, board);
-
-        if (figure_.figureIndex === 12) {
-            availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.WHITE, board);
-        };
-        var max_ = board.getWhiteMaxIndex();
-        if (figure_.figureIndex === 12 + max_) {
-            availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.BLACK, board);
-        };
-        var flag_ = false;
-        for (var i = 0; i < availablePositions.length; i++) {
-            if (obj.boardPosition.equals(availablePositions[i])) {
-                flag_ = true;
-                break;
-            };
-        };
-        if (flag_ === false) return;
-
-// TODO: var testBoard = board.copy(); 
-        if (_testBoard === 'undefined') {
-            console.log("ERROR!");
+        if ((_testBoard === 'undefined') || (_testBoard === null)) {
+            console.log("\n\nERROR! Test board not found!\n\n");
             return;
         }
-        _testBoard.SetFigures([],[]);
-        // console.log("***************** " + _testBoard.getWhite().length);
-        var allFree_ = board.getFreeAll();
-        for (var i = allFree_.length - 1; i >= 0; i--) {
-            var tmpIndex = allFree_[i].figureIndex;
-            var tmpPosition = allFree_[i].boardPosition.clone();
-            _testBoard.addTestFigure(tmpIndex, tmpPosition);
-        };
-        // _testBoard.SetFigures(board.getWhite(),board.getBlack());
-        var testFigure_ = UTILS.getFigureWithIndex(selectedFigureIndex, _testBoard.getAllFigure());
-        testFigure_.boardPosition = obj.boardPosition.clone();
-
-        if (that.isCheck(_testBoard, player)) {
-            console.log("Check!!");
+        //this.isSecondStepAvailable = function(obj, board, targetPositions, sampleBoard) {
+        if (that.isSecondStepAvailable(figure_, board, obj.boardPosition, _testBoard) === false) {
+            console.log('isSecondStepAvailable => false!');
             return;
         };
+        console.log('LOGIC.secondStep() target position availabe!');
+        // var availablePositions = UTILS.getMoveArray(figure_, board, true); //moveArrow
+        // availablePositions = that.addAdditionPositions(availablePositions, figure_, board, true);
+        // availablePositions = that.removeAdditionPositions(availablePositions, figure_, board);
+
+        // if (figure_.figureIndex === 12) {
+        //     availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.WHITE, board);
+        // };
+        // var max_ = board.getWhiteMaxIndex();
+        // if (figure_.figureIndex === 12 + max_) {
+        //     availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.BLACK, board);
+        // };
+        // var flag_ = false;
+        // for (var i = 0; i < availablePositions.length; i++) {
+        //     if (obj.boardPosition.equals(availablePositions[i])) {
+        //         flag_ = true;
+        //         break;
+        //     };
+        // };
+        // if (flag_ === false) return;
+
+        // // TODO: var testBoard = board.copy(); 
+        // if (_testBoard === 'undefined') {
+        //     console.log("ERROR!");
+        //     return;
+        // }
+        // _testBoard.SetFigures([], []);
+        // // console.log("***************** " + _testBoard.getWhite().length);
+        // var allFree_ = board.getFreeAll();
+        // for (var i = allFree_.length - 1; i >= 0; i--) {
+        //     var tmpIndex = allFree_[i].figureIndex;
+        //     var tmpPosition = allFree_[i].boardPosition.clone();
+        //     _testBoard.addTestFigure(tmpIndex, tmpPosition);
+        // };
+        // // _testBoard.SetFigures(board.getWhite(),board.getBlack());
+        // var testFigure_ = UTILS.getFigureWithIndex(selectedFigureIndex, _testBoard.getAllFigure());
+        // testFigure_.boardPosition = obj.boardPosition.clone();
+
+        // if (that.isCheck(_testBoard, player)) {
+        //     console.log("Check!!");
+        //     return;
+        // };
 
         state = cSTATE.MOVE;
-
-        // rokirovka
+        console.log('LOGIC => state = cSTATE.MOVE')
+            // rokirovka
         var max_ = board.getWhiteMaxIndex();
         var figureDelta_ = 0;
         var ind_ = figure_.figureIndex;
@@ -300,24 +390,38 @@ LOGIC.LogicContainer = function() {
 
         // renderTmpObj(availablePositions);
         targetPosition = obj.clone();
+        console.log('PPPP1', obj.boardPosition);
         targetPosition.boardPosition = obj.boardPosition.clone();
+        console.log('PPPP2', obj.position);
+        targetPosition.position.copy(obj.position);
         var figures_ = board.getAllFigure();
         sourceArray = that.getAllFiguresAtPosition(figure_.boardPosition, figures_);
+        console.log('All figures at position count=%d', sourceArray.length);
         sourceArray = RENDER.main.getTowerUpFigures(sourceArray);
+        console.log('Up figures count=%d', sourceArray.length);
 
         res = isFigure(obj, board.getAllFigure());
         if (res === true) {
             var countDest_ = UTILS.getFigureCountAtPosition(obj.boardPosition, figures_);
             var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition, figures_) - 1;
+            targetPosition.indexYsrc = countSrc_;
+            targetPosition.indexYdst = countDest_;
             countSrc_ -= RENDER.main.getTowerIndex();
             var count_ = countSrc_ + countDest_;
-            targetPosition.position.y = 0.5 + count_ * 0.5;
+            targetPosition.position.y = count_ * 0.5 + 0.5;
+            targetPosition.indexY = count_;
         } else {
             var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition, figures_) - 1;
+            targetPosition.indexYsrc = countSrc_;
+            targetPosition.indexYdst = countSrc_;
             countSrc_ -= RENDER.main.getTowerIndex();
             targetPosition.position.y = 0.5 + countSrc_ * 0.5;
+            targetPosition.indexY = countSrc_;
         };
-
+        console.log('indexYsrc = ',targetPosition.indexYsrc);
+        console.log('indexYdst = ',targetPosition.indexYdst);
+        console.log('Targer position', targetPosition.position);
+        console.log('Target board pos', targetPosition.boardPosition);
         if (RENDER.main.getTowerIndex() > 0) {
             var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition, figures_);
             curStep += "(" + (countSrc_ - RENDER.main.getTowerIndex()) + ")";
@@ -327,6 +431,7 @@ LOGIC.LogicContainer = function() {
         _steps.push(curStep + "-" + step2_);
         console.log("Push: " + curStep + "-" + step2_);
         console.log("current step = " + that.getCurrentStepNum());
+        console.log('LOGIC.secondStep() --|');
     };
     this.removeAdditionPositions = function(positionsArray, figure, board, forPlayer) {
         var player_ = player;
@@ -466,34 +571,49 @@ LOGIC.LogicContainer = function() {
         return maxZFigure_;
     };
     this.Init = function(externalFunc) {
-        funcArrays = [zeroStep, firstStep, secondStep, moveStep, externalFunc];
+        if (externalFunc === undefined) {
+            funcArrays = [zeroStep, firstStep, secondStep, moveStep];
+        } else {
+            funcArrays = [zeroStep, firstStep, secondStep, moveStep, externalFunc];
+        };
     };
     this.ClickOnObject = function(obj, board) {
         if (obj === undefined) return;
         if (board === undefined) return;
         if (board === null) return;
+        console.log('LOGIC.ClickOnObject() with state=%d', state);
         funcArrays[state](obj, board);
     };
-    this.RenderStep = function(board) {
+    this.RenderStep = function(board, testMode) {
         if (state == cSTATE.MOVE) {
             var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
+            if (testMode === undefined) {
+                moveFiguresArray(sourceArray, targetPosition, board);
+            } else {
+                moveFiguresArray(sourceArray, targetPosition, board, 'test');
+            };
+            console.log('target pos', targetPosition.position);
+            console.log('figure pos', figure_.position);
             var dist = figure_.position.distanceTo(targetPosition.position);
+            console.log('Dist=%d', dist);
             if (dist < 0.1) {
-                funcArrays[cSTATE.EXTERNAL]();
+                if (funcArrays[cSTATE.EXTERNAL] !== undefined) {
+                    funcArrays[cSTATE.EXTERNAL]();
+                };
                 state = cSTATE.SOURCE;
                 normalizeFiguresArray(targetPosition, sourceArray, board);
                 zeroStep(null, board);
+                // this.switchPlayer();
                 if (player == cPLAYER.WHITE) {
                     player = cPLAYER.BLACK;
                 } else {
                     player = cPLAYER.WHITE;
                 };
+
                 checkRuleAfterStep(board);
                 that.isMat(board);
                 return;
             };
-            // figure_.position.lerp(targetPosition.position,0.11);
-            moveFiguresArray(sourceArray, targetPosition, board);
         };
     };
 
@@ -625,25 +745,99 @@ LOGIC.LogicContainer = function() {
     };
 
     function normalizeFiguresArray(target, figuresArray, board) {
-        var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
+        console.log('--- Normalize array ---');
+        // var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
         for (var i = 0; i < figuresArray.length; i++) {
+            console.log('1)figure index=', figuresArray[i].figureIndex);
+            console.log('1)pos=', figuresArray[i].position);
+            console.log('1)board pos=', figuresArray[i].boardPosition);
+            console.log('1)indexY = ', sourceArray[i].indexY);
             figuresArray[i].boardPosition.copy(target.boardPosition);
             figuresArray[i].position.x = figuresArray[i].boardPosition.x - 4 + 0.5;
             figuresArray[i].position.z = figuresArray[i].boardPosition.y - 4 + 0.5;
             var target_ = target.position.clone();
-            var scale_ = -sourceArray[i].indexY;
-            figuresArray[i].position.y = target.position.y + scale_ * 0.5;
+            var scale_ = target.indexY - (target.indexYsrc - sourceArray[i].indexY);
+            sourceArray[i].indexY = scale_;
+            console.log('Scale=%d figure position.y=%d', scale_, figuresArray[i].position.y);
+            figuresArray[i].position.y = scale_ * 0.5 + 0.5;
+            console.log('2)pos=', figuresArray[i].position);
+            console.log('2)board pos=', figuresArray[i].boardPosition);
+            console.log('2)indexY = ', sourceArray[i].indexY);
         };
     };
 
-    function moveFiguresArray(figuresArray, target, board) {
-        var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
+    function moveFiguresArray(figuresArray, target, board, testMode) {
+        var lerp_ = 0.0911;
+        if (testMode !== undefined) {
+            console.log('LOGIC.moveFiguresArray');
+        };
+        // var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
+        console.log('Target pos ' + target.position);
+        console.log('Target indexY=%d indexYsrc=%d indexYdst=%d', target.indexY, target.indexYsrc, target.indexYdst);
         for (var i = 0; i < sourceArray.length; i++) {
             var target_ = target.position.clone();
-            var scale_ = -sourceArray[i].indexY;
-            // console.log(scale_);
-            target_.y = target.position.y + scale_ * 0.5;
-            sourceArray[i].position.lerp(target_, 0.0911);
+            var indexYdelta_  = parseInt(target.indexYsrc - sourceArray[i].indexY, 10);
+            var figureIndexY_ = parseInt(sourceArray[i].indexY, 10);
+            var figureIndex_  = parseInt(sourceArray[i].figureIndex, 10);
+            console.log('i=%d figure index=%d indexY=%d, indexYdelta_=%d', i, figureIndex_, figureIndexY_, indexYdelta_);
+            target_.y = target.position.y - indexYdelta_ * 0.5;
+            console.log('1)pos=', sourceArray[i].position);
+            if (testMode === undefined) {
+                sourceArray[i].position.lerp(target_, lerp_);
+            } else {
+                console.log('...');
+                sourceArray[i].position.copy(target_);
+            };
+            console.log('2)pos=', sourceArray[i].position);
+        };
+    };
+    this.switchPlayer = function(obj1, obj2, towerCount, board) {
+        var figures_ = board.getAllFigure();
+        sourceArray = that.getAllFiguresAtPosition(obj1.boardPosition, figures_);
+        var fig1 = that.getTopFigureAtPosition(obj1, board.getAllFigure());
+        var targetPosition = fig1.clone();
+        targetPosition.boardPosition = obj2.boardPosition.clone();
+        var isTargetPosEmpty = isFigureAtPosition(obj2.boardPosition, board.getAllFigure());
+        var count = null;
+        if (isTargetPosEmpty === true) {
+            var countDest_ = UTILS.getFigureCountAtPosition(obj2.boardPosition, figures_);
+            var countSrc_ = UTILS.getFigureCountAtPosition(obj1.boardPosition, figures_);
+            if (towerCount > countSrc_) {
+                console.log('Error! Wrong tower count!');
+                towerCount = 0;
+            }
+            // countSrc_ -= RENDER.main.getTowerIndex();
+            var count_ = countSrc_ + countDest_ - towerCount;
+            targetPosition.position.y = 0.5 + count_ * 0.5;
+            var sourceTower = [];
+            console.log('Counts: src=%d dst=%d tower=%d', countSrc_, countDest_, towerCount);
+            if (towerCount !== 0) {
+                towerCount = countSrc_ - towerCount;
+            };
+            for (var i = 0; i < sourceArray.length; i++) {
+                console.log('source index =%d min index=%d', sourceArray[i].indexY, (towerCount));
+                if (sourceArray[i].indexY >= (towerCount)) {
+                    sourceTower.push(sourceArray[i]);
+                }
+            };
+            console.log('source tower count=%d', sourceTower.length);
+            sourceArray = sourceTower;
+            for (var i = 0; i < sourceArray.length; i++) {
+                // console.log('1)indexY = ', sourceArray[i].indexY);
+                sourceArray[i].indexY += countDest_;
+                console.log('2)indexY = ', sourceArray[i].indexY);
+            };
+        } else {
+            var countSrc_ = UTILS.getFigureCountAtPosition(obj1.boardPosition, figures_) - 1;
+            countSrc_ -= towerCount; //RENDER.main.getTowerIndex();
+            targetPosition.position.y = 0.5 + countSrc_ * 0.5;
+            count = countSrc_;
+        };
+        normalizeFiguresArray(targetPosition, sourceArray, board);
+        if (player == cPLAYER.WHITE) {
+            player = cPLAYER.BLACK;
+        } else {
+            player = cPLAYER.WHITE;
         };
     };
 };
