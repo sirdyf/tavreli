@@ -1,5 +1,5 @@
 var SAMPLES = SAMPLES || {
-    revision: "v0.0.1"
+    revision: "v0.1.0"
 };
 
 if (typeof module === 'object') {
@@ -8,38 +8,38 @@ if (typeof module === 'object') {
 
 SAMPLES.SamplesContainer = function() {
     var _sample = {};
+    var that = this;
 
     this.getSampleString = function() {
         return _sample.steps;
     };
     this.Init = function() {
         num = window.GameDemoNum;
-        if (num == 1) {
-            sample1();
-        } else if (num == 2) {
-            sample2();
-        } else if (num == 3) {
-            sample3();
-        } else {
-            sample4();
-        };
+        that.InitWithSample(num);
     };
     this.InitWithSample = function(sampleNum) {
-        if (sampleNum == 1) {
-            sample1();
-        } else if (sampleNum == 2) {
-            sample2();
-        } else if (sampleNum == 3) {
-            sample3();
+        var sampleArray = [sample1, sample2, sample3, sample4, sample5, sample6];
+        if ((sampleNum > 0) && (sampleNum < 8)) {
+            console.log('InitWithSample:', sampleNum);
+            var curSample = sampleArray[sampleNum - 1];
+            curSample();
         } else {
-            sample4();
+            sample1();
         };
+        console.log('SAMPLES num=%d', sampleNum);
     };
     this.getDescriptionForStep = function(stepNum) {
 
         var ret = _sample.descriptions["step" + stepNum];
         if (ret === undefined) return _sample.descriptions["default"];
         return ret;
+    };
+
+    function sample0() {
+        _sample.steps = "c1-d2 ... b5-d6x";
+        var desc = {};
+        desc['default'] = "А.Карпов - В.Купрейчик, Москва, 1997 год";
+        _sample.descriptions = desc;
     };
     // http://www.tavreli.narod.ru/advice.html
     function sample1() {
@@ -104,6 +104,24 @@ SAMPLES.SamplesContainer = function() {
         desc.step2 = "с1-с2 создавая две угрозы: с2(1)-h7, c2-c7";
         desc.step6 = "после 4. c7(1)-b8 e7-b4 5. b8-a8 b4-b2 или 5. b2-b3 b4-b7 преимущество у черных, а после 4. b1-c3 вся борьба впереди";
         desc.step7 = "Теперь же черные берут в плен князя и лучника c6-b8 и белые сдались";
+        _sample.descriptions = desc;
+    };
+    // http://rus-chess.ru/partii
+    function sample5() {
+        _sample.steps = "d1-c1 b8-c6 f1-e2 d8-e7 c1-d2 e7-e6 g1-e2 f8-d6 d2-e2 g8-e7 b1-c3 c8-d7 e2(5)-d3 h7-h6 a1-d1 e6-d7 d3-d5 0-0-0 d5-d3 d7-c6 d3-h3+ c8-b8 h3-f3 c6(4)-d6 g2-g3 d6-h6x";
+        var desc = {};
+        desc['default'] = "Ларцева С. – Овчинникова Ю., Рязань 2002г.";
+        desc.step15 = "Лучше 0-0-0";
+        desc.step17 = "Нападая на f7";
+        desc.step25 = "От многочисленных угроз: h6-h2, h6(4)-c1 и h6(4)-d2+ защиты нет, поэтому белые сдались.";
+        desc.step26 = desc.step25;
+        _sample.descriptions = desc;
+    };
+
+    function sample6() {
+        _sample.steps = "g1-f3 f8-e7 f1-e2 d8-e7 b1-c3 c8-d7 c1-d2 b8-c6 d1-d2 d7(1)-e6 d2-e2 e7-e6 0-0 g8-e7 e2-e4 h7-h6 e4-f4 e7-d5 f4-g3 0-0 a1-e1 a8-e8 e1-e5? d5-c3! f1-e1 e6-d6! g3-f4 c3-e2! e1-e2 d6-d1+ e2-e1 d1(2)-f3 e1(2)-d1 f3-d1 f4(3)-d2? d1(5)-d2x";
+        var desc = {};
+        desc['default'] = "Безгодова С. – Ершова С., Рязань 2002г.";
         _sample.descriptions = desc;
     };
 };

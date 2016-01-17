@@ -99,7 +99,7 @@ LOGIC.LogicContainer = function() {
             return;
         };
         var figures_ = board.getAllFigure();
-        console.log('figures count=',figures_.length);
+        console.log('figures count=', figures_.length);
         var topFigure_ = that.getTopFigureAtPosition(obj, figures_);
         console.log('Top figure index=%d, indexY=%d', topFigure_.figureIndex, topFigure_.indexY);
         UTILS.removeAllArrowWithArray(figures_);
@@ -266,6 +266,7 @@ LOGIC.LogicContainer = function() {
             };
         };
         console.log('available positions:', availablePositions);
+        console.log('source board pos=', obj.boardPosition);
         console.log('target board pos=', targetPositions);
         if (flag_ === false) {
             console.log('Error! Wrong second position!');
@@ -278,16 +279,35 @@ LOGIC.LogicContainer = function() {
         for (var i = allFree_.length - 1; i >= 0; i--) {
             var tmpIndex = allFree_[i].figureIndex;
             var tmpPosition = allFree_[i].boardPosition.clone();
-            var tmpIndexY = allFree_[i].indexY;// NaN - WTF???
+            var tmpIndexY = allFree_[i].indexY; // NaN - WTF???
             // sampleBoard.addTestFigure(tmpIndex, tmpPosition, tmpIndexY);// not work WTF?
             sampleBoard.addTestFigure(tmpIndex, tmpPosition, 0);
         };
         var selectedFigureIndex = topFigure_.figureIndex;
         // sampleBoard.SetFigures(board.getWhite(),board.getBlack());
         var testFigure_ = UTILS.getFigureWithIndex(selectedFigureIndex, sampleBoard.getAllFigure());
-        testFigure_.boardPosition = targetPositions;//obj.boardPosition.clone();
-        testFigure_.indexY = 50; // must be top!
+
+        // TODO: move all figure at position!!
+        // testFigure_.boardPosition = targetPositions; //obj.boardPosition.clone();
+        // testFigure_.indexY = 50; // must be top!
+        // testFigure_.position.y = 50;
+        var figures_ = sampleBoard.getAllFigure();
+        var sourceArrayTMP = sampleBoard.getAllFiguresAtPosition(obj.boardPosition);
+        console.log('All figures at position count=%d', sourceArrayTMP.length);
+        sourceArrayTMP = RENDER.main.getTowerUpFigures(sourceArrayTMP);
+        console.log('Up figures count=%d', sourceArrayTMP.length);
+        for (var i = 0; i < sourceArrayTMP.length; i++) {
+            sourceArrayTMP[i].boardPosition = targetPositions;
+            sourceArrayTMP[i].indexY += 50;
+            sourceArrayTMP[i].position.y += 50;
+        };
+
         console.log('LOGIC.isSecondStepAvailable() check _CHECK_');
+        console.log('All figures at target position:', targetPositions);
+        // var figuresTMP_ = sampleBoard.getAllFiguresAtPosition(targetPositions);
+        // for (var i = 0; i < figuresTMP_.length; i++) {
+        //     console.log('i=%d figureIndex=%d figureIndexY=%d',i, figuresTMP_[i].figureIndex, figuresTMP_[i].indexY);
+        // };
         if (that.isCheck(sampleBoard, player)) {
             console.log("Check!!");
             return false;
@@ -319,51 +339,11 @@ LOGIC.LogicContainer = function() {
         }
         //this.isSecondStepAvailable = function(obj, board, targetPositions, sampleBoard) {
         if (that.isSecondStepAvailable(figure_, board, obj.boardPosition, _testBoard) === false) {
+        // if (that.isSecondStepAvailable(obj, board, figure_.boardPosition, _testBoard) === false) {
             console.log('isSecondStepAvailable => false!');
             return;
         };
         console.log('LOGIC.secondStep() target position availabe!');
-        // var availablePositions = UTILS.getMoveArray(figure_, board, true); //moveArrow
-        // availablePositions = that.addAdditionPositions(availablePositions, figure_, board, true);
-        // availablePositions = that.removeAdditionPositions(availablePositions, figure_, board);
-
-        // if (figure_.figureIndex === 12) {
-        //     availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.WHITE, board);
-        // };
-        // var max_ = board.getWhiteMaxIndex();
-        // if (figure_.figureIndex === 12 + max_) {
-        //     availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.BLACK, board);
-        // };
-        // var flag_ = false;
-        // for (var i = 0; i < availablePositions.length; i++) {
-        //     if (obj.boardPosition.equals(availablePositions[i])) {
-        //         flag_ = true;
-        //         break;
-        //     };
-        // };
-        // if (flag_ === false) return;
-
-        // // TODO: var testBoard = board.copy(); 
-        // if (_testBoard === 'undefined') {
-        //     console.log("ERROR!");
-        //     return;
-        // }
-        // _testBoard.SetFigures([], []);
-        // // console.log("***************** " + _testBoard.getWhite().length);
-        // var allFree_ = board.getFreeAll();
-        // for (var i = allFree_.length - 1; i >= 0; i--) {
-        //     var tmpIndex = allFree_[i].figureIndex;
-        //     var tmpPosition = allFree_[i].boardPosition.clone();
-        //     _testBoard.addTestFigure(tmpIndex, tmpPosition);
-        // };
-        // // _testBoard.SetFigures(board.getWhite(),board.getBlack());
-        // var testFigure_ = UTILS.getFigureWithIndex(selectedFigureIndex, _testBoard.getAllFigure());
-        // testFigure_.boardPosition = obj.boardPosition.clone();
-
-        // if (that.isCheck(_testBoard, player)) {
-        //     console.log("Check!!");
-        //     return;
-        // };
 
         state = cSTATE.MOVE;
         console.log('LOGIC => state = cSTATE.MOVE')
@@ -418,8 +398,8 @@ LOGIC.LogicContainer = function() {
             targetPosition.position.y = 0.5 + countSrc_ * 0.5;
             targetPosition.indexY = countSrc_;
         };
-        console.log('indexYsrc = ',targetPosition.indexYsrc);
-        console.log('indexYdst = ',targetPosition.indexYdst);
+        console.log('indexYsrc = ', targetPosition.indexYsrc);
+        console.log('indexYdst = ', targetPosition.indexYdst);
         console.log('Targer position', targetPosition.position);
         console.log('Target board pos', targetPosition.boardPosition);
         if (RENDER.main.getTowerIndex() > 0) {
@@ -687,11 +667,12 @@ LOGIC.LogicContainer = function() {
             volhvObj_ = UTILS.getFigureWithIndex(maxWhiteIndex_ + 12, board.getBlack());
         } else {
             enemyPlayer_ = cPLAYER.BLACK;
-            allFigures_ = board.getBlack();
+            allFigures_ = board.getFreeBlack();
             volhvObj_ = UTILS.getFigureWithIndex(12, board.getWhite());
         };
         var allAttackPositions = [];
         for (var i = allFigures_.length - 1; i >= 0; i--) {
+    // this.getAllPositionsForFigure = function(figureIndex, board, forPlayer, isNeedAllPositions) {
             var tmpPosArray = that.getAllPositionsForFigure([allFigures_[i].figureIndex], board, enemyPlayer_);
             if (tmpPosArray.length > 0) {
                 allAttackPositions = allAttackPositions.concat(tmpPosArray);
@@ -705,6 +686,12 @@ LOGIC.LogicContainer = function() {
             // console.log(allAttackPositions[i]);
             if (allAttackPositions[i].equals(volhvObj_.boardPosition)) {
                 isVolhvAttack = true;
+                console.log('Check attack position for figures:');
+                for (var i = allFigures_.length - 1; i >= 0; i--) {
+                    console.log('Figure name=%s index=%d indexY=%d boardPosition', allFigures_[i].main.name, allFigures_[i].figureIndex, allFigures_[i].indexY, allFigures_[i].boardPosition);
+                    var tmpPosArray = that.getAllPositionsForFigure([allFigures_[i].figureIndex], board, enemyPlayer_);
+                    console.log(tmpPosArray);
+                };
                 break;
             };
         };
@@ -776,9 +763,9 @@ LOGIC.LogicContainer = function() {
         console.log('Target indexY=%d indexYsrc=%d indexYdst=%d', target.indexY, target.indexYsrc, target.indexYdst);
         for (var i = 0; i < sourceArray.length; i++) {
             var target_ = target.position.clone();
-            var indexYdelta_  = parseInt(target.indexYsrc - sourceArray[i].indexY, 10);
+            var indexYdelta_ = parseInt(target.indexYsrc - sourceArray[i].indexY, 10);
             var figureIndexY_ = parseInt(sourceArray[i].indexY, 10);
-            var figureIndex_  = parseInt(sourceArray[i].figureIndex, 10);
+            var figureIndex_ = parseInt(sourceArray[i].figureIndex, 10);
             console.log('i=%d figure index=%d indexY=%d, indexYdelta_=%d', i, figureIndex_, figureIndexY_, indexYdelta_);
             target_.y = target.position.y - indexYdelta_ * 0.5;
             console.log('1)pos=', sourceArray[i].position);

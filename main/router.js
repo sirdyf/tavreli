@@ -1,5 +1,5 @@
 var ROUTER = ROUTER || {
-    revision: "v0.0.2"
+    revision: "v0.1.0"
 };
 if (typeof module === 'object') {
     module.exports = ROUTER;
@@ -18,8 +18,8 @@ ROUTER.RouterContainer = function() {
     var _board = null;
     var _sampleArray = null;
     var _currentStepNum = 0;
-    var _DEBUG = false;
-    var _pauseOnStep = 1112;
+    var _DEBUG = true;
+    var _pauseOnStep = 28;
     var _serverUrl = null;
     var _network = [];
     var _timePingPong = null;
@@ -263,7 +263,8 @@ ROUTER.RouterContainer = function() {
             var not_ = stepNotation;
             console.log(not_);
             var max_ = board.getWhiteMaxIndex();
-            if ((not_ == '0') || (not_ == 0)) {
+            if ((not_ == '0') || (not_ == '0-0') || (not_ == 0)) {
+                console.log('Short rokirovka!');
                 if (_currentStepNum % 2 == 0) {
                     obj_ = UTILS.getFigureWithIndex(12, board.getAllFigure());
                 } else {
@@ -272,6 +273,7 @@ ROUTER.RouterContainer = function() {
                 _logic.ClickOnObject(obj_, board);
                 return;
             }
+            console.log('_');
             //************************************************************************
             if (not_.length > 2) {
                 var towerIndex_ = not_.substring(3);
@@ -357,7 +359,7 @@ ROUTER.RouterContainer = function() {
                 console.log('Wait oponents');
             };
         } else if (_state == rSTATE.AUTO) {
-            console.log('jnjnjnjnjnjjnjnjnjn', _currentStepNum, _sampleArray);
+            console.log('Sample mode:', _currentStepNum);
             if (_currentStepNum * 2 >= _sampleArray.length) {
                 _DEBUG = false;
                 _state = rSTATE.NONE;
@@ -578,7 +580,6 @@ ROUTER.RouterContainer = function() {
             $('#description').html(desc_);
             _state = window.GameState;
             var sampleStr_ = SAMPLES.main.getSampleString();
-            console.log('dddddddddddddddd', sampleStr_);
             _sampleArray = PARSER.main.parseString(sampleStr_);
             console.log(_sampleArray);
             clickMouse();

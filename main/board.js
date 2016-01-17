@@ -95,6 +95,9 @@ TAVRELI.init = function() {
         };
         var maxZFigure_ = figures_[0];
         for (var i = 1; i < figures_.length; i++) {
+            if (figures_[i].position.y == 50){
+                console.log('Target figure available!!! i=%d length=%d', i, figures_.length);
+            };
             if (figures_[i].position.y > maxZFigure_.position.y) {
                 maxZFigure_ = figures_[i];
             };
@@ -576,7 +579,7 @@ TAVRELI.init = function() {
         if (index_ > -1) {
             figures.allFigure.splice(index_, 1);
         }
-        console.log('BOARD.convertRatnikWithIndex=%d', figureIndex, scene);
+        console.log('BOARD.convertRatnikWithIndex=%d', figureIndex);
         if (scene) {
             scene.remove(figure_);
         };
@@ -588,7 +591,7 @@ TAVRELI.init = function() {
             mainFigure = new Chess(originCube);
             chess = mainFigure.getMainObj().clone();
         };
-        console.log(figure_);
+        // console.log(figure_);
         chess.name = 'figure';
         chess.boardPosition = new THREE.Vector2();
         chess.boardPosition.copy(figure_.boardPosition);
@@ -601,7 +604,7 @@ TAVRELI.init = function() {
             if (_testMode === true) {
                 chess = that.makeTestFigure(figureIndexNew, chess.boardPosition, figure_.indexY);
             } else {
-                that.makeFigureWithIndex(chess, figureIndexNew);
+                makeFigureWithIndex(chess, figureIndexNew);
             };
             // make Helgi
             chess.figureIndex = figureIndexNew + 8; // add 8 for create new unique figure index
@@ -611,7 +614,7 @@ TAVRELI.init = function() {
             if (_testMode === true) {
                 chess = that.makeTestFigure(figureIndexNew, chess.boardPosition, figure_.indexY);
             } else {
-                that.makeFigureWithIndex(chess, figureIndexNew);
+                makeFigureWithIndex(chess, figureIndexNew);
             };
             chess.figureIndex = figureIndexNew + 8; // add 8 for create new unique figure index
         };
@@ -619,7 +622,7 @@ TAVRELI.init = function() {
         chess.position.y = chess.indexY * 0.5 + 0.5;
         console.log('BOARD figures.allFigure count=', figures.allFigure.length);
         figures.allFigure.push(chess);
-        console.log(chess);
+        // console.log(chess);
         console.log('BOARD figures.allFigure count=', figures.allFigure.length);
         if (scene) {
             scene.add(chess);
