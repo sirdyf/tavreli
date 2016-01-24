@@ -7,6 +7,8 @@ var container, stats;
 
 var camera, scene, renderer, projector;
 
+var ROUTER;
+
 var num = 0;
 
 var mouseX = 0,
@@ -71,7 +73,17 @@ function init() {
         document.getElementById("val_right").innerHTML = "not supported";
 
     }
-    scene.main = new TAVRELI.init();
+    var myLogger = log4javascript.getDefaultLogger();
+    myLogger.setLevel(log4javascript.Level.OFF);
+    var config = {};
+    config.logger = myLogger;
+
+    var testLogic = new LOGIC.LogicContainer(config);
+    testLogic.Init();
+
+    ROUTER.main = new ROUTER.RouterContainer(config);
+
+    scene.main = new TAVRELI.init(config);
     scene.main.creates();
 
     // model
@@ -80,7 +92,7 @@ function init() {
         scene.main.createModel(object);
         scene.main.getMaterialFromObj(object, window.GameState);
         ROUTER.main.Init(window.GameState, null, scene.main);
-        RENDER.main = new RENDER.RenderContainer();
+        RENDER.main = new RENDER.RenderContainer(config);
     });
 
 
@@ -98,7 +110,7 @@ function init() {
     var width = window.innerWidth || 2;
     var height = window.innerHeight || 2;
 
-    ROUTER.main = new ROUTER.RouterContainer();
+    // ROUTER.main = new ROUTER.RouterContainer();
     // ROUTER.main.Init(window.GameState, null, scene.main);
 }
 

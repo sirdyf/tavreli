@@ -1,5 +1,5 @@
 var LOGIC = LOGIC || {
-    revision: "v0.1.3"
+    revision: "v0.1.4"
 };
 
 if (typeof module === 'object') {
@@ -7,7 +7,7 @@ if (typeof module === 'object') {
 }
 
 // function LogicContainer() {
-LOGIC.LogicContainer = function() {
+LOGIC.LogicContainer = function(config) {
     var funcArrays = null;
     var that = this;
     var cSTATE = {
@@ -33,6 +33,10 @@ LOGIC.LogicContainer = function() {
 
     var _testBoard = null;
     // TODO: var testBoard = board.copy(); 
+
+    var _config = config;
+    var logger = _config.logger;
+
     this.setTestBoard = function(testBoard) {
         _testBoard = testBoard;
     };
@@ -60,7 +64,7 @@ LOGIC.LogicContainer = function() {
     };
 
     function zeroStep(obj, board) {
-        console.log('zero step');
+        logger.debug('zero step');
         UTILS.removeAllArrowWithArray(board.getAllFigure());
         board.deSelectFigureWithIndex(selectedFigureIndex);
         selectedFigureIndex = null;
@@ -76,38 +80,38 @@ LOGIC.LogicContainer = function() {
         var resB = isFigureIndexContaints(topFigure_.figureIndex, board.getBlack());
         if ((player == cPLAYER.WHITE) && (resB === true)) {
             // if obj is enemy figure
-            console.log('Error! Selected enemy figure!');
+            logger.debug('Error! Selected enemy figure!');
             return false;
         };
         if ((player == cPLAYER.BLACK) && (resW === true)) {
             // if obj is enemy figure
-            console.log('Error! Selected enemy figure!');
+            logger.debug('Error! Selected enemy figure!');
             return false;
         };
         return true;
     };
 
     function firstStep(obj, board) {
-        console.log('LOGIC.firstStep()');
+        logger.debug('LOGIC.firstStep()');
         if (player == cPLAYER.NONE) {
-            console.log('Error! (player = none!)');
+            logger.debug('Error! (player = none!)');
             return;
         };
 
         if (that.isFirstStepAvailable(obj, board) === false) {
-            console.log('Obj can not be selected!');
+            logger.debug('Obj can not be selected!');
             return;
         };
         var figures_ = board.getAllFigure();
-        console.log('figures count=', figures_.length);
+        logger.debug('figures count=', figures_.length);
         var topFigure_ = that.getTopFigureAtPosition(obj, figures_);
-        console.log('Top figure index=%d, indexY=%d', topFigure_.figureIndex, topFigure_.indexY);
+        logger.debug('Top figure index=%d, indexY=%d', topFigure_.figureIndex, topFigure_.indexY);
         UTILS.removeAllArrowWithArray(figures_);
         board.deSelectFigureWithIndex(selectedFigureIndex);
         selectedFigureIndex = topFigure_.figureIndex; //getFigureIndex(obj,board.getAllFigure());
         board.selectFigureWithIndex(selectedFigureIndex);
         state = cSTATE.TARGET;
-        console.log('LOGIC.firstStep() state=cSTATE.TARGET')
+        logger.debug('LOGIC.firstStep() state=cSTATE.TARGET')
         var availablePositions = that.getAllPositionsForFigure(selectedFigureIndex, board);
         if (selectedFigureIndex === 12) {
             availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.WHITE, board);
@@ -119,12 +123,12 @@ LOGIC.LogicContainer = function() {
         var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
         // renderTmpObj(availablePositions);
         UTILS.showAvailablePositions(availablePositions, figure_);
-        // console.log('figure=' + topFigure_);
+        // logger.debug('figure=' + topFigure_);
         var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition, figures_) - 1;
         if (countSrc_ > 0) {
             RENDER.main.showTowerWithPosition(figure_, board);
         };
-        // console.log(PARSER.main.getNotationFromStep(figure_.boardPosition));
+        // logger.debug(PARSER.main.getNotationFromStep(figure_.boardPosition));
         curStep = PARSER.main.getNotationFromStep(figure_.boardPosition);
     };
     this.getAllPositionsForFigure = function(figureIndex, board, forPlayer, isNeedAllPositions) {
@@ -135,11 +139,11 @@ LOGIC.LogicContainer = function() {
         if (forPlayer !== undefined) {
             player_ = forPlayer;
         };
-        // console.log("-----getAllFigure");
-        // console.log(board.getAllFigure());
+        // logger.debug("-----getAllFigure");
+        // logger.debug(board.getAllFigure());
         var figure_ = UTILS.getFigureWithIndex(figureIndex, board.getAllFigure());
-        // console.log("-----");
-        // console.log(figure_);
+        // logger.debug("-----");
+        // logger.debug(figure_);
         var availablePositions_ = UTILS.getMoveArray(figure_, board, isNeedAllPositions);
         availablePositions_ = that.addAdditionPositions(availablePositions_, figure_, board, isNeedAllPositions);
         availablePositions_ = that.removeAdditionPositions(availablePositions_, figure_, board, player_);
@@ -187,13 +191,17 @@ LOGIC.LogicContainer = function() {
             };
         };
         // ---------- HELGI
-        if ((ind_ == 20) || (ind_ == max_ + 20)) { //helgi
+        if ((ind_ == 20 + 8) || (ind_ == max_ + 20 + 8)) { //helgi
             var main_ = new FIGURES.VsadnikContainer();
             var extendAvailablePosition = UTILS.getMoveArrayExt(main_, figure.boardPosition, board, false);
-            // console.log(extendAvailablePosition);
+            logger.debug('extendAvailablePosition:', extendAvailablePosition);
+            // var extRet = [];
             if (isAllPositionsNeed === false) {
-                for (var i = 8; i < retArray.length; i++) {
-                    retArray[i].copy(extendAvailablePosition[i - 8]);
+                // for (var i = 8; i < retArray.length; i++) {
+                //     retArray[i].copy(extendAvailablePosition[i - 8]);
+                // };
+                for (var i = 0; i < extendAvailablePosition.length; i++) {
+                    retArray.push(extendAvailablePosition[i].clone());
                 };
             } else {
                 for (var i = 0; i < extendAvailablePosition.length; i++) {
@@ -250,38 +258,21 @@ LOGIC.LogicContainer = function() {
         var availablePositions = UTILS.getMoveArray(topFigure_, board, true); //moveArrow
         availablePositions = that.addAdditionPositions(availablePositions, topFigure_, board, true);
         availablePositions = that.removeAdditionPositions(availablePositions, topFigure_, board);
+        // logger.debug('Figure index=%d, available positions:', topFigure_.figureIndex, availablePositions);
+        logger.debug('Figure index=%d', topFigure_.figureIndex);
 
-        if (topFigure_.figureIndex === 12) {
-            availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.WHITE, board);
-        };
-        var max_ = board.getWhiteMaxIndex();
-        if (topFigure_.figureIndex === 12 + max_) {
-            availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.BLACK, board);
-        };
-        var flag_ = false;
-        for (var i = 0; i < availablePositions.length; i++) {
-            if (targetPositions.equals(availablePositions[i])) {
-                flag_ = true;
-                break;
-            };
-        };
-        console.log('available positions:', availablePositions);
-        console.log('source board pos=', obj.boardPosition);
-        console.log('target board pos=', targetPositions);
-        if (flag_ === false) {
-            console.log('Error! Wrong second position!');
-            return false;
-        }
-        console.log('LOGIC.isSecondStepAvailable() Chack target position with use test board:');
+        logger.debug('LOGIC.isSecondStepAvailable() Check target position with use test board:');
         sampleBoard.SetFigures([], []);
-        // console.log("***************** " + _testBoard.getWhite().length);
-        var allFree_ = board.getFreeAll();
+        // logger.debug("***************** " + _testBoard.getWhite().length);
+        var allFree_ = board.getAllFigure();
         for (var i = allFree_.length - 1; i >= 0; i--) {
             var tmpIndex = allFree_[i].figureIndex;
             var tmpPosition = allFree_[i].boardPosition.clone();
             var tmpIndexY = allFree_[i].indexY; // NaN - WTF???
-            // sampleBoard.addTestFigure(tmpIndex, tmpPosition, tmpIndexY);// not work WTF?
-            sampleBoard.addTestFigure(tmpIndex, tmpPosition, 0);
+            // logger.debug('tmpIndexY=%d', tmpIndexY);
+            // logger.debug(' LOGIC. add figure');
+            sampleBoard.addTestFigure(tmpIndex, tmpPosition, tmpIndexY);
+            // sampleBoard.addTestFigure(tmpIndex, tmpPosition, 0);
         };
         var selectedFigureIndex = topFigure_.figureIndex;
         // sampleBoard.SetFigures(board.getWhite(),board.getBlack());
@@ -292,34 +283,68 @@ LOGIC.LogicContainer = function() {
         // testFigure_.indexY = 50; // must be top!
         // testFigure_.position.y = 50;
         var figures_ = sampleBoard.getAllFigure();
+        logger.debug('isSecondStepAvailable _1', obj.boardPosition);
         var sourceArrayTMP = sampleBoard.getAllFiguresAtPosition(obj.boardPosition);
-        console.log('All figures at position count=%d', sourceArrayTMP.length);
+        logger.debug('isSecondStepAvailable _2', sourceArrayTMP.length);
+        logger.debug('All figures at position count=%d', sourceArrayTMP.length);
         sourceArrayTMP = RENDER.main.getTowerUpFigures(sourceArrayTMP);
-        console.log('Up figures count=%d', sourceArrayTMP.length);
+        logger.debug('Up figures count=%d', sourceArrayTMP.length);
+        var rrr_ = 0;
         for (var i = 0; i < sourceArrayTMP.length; i++) {
             sourceArrayTMP[i].boardPosition = targetPositions;
+            if ((rrr_ == 1) && (sourceArrayTMP[i].indexY == 0)) {
+                logger.debug('RRR!!!!!!!!');
+                return false;
+            };
+            if (sourceArrayTMP[i].indexY == 0) {
+                rrr_ = 1;
+            };
             sourceArrayTMP[i].indexY += 50;
             sourceArrayTMP[i].position.y += 50;
         };
 
-        console.log('LOGIC.isSecondStepAvailable() check _CHECK_');
-        console.log('All figures at target position:', targetPositions);
+        if (topFigure_.figureIndex === 12) {
+            availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.WHITE, sampleBoard);
+            logger.debug('available positions after remove attacked positions:', availablePositions);
+        };
+        var max_ = sampleBoard.getWhiteMaxIndex();
+        if (topFigure_.figureIndex === 12 + max_) {
+            availablePositions = that.removeAttackedPosition(availablePositions, cPLAYER.BLACK, sampleBoard);
+            logger.debug('available positions after remove attacked positions:', availablePositions);
+        };
+        var flag_ = false;
+        for (var i = 0; i < availablePositions.length; i++) {
+            if (targetPositions.equals(availablePositions[i])) {
+                flag_ = true;
+                break;
+            };
+        };
+        // logger.debug('available positions:', availablePositions);
+        logger.debug('source board pos=', obj.boardPosition);
+        logger.debug('target board pos=', targetPositions);
+        if (flag_ === false) {
+            logger.debug('Error! Wrong second position!');
+            return false;
+        }
+
+        logger.debug('LOGIC.isSecondStepAvailable() check _CHECK_');
+        logger.debug('All figures at target position:', targetPositions);
         // var figuresTMP_ = sampleBoard.getAllFiguresAtPosition(targetPositions);
         // for (var i = 0; i < figuresTMP_.length; i++) {
-        //     console.log('i=%d figureIndex=%d figureIndexY=%d',i, figuresTMP_[i].figureIndex, figuresTMP_[i].indexY);
+        //     logger.debug('i=%d figureIndex=%d figureIndexY=%d',i, figuresTMP_[i].figureIndex, figuresTMP_[i].indexY);
         // };
         if (that.isCheck(sampleBoard, player)) {
-            console.log("Check!!");
+            logger.debug("Check!!");
             return false;
         };
-        console.log('LOGIC.isSecondStepAvailable() return TRUE!');
+        logger.debug('LOGIC.isSecondStepAvailable() return TRUE!');
         return true;
     };
 
     function secondStep(obj, board) {
-        console.log('|-- LOGIC.secondStep()');
+        logger.debug('|-- LOGIC.secondStep()');
         if (player == cPLAYER.NONE) {
-            console.log('Error! (player = none!)');
+            logger.debug('Error! (player = none!)');
             return;
         };
         var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
@@ -329,24 +354,24 @@ LOGIC.LogicContainer = function() {
                 state = cSTATE.SOURCE;
                 zeroStep(null, board);
                 RENDER.main.hideTower(board);
-                console.log('LOGIC => cancel select figure!');
+                logger.debug('LOGIC => cancel select figure!');
                 return;
             };
         };
         if ((_testBoard === 'undefined') || (_testBoard === null)) {
-            console.log("\n\nERROR! Test board not found!\n\n");
+            logger.debug("\n\nERROR! Test board not found!\n\n");
             return;
         }
         //this.isSecondStepAvailable = function(obj, board, targetPositions, sampleBoard) {
         if (that.isSecondStepAvailable(figure_, board, obj.boardPosition, _testBoard) === false) {
-        // if (that.isSecondStepAvailable(obj, board, figure_.boardPosition, _testBoard) === false) {
-            console.log('isSecondStepAvailable => false!');
+            // if (that.isSecondStepAvailable(obj, board, figure_.boardPosition, _testBoard) === false) {
+            logger.debug('isSecondStepAvailable => false!');
             return;
         };
-        console.log('LOGIC.secondStep() target position availabe!');
+        logger.debug('LOGIC.secondStep() target position availabe!');
 
         state = cSTATE.MOVE;
-        console.log('LOGIC => state = cSTATE.MOVE')
+        logger.debug('LOGIC => state = cSTATE.MOVE')
             // rokirovka
         var max_ = board.getWhiteMaxIndex();
         var figureDelta_ = 0;
@@ -370,15 +395,15 @@ LOGIC.LogicContainer = function() {
 
         // renderTmpObj(availablePositions);
         targetPosition = obj.clone();
-        console.log('PPPP1', obj.boardPosition);
+        // logger.debug('PPPP1', obj.boardPosition);
         targetPosition.boardPosition = obj.boardPosition.clone();
-        console.log('PPPP2', obj.position);
+        // logger.debug('PPPP2', obj.position);
         targetPosition.position.copy(obj.position);
         var figures_ = board.getAllFigure();
         sourceArray = that.getAllFiguresAtPosition(figure_.boardPosition, figures_);
-        console.log('All figures at position count=%d', sourceArray.length);
+        logger.debug('All figures at position count=%d', sourceArray.length);
         sourceArray = RENDER.main.getTowerUpFigures(sourceArray);
-        console.log('Up figures count=%d', sourceArray.length);
+        logger.debug('Up figures count=%d', sourceArray.length);
 
         res = isFigure(obj, board.getAllFigure());
         if (res === true) {
@@ -398,10 +423,10 @@ LOGIC.LogicContainer = function() {
             targetPosition.position.y = 0.5 + countSrc_ * 0.5;
             targetPosition.indexY = countSrc_;
         };
-        console.log('indexYsrc = ', targetPosition.indexYsrc);
-        console.log('indexYdst = ', targetPosition.indexYdst);
-        console.log('Targer position', targetPosition.position);
-        console.log('Target board pos', targetPosition.boardPosition);
+        logger.debug('indexYsrc = ', targetPosition.indexYsrc);
+        logger.debug('indexYdst = ', targetPosition.indexYdst);
+        logger.debug('Targer position', targetPosition.position);
+        logger.debug('Target board pos', targetPosition.boardPosition);
         if (RENDER.main.getTowerIndex() > 0) {
             var countSrc_ = UTILS.getFigureCountAtPosition(figure_.boardPosition, figures_);
             curStep += "(" + (countSrc_ - RENDER.main.getTowerIndex()) + ")";
@@ -409,9 +434,9 @@ LOGIC.LogicContainer = function() {
         RENDER.main.hideTower(board);
         var step2_ = PARSER.main.getNotationFromStep(obj.boardPosition);
         _steps.push(curStep + "-" + step2_);
-        console.log("Push: " + curStep + "-" + step2_);
-        console.log("current step = " + that.getCurrentStepNum());
-        console.log('LOGIC.secondStep() --|');
+        logger.debug("Push: " + curStep + "-" + step2_);
+        logger.debug("current step = " + that.getCurrentStepNum());
+        logger.debug('LOGIC.secondStep() --|');
     };
     this.removeAdditionPositions = function(positionsArray, figure, board, forPlayer) {
         var player_ = player;
@@ -462,7 +487,7 @@ LOGIC.LogicContainer = function() {
         tmpObj.boardPosition = position.clone();
         var max_ = board.getWhiteMaxIndex();
         var checkFiguresArray_ = null;
-        if (figure.figureIndex < max_) {
+        if (figure.figureIndex <= max_) {
             checkFiguresArray_ = board.getFreeBlack();
         } else {
             checkFiguresArray_ = board.getFreeWhite();
@@ -472,12 +497,12 @@ LOGIC.LogicContainer = function() {
 
     function renderTmpObj(posArray) {
         for (var i = 0; i < posArray.length; i++) {
-            console.log(posArray[i].x + ' ' + posArray[i].z);
+            logger.debug(posArray[i].x + ' ' + posArray[i].z);
         };
     };
 
     function moveStep(obj, board) {
-        console.log('move step');
+        logger.debug('move step');
     };
     this.getFigureIndex = function(obj, figureArray) {
         for (var i = 0; i < figureArray.length; i++) {
@@ -561,7 +586,7 @@ LOGIC.LogicContainer = function() {
         if (obj === undefined) return;
         if (board === undefined) return;
         if (board === null) return;
-        console.log('LOGIC.ClickOnObject() with state=%d', state);
+        logger.debug('LOGIC.ClickOnObject() with state=%d', state);
         funcArrays[state](obj, board);
     };
     this.RenderStep = function(board, testMode) {
@@ -572,10 +597,10 @@ LOGIC.LogicContainer = function() {
             } else {
                 moveFiguresArray(sourceArray, targetPosition, board, 'test');
             };
-            console.log('target pos', targetPosition.position);
-            console.log('figure pos', figure_.position);
+            logger.debug('target pos', targetPosition.position);
+            logger.debug('figure pos', figure_.position);
             var dist = figure_.position.distanceTo(targetPosition.position);
-            console.log('Dist=%d', dist);
+            logger.debug('Dist=%d', dist);
             if (dist < 0.1) {
                 if (funcArrays[cSTATE.EXTERNAL] !== undefined) {
                     funcArrays[cSTATE.EXTERNAL]();
@@ -657,41 +682,60 @@ LOGIC.LogicContainer = function() {
     };
     // checkmate
     this.isCheck = function(board, forPlayer) {
+        logger.debug('isCheck');
         var allFigures_ = [];
         var volhvObj_ = null;
         var enemyPlayer_ = null;
         var maxWhiteIndex_ = board.getWhiteMaxIndex();
+        logger.debug('isCheck _1');
         if (forPlayer == cPLAYER.BLACK) {
+            logger.debug('isCheck _2');
             enemyPlayer_ = cPLAYER.WHITE;
             allFigures_ = board.getFreeWhite();
             volhvObj_ = UTILS.getFigureWithIndex(maxWhiteIndex_ + 12, board.getBlack());
+            logger.debug('BLACK Volhv position:', volhvObj_.boardPosition);
         } else {
+            logger.debug('isCheck _3');
             enemyPlayer_ = cPLAYER.BLACK;
             allFigures_ = board.getFreeBlack();
             volhvObj_ = UTILS.getFigureWithIndex(12, board.getWhite());
+            logger.debug('WHITE Volhv position:', volhvObj_.boardPosition);
         };
+        logger.debug('isCheck _4');
+        logger.debug('Free enemy figures count=%d', allFigures_.length);
         var allAttackPositions = [];
+
+
+        var tmpPosArray = [];
         for (var i = allFigures_.length - 1; i >= 0; i--) {
-    // this.getAllPositionsForFigure = function(figureIndex, board, forPlayer, isNeedAllPositions) {
-            var tmpPosArray = that.getAllPositionsForFigure([allFigures_[i].figureIndex], board, enemyPlayer_);
+            // this.getAllPositionsForFigure = function(figureIndex, board, forPlayer, isNeedAllPositions) {
+            tmpPosArray = that.getAllPositionsForFigure(allFigures_[i].figureIndex, board, enemyPlayer_);
             if (tmpPosArray.length > 0) {
                 allAttackPositions = allAttackPositions.concat(tmpPosArray);
             };
         };
+
+
+        logger.debug('isCheck _5');
+
+
+
         // allAttackPositions = arrayUnique(allAttackPositions);
         var isVolhvAttack = false;
-        // console.log("volhv=");
-        // console.log(volhvObj_.boardPosition);
+        // logger.debug("volhv=");
+        // logger.debug(volhvObj_.boardPosition);
         for (var i = allAttackPositions.length - 1; i >= 0; i--) {
-            // console.log(allAttackPositions[i]);
+            // logger.debug(allAttackPositions[i]);
             if (allAttackPositions[i].equals(volhvObj_.boardPosition)) {
                 isVolhvAttack = true;
-                console.log('Check attack position for figures:');
+                logger.debug('Attacked position:', volhvObj_.boardPosition);
+                logger.debug('Check attack position for figures:');
                 for (var i = allFigures_.length - 1; i >= 0; i--) {
-                    console.log('Figure name=%s index=%d indexY=%d boardPosition', allFigures_[i].main.name, allFigures_[i].figureIndex, allFigures_[i].indexY, allFigures_[i].boardPosition);
-                    var tmpPosArray = that.getAllPositionsForFigure([allFigures_[i].figureIndex], board, enemyPlayer_);
-                    console.log(tmpPosArray);
+                    logger.debug('Figure name=%s index=%d indexY=%d boardPosition', allFigures_[i].main.name, allFigures_[i].figureIndex, allFigures_[i].indexY, allFigures_[i].boardPosition);
+                    var tmpPosArray = that.getAllPositionsForFigure(allFigures_[i].figureIndex, board, enemyPlayer_);
+                    logger.debug(tmpPosArray);
                 };
+                logger.debug('...end');
                 break;
             };
         };
@@ -707,13 +751,13 @@ LOGIC.LogicContainer = function() {
             volhvObj_ = UTILS.getFigureWithIndex(12, board.getWhite());
         };
         var allVolhvAvailablePositions = that.getAllPositionsForFigure(volhvObj_.figureIndex, board, forPlayer);
-        // console.log(allVolhvAvailablePositions);
+        // logger.debug(allVolhvAvailablePositions);
         if (allVolhvAvailablePositions.length == 0) {
             if (isVolhvAttack) {
                 // TODO check
-                console.log("Нам МАТ!!!");
+                logger.debug("Нам МАТ!!!");
             } else {
-                console.log("ПАТ..");
+                logger.debug("ПАТ..");
             };
             return truel
         };
@@ -732,50 +776,50 @@ LOGIC.LogicContainer = function() {
     };
 
     function normalizeFiguresArray(target, figuresArray, board) {
-        console.log('--- Normalize array ---');
+        logger.debug('--- Normalize array ---');
         // var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
         for (var i = 0; i < figuresArray.length; i++) {
-            console.log('1)figure index=', figuresArray[i].figureIndex);
-            console.log('1)pos=', figuresArray[i].position);
-            console.log('1)board pos=', figuresArray[i].boardPosition);
-            console.log('1)indexY = ', sourceArray[i].indexY);
+            logger.debug('1)figure index=', figuresArray[i].figureIndex);
+            logger.debug('1)pos=', figuresArray[i].position);
+            logger.debug('1)board pos=', figuresArray[i].boardPosition);
+            logger.debug('1)indexY = ', sourceArray[i].indexY);
             figuresArray[i].boardPosition.copy(target.boardPosition);
             figuresArray[i].position.x = figuresArray[i].boardPosition.x - 4 + 0.5;
             figuresArray[i].position.z = figuresArray[i].boardPosition.y - 4 + 0.5;
             var target_ = target.position.clone();
             var scale_ = target.indexY - (target.indexYsrc - sourceArray[i].indexY);
             sourceArray[i].indexY = scale_;
-            console.log('Scale=%d figure position.y=%d', scale_, figuresArray[i].position.y);
+            logger.debug('Scale=%d figure position.y=%d', scale_, figuresArray[i].position.y);
             figuresArray[i].position.y = scale_ * 0.5 + 0.5;
-            console.log('2)pos=', figuresArray[i].position);
-            console.log('2)board pos=', figuresArray[i].boardPosition);
-            console.log('2)indexY = ', sourceArray[i].indexY);
+            logger.debug('2)pos=', figuresArray[i].position);
+            logger.debug('2)board pos=', figuresArray[i].boardPosition);
+            logger.debug('2)indexY = ', sourceArray[i].indexY);
         };
     };
 
     function moveFiguresArray(figuresArray, target, board, testMode) {
         var lerp_ = 0.0911;
         if (testMode !== undefined) {
-            console.log('LOGIC.moveFiguresArray');
+            logger.debug('LOGIC.moveFiguresArray');
         };
         // var figure_ = UTILS.getFigureWithIndex(selectedFigureIndex, board.getAllFigure());
-        console.log('Target pos ' + target.position);
-        console.log('Target indexY=%d indexYsrc=%d indexYdst=%d', target.indexY, target.indexYsrc, target.indexYdst);
+        logger.debug('Target pos ' + target.position);
+        logger.debug('Target indexY=%d indexYsrc=%d indexYdst=%d', target.indexY, target.indexYsrc, target.indexYdst);
         for (var i = 0; i < sourceArray.length; i++) {
             var target_ = target.position.clone();
             var indexYdelta_ = parseInt(target.indexYsrc - sourceArray[i].indexY, 10);
             var figureIndexY_ = parseInt(sourceArray[i].indexY, 10);
             var figureIndex_ = parseInt(sourceArray[i].figureIndex, 10);
-            console.log('i=%d figure index=%d indexY=%d, indexYdelta_=%d', i, figureIndex_, figureIndexY_, indexYdelta_);
+            logger.debug('i=%d figure index=%d indexY=%d, indexYdelta_=%d', i, figureIndex_, figureIndexY_, indexYdelta_);
             target_.y = target.position.y - indexYdelta_ * 0.5;
-            console.log('1)pos=', sourceArray[i].position);
+            logger.debug('1)pos=', sourceArray[i].position);
             if (testMode === undefined) {
                 sourceArray[i].position.lerp(target_, lerp_);
             } else {
-                console.log('...');
+                logger.debug('...');
                 sourceArray[i].position.copy(target_);
             };
-            console.log('2)pos=', sourceArray[i].position);
+            logger.debug('2)pos=', sourceArray[i].position);
         };
     };
     this.switchPlayer = function(obj1, obj2, towerCount, board) {
@@ -790,29 +834,29 @@ LOGIC.LogicContainer = function() {
             var countDest_ = UTILS.getFigureCountAtPosition(obj2.boardPosition, figures_);
             var countSrc_ = UTILS.getFigureCountAtPosition(obj1.boardPosition, figures_);
             if (towerCount > countSrc_) {
-                console.log('Error! Wrong tower count!');
+                logger.debug('Error! Wrong tower count!');
                 towerCount = 0;
             }
             // countSrc_ -= RENDER.main.getTowerIndex();
             var count_ = countSrc_ + countDest_ - towerCount;
             targetPosition.position.y = 0.5 + count_ * 0.5;
             var sourceTower = [];
-            console.log('Counts: src=%d dst=%d tower=%d', countSrc_, countDest_, towerCount);
+            logger.debug('Counts: src=%d dst=%d tower=%d', countSrc_, countDest_, towerCount);
             if (towerCount !== 0) {
                 towerCount = countSrc_ - towerCount;
             };
             for (var i = 0; i < sourceArray.length; i++) {
-                console.log('source index =%d min index=%d', sourceArray[i].indexY, (towerCount));
+                logger.debug('source index =%d min index=%d', sourceArray[i].indexY, (towerCount));
                 if (sourceArray[i].indexY >= (towerCount)) {
                     sourceTower.push(sourceArray[i]);
                 }
             };
-            console.log('source tower count=%d', sourceTower.length);
+            logger.debug('source tower count=%d', sourceTower.length);
             sourceArray = sourceTower;
             for (var i = 0; i < sourceArray.length; i++) {
-                // console.log('1)indexY = ', sourceArray[i].indexY);
+                // logger.debug('1)indexY = ', sourceArray[i].indexY);
                 sourceArray[i].indexY += countDest_;
-                console.log('2)indexY = ', sourceArray[i].indexY);
+                logger.debug('2)indexY = ', sourceArray[i].indexY);
             };
         } else {
             var countSrc_ = UTILS.getFigureCountAtPosition(obj1.boardPosition, figures_) - 1;

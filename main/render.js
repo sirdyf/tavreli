@@ -1,19 +1,22 @@
 var RENDER = RENDER || {
-    revision: "v0.0.1"
+    revision: "v0.1.1"
 };
 if (typeof module === 'object') {
     module.exports = RENDER;
 }
 
-RENDER.RenderContainer = function(testMode) {
+RENDER.RenderContainer = function(config, testMode) {
     var _testMode = false;
     if (testMode !== undefined) {
         _testMode = true;
     };
-    console.log('RENDER test mode=',_testMode);
     var _tower = [];
     var _towerIndex = 0;
     var _platform = null;
+
+    var _config = config;
+    var logger = _config.logger;
+    logger.debug('RENDER test mode=',_testMode);
 
     this.Init = function() {};
     this.hideTower = function(board) {
@@ -56,7 +59,7 @@ RENDER.RenderContainer = function(testMode) {
                 figure_.name = 'tower';
                 var posY_ = figure_.position.y - 0;
                 var scale_ = Math.floor(posY_ / 0.51);
-                console.log('RENDER scale=' + scale_);
+                logger.debug('RENDER scale=' + scale_);
                 figure_.indexY = scale_;
                 figure_.position.x = 4;
                 figure_.position.z = -10;
@@ -66,7 +69,7 @@ RENDER.RenderContainer = function(testMode) {
                     UTILS.removeAllArrow(figure_);
                     this.renderDeselectFigure(figure_);
                     camera.add(figure_);
-                    console.log('RENDER.showTowerWithPosition figureIndex=',figure_.figureIndex);
+                    logger.debug('RENDER.showTowerWithPosition figureIndex=',figure_.figureIndex);
                 };
                 _tower.push(figure_);
             };
@@ -80,10 +83,10 @@ RENDER.RenderContainer = function(testMode) {
     };
 
     function getFigureWithYIndex(yIndex) {
-        console.log('RENDER.getFigureWithYIndex(%d)', yIndex);
-        console.log('Tower length=',_tower.length);
+        logger.debug(' RENDER.getFigureWithYIndex(%d)', yIndex);
+        logger.debug(' RENDER. Tower length=',_tower.length);
         for (var i = 0; i < _tower.length; i++) {
-            console.log('i=%d _tower[i].figureIndex =%d indexY=%d',i,_tower[i].figureIndex,_tower[i].indexY);
+            logger.debug('i=%d _tower[i].figureIndex =%d indexY=%d',i,_tower[i].figureIndex,_tower[i].indexY);
             if (_tower[i].indexY == yIndex) return _tower[i];
         };
         return null;
@@ -92,9 +95,9 @@ RENDER.RenderContainer = function(testMode) {
         var ind_ = object.figureIndex;
         var figure_ = UTILS.getFigureWithIndex(ind_, _tower);
         var posY_ = figure_.indexY;
-        console.log('select tower with index:' + posY_);
+        logger.debug(' RENDER. Select tower with index:%d Tower count=%d andPosition:', posY_, _tower.length, object.boardPosition);
         _towerIndex = posY_;
-        console.log(posY_);
+        
         for (var i = 0; i < _tower.length; i++) {
             if (_tower[i].indexY < posY_) {
                 _tower[i].position.y = _tower[i].indexY * 0.5 - 2;
@@ -104,21 +107,24 @@ RENDER.RenderContainer = function(testMode) {
         };
     };
     this.getTowerUpFigures = function(figuresArray) {
+        // logger.debug('!', figuresArray);
         if (figuresArray.length < 2) {
             figuresArray[0].indexY = 0;
+            logger.debug(' RENDER. !!!!!!',figuresArray.length);
             return figuresArray;
         };
         var retArray_ = [];
-        console.log("figuresArray count=%d, towerIndex =%d", figuresArray.length, _towerIndex);
+        logger.debug(" RENDER. FiguresArray count=%d, towerIndex =%d", figuresArray.length, _towerIndex);
         for (var i = 0; i < figuresArray.length; i++) {
             var indY_ = isFigureUp(figuresArray[i]);
             if (indY_ >= 0) {
                 var upFiguresCount = figuresArray.length - _towerIndex - 1;
                 // figuresArray[i].indexY = upFiguresCount - (indY_ - _towerIndex);
-                console.log("indY=%d, indexY=%d", indY_, figuresArray[i].indexY);
+                logger.debug(" RENDER. indY=%d, indexY=%d", indY_, figuresArray[i].indexY);
                 retArray_.push(figuresArray[i]);
             };
         };
+        logger.debug(' RENDER. getTowerUpFigures count=%d', retArray_.length);
         return retArray_;
     };
 

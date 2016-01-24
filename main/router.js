@@ -1,10 +1,10 @@
 var ROUTER = ROUTER || {
-    revision: "v0.1.0"
+    revision: "v0.1.1"
 };
 if (typeof module === 'object') {
     module.exports = ROUTER;
 }
-ROUTER.RouterContainer = function() {
+ROUTER.RouterContainer = function(config) {
     var that = this;
     var rSTATE = {
         NONE: 0,
@@ -18,19 +18,22 @@ ROUTER.RouterContainer = function() {
     var _board = null;
     var _sampleArray = null;
     var _currentStepNum = 0;
-    var _DEBUG = true;
-    var _pauseOnStep = 28;
+    var _DEBUG = false;
+    var _pauseOnStep = 70 / 2 - 1;
     var _serverUrl = null;
     var _network = [];
     var _timePingPong = null;
     var _pingPongIndicator = 0;
+
+    var _config = config;
+    var logger = _config.logger;
 
     // Cookies.set('clientType', 'White', { expires: 1, path: '' });
     // Cookies.set('sessionId', "SampleSessionId_1" + "_room_4", { expires: 1, path: '' });
     // Cookies.set('clientType', 'Black', { expires: 1, path: '' });
     // Cookies.set('sessionId', "SampleSessionId_2" + "_room_4", { expires: 1, path: '' });
     function startServerPingPong() {
-        console.log("startServerPingPong..");
+        logger.debug("startServerPingPong..");
         var curStepNum = _logic.length;
         var stepNotation = _logic.getLastStep();
 
@@ -57,7 +60,7 @@ ROUTER.RouterContainer = function() {
 
             if (xmlhttp.status == 200) {
                 // Все ок
-                console.log("Ping Pong OK!");
+                logger.debug("Ping Pong OK!");
                 _pingPongIndicator += 1;
                 if (_pingPongIndicator === 4) _pingPongIndicator = 0;
                 var resp = $.parseJSON(xmlhttp.responseText); //parse JSON
@@ -86,19 +89,19 @@ ROUTER.RouterContainer = function() {
     function isOurStep() {
         // && (curStepNum_ < _network.currentStepNum)
         var curStepNum_ = _logic.getCurrentStepNum();
-        console.log("isOurStep serv step num=" + _network.currentStepNum + " local step num =" + curStepNum_);
+        logger.debug("isOurStep serv step num=" + _network.currentStepNum + " local step num =" + curStepNum_);
         if (curStepNum_ < _network.currentStepNum) return false;
         // if player white and step even
         if ((curStepNum_ % 2 == 0) && (_network.clientType == 'White')) {
-            console.log("our step 1!");
+            logger.debug("our step 1!");
             return true;
         };
         // if player black and step odd
         if ((curStepNum_ % 2 != 0) && (_network.clientType == 'Black')) {
-            console.log("our step 2!");
+            logger.debug("our step 2!");
             return true;
         };
-        console.log('Wait oponents');
+        logger.debug('Wait oponents');
         return false;
     };
 
@@ -108,18 +111,18 @@ ROUTER.RouterContainer = function() {
         // if (isOurStep() == false){ 
         //     return;
         // }
-        console.log("Send data to server!");
+        logger.debug("Send data to server!");
         var curStepNum_ = _logic.getCurrentStepNum();
-        console.log("isOurStep serv step num=" + _network.currentStepNum + " local step num =" + curStepNum_);
+        logger.debug("isOurStep serv step num=" + _network.currentStepNum + " local step num =" + curStepNum_);
         if ((curStepNum_ == _network.currentStepNum) && (curStepNum_ != 0)) {
-            console.log("Skip send data!");
+            logger.debug("Skip send data!");
             return;
         };
         var curStepNum_ = _logic.getCurrentStepNum();
         var name_ = "Player Name";
         var stepNotation_ = _logic.getLastStep();
         var params = 'curStepNum=' + encodeURIComponent(curStepNum_) + '&sessionId=' + encodeURIComponent(_network.sessionId) + '&name=' + encodeURIComponent(name_) + '&stepNotation=' + encodeURIComponent(stepNotation_) + '&roomNum=' + encodeURIComponent(_network.roomNum) + '&clientType=' + encodeURIComponent(_network.clientType);
-        console.log("Send step with params:" + params);
+        logger.debug("Send step with params:" + params);
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", _serverUrl + '/playerStep', true);
         xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -163,7 +166,7 @@ ROUTER.RouterContainer = function() {
     }
 
     function updateGameInfo() {
-        console.log('updateGameInfo:' + _network.roomNum);
+        logger.debug('updateGameInfo:' + _network.roomNum);
         $('#boardNum').html(_network.roomNum);
         $('#player_white').html(_network.playerWhite);
         $('#player_black').html(_network.playerBlack);
@@ -191,7 +194,7 @@ ROUTER.RouterContainer = function() {
         var params = 'curStepNum=' + encodeURIComponent(curStepNum_) + '&sessionId=' + encodeURIComponent(_network.sessionId) + '&name=' + encodeURIComponent(name_)
             // + '&stepNotation_=' + encodeURIComponent(stepNotation_)
             + '&roomNum=' + encodeURIComponent(_network.roomNum) + '&clientType=' + encodeURIComponent(_network.clientType);
-        console.log("Get step with params:" + params);
+        logger.debug("Get step with params:" + params);
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("GET", _serverUrl + "/getCurrentNotation?" + params, true);
         xmlhttp.setRequestHeader('Access-Control-Allow-Origin', "http://localhost");
@@ -200,20 +203,20 @@ ROUTER.RouterContainer = function() {
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var resp = $.parseJSON(xmlhttp.responseText); //parse JSON
-                console.log('Data from Server:' + resp);
+                logger.debug('Data from Server:' + resp);
                 var ct = resp['clientType'];
                 _network.clientType = resp['clientType'];
                 _network.sessionId = resp.sessionId;
                 _network.roomNum = resp.roomNum;
                 _network.currentStepNum = resp.currentStepNum;
                 _network.stepNotation = resp.stepNotation;
-                console.log("serv step num=" + _network.currentStepNum + " local step num=" + curStepNum_);
+                logger.debug("serv step num=" + _network.currentStepNum + " local step num=" + curStepNum_);
                 // if (_network.currentStepNum == 0){
-                //     console.log("Stop timer, our step!");
+                //     logger.debug("Stop timer, our step!");
                 //     return;
                 // };
                 if ((_network.stepNotation != stepNotation_) && (_network.stepNotation != "") && (_network.stepNotation !== undefined)) {
-                    console.log("processNetworkStep with:" + _network.stepNotation);
+                    logger.debug("processNetworkStep with:" + _network.stepNotation);
                     processNetworkStep();
                 };
             }
@@ -229,25 +232,28 @@ ROUTER.RouterContainer = function() {
 
     function processNetworkStep(board) {
         // TODO: process response
-        console.log("processNetworkStep with notation:" + _network.stepNotation);
+        logger.debug("processNetworkStep with notation:" + _network.stepNotation);
         processNotation(_network.stepNotation, board);
         processNotation(_network.stepNotation, board);
     };
 
     this.processNotation = function(stepNotation, board) {
-        console.log('--- processNotation:%s ---', stepNotation);
+        logger.debug('--- processNotation:%s ---', stepNotation);
         var logicState_ = _logic.getCurrentState();
         // TODO: !!!! scene.main !!!!
         // var board = scene.main; //TAVRELI;
         var arr_ = PARSER.main.parseString(stepNotation);
-        console.log("Try parse:");
-        console.log(arr_);
+        logger.debug("Try parse:");
+        logger.debug(arr_);
         if (logicState_ == 1) { //rSTATE.SOURCE){ TODO
             that.processNotationWithFirstStep(arr_[0], board);
         } else if (logicState_ == 2) {
             if (stepNotation == '0-0') {
-                console.log('Long rokirovka!');
+                logger.debug('Long rokirovka!');
                 that.processNotationWithSecondStep('0-0', board);
+            }else if (stepNotation == '0'){
+                logger.debug('Short rokirovka!');
+                that.processNotationWithSecondStep('0', board);
             }else{
                 that.processNotationWithSecondStep(arr_[0], board);
             };
@@ -256,15 +262,15 @@ ROUTER.RouterContainer = function() {
     };
 
     this.processNotationWithFirstStep = function(stepNotation, board) {
-        console.log("--- processNotationWithFirstStep:%s ---", stepNotation);
+        logger.debug("--- processNotationWithFirstStep:%s ---", stepNotation);
         var state_ = _logic.getCurrentState();
         if (state_ == 1) { //rSTATE.SOURCE){ TODO
             var obj_ = {};
             var not_ = stepNotation;
-            console.log(not_);
+            logger.debug(not_);
             var max_ = board.getWhiteMaxIndex();
             if ((not_ == '0') || (not_ == '0-0') || (not_ == 0)) {
-                console.log('Short rokirovka!');
+                logger.debug('Rokirovka!');
                 if (_currentStepNum % 2 == 0) {
                     obj_ = UTILS.getFigureWithIndex(12, board.getAllFigure());
                 } else {
@@ -273,7 +279,7 @@ ROUTER.RouterContainer = function() {
                 _logic.ClickOnObject(obj_, board);
                 return;
             }
-            console.log('_');
+            logger.debug('_');
             //************************************************************************
             if (not_.length > 2) {
                 var towerIndex_ = not_.substring(3);
@@ -284,20 +290,20 @@ ROUTER.RouterContainer = function() {
 
                 _logic.ClickOnObject(obj_, board);
 
-                console.log('ROUTER tower Index=%d',intValue);
+                logger.debug('ROUTER tower Index=%d',intValue);
                 var towerFigure_ = RENDER.main.getTowerFigureWithIndex(intValue);
-                // console.log('ROUTER towerFigure_=', towerFigure_);
+                // logger.debug('ROUTER towerFigure_=', towerFigure_);
                 RENDER.main.selectTowerWith(towerFigure_);
             } else {
                 UTILS.setIndexFromNotation(not_, obj_);
-                console.log("_logic.ClickOnObject(obj_,board) !!");
+                logger.debug("_logic.ClickOnObject(obj_,board) !!");
                 _logic.ClickOnObject(obj_, board);
             };
         };
     };
 
     this.processNotationWithSecondStep = function(stepNotation, board) {
-        console.log("--- processNotationWithSecondStep:%s ---", stepNotation);
+        logger.debug("--- processNotationWithSecondStep:%s ---", stepNotation);
         var state_ = _logic.getCurrentState();
         if (state_ == 2) { //rSTATE.SOURCE){ TODO
             var obj_ = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 1, 1, 1), new THREE.MeshBasicMaterial({
@@ -316,12 +322,14 @@ ROUTER.RouterContainer = function() {
                 var delta_ = 0;
                 not_ = stepNotation; //_sampleArray[_currentStepNum*2+1];
                 if (not_ == '0-0') {
+                    logger.debug('Long rokirovka, delta = -2');
                     // if (_logic.getCurrentPlayer() == 'White' ) {
                         delta_ = -2;
                     // }else{
                         // delta_ = 2;
                     // };
                 } else {
+                    logger.debug('Short rokirovka, delta = +2');
                     // if (_logic.getCurrentPlayer() == 'White' ) {
                         delta_ = 2;
                     // }else{
@@ -333,12 +341,12 @@ ROUTER.RouterContainer = function() {
                 obj_.boardPosition.y = volhv_.boardPosition.y;
             } else {
                 not_ = stepNotation; //_sampleArray[_currentStepNum*2+1];
-                console.log(not_);
+                logger.debug(not_);
                 UTILS.setIndexFromNotation(not_, obj_);
             };
             fig_ = getBoardSquare(obj_.boardPosition, board);
-            console.log('ROUTER fig board pos=', fig_.boardPosition);
-            console.log('ROUTER fig position=', fig_.position);
+            logger.debug('ROUTER fig board pos=', fig_.boardPosition);
+            logger.debug('ROUTER fig position=', fig_.position);
             obj_.position = new THREE.Vector3();
             obj_.position.copy(fig_.position);
             _logic.ClickOnObject(obj_, board);
@@ -347,7 +355,7 @@ ROUTER.RouterContainer = function() {
     };
     this.ClickOnObject = function(obj, board) {
         if (_state == rSTATE.NONE) return;
-        console.log('ROUTER.ClickOnObject() WITH _state=%d', _state);
+        logger.debug('ROUTER.ClickOnObject() WITH _state=%d', _state);
         if (_state == rSTATE.TEST) {
             _logic.ClickOnObject(obj, board);
         } else if (_state == rSTATE.MANUAL) {
@@ -356,10 +364,10 @@ ROUTER.RouterContainer = function() {
             if (isOurStep() === true) {
                 _logic.ClickOnObject(obj, board);
             } else {
-                console.log('Wait oponents');
+                logger.debug('Wait oponents');
             };
         } else if (_state == rSTATE.AUTO) {
-            console.log('Sample mode:', _currentStepNum);
+            logger.debug('Sample mode:', _currentStepNum);
             if (_currentStepNum * 2 >= _sampleArray.length) {
                 _DEBUG = false;
                 _state = rSTATE.NONE;
@@ -410,7 +418,7 @@ ROUTER.RouterContainer = function() {
             triggerMouseEvent(targetNode, "mouseup");
             // triggerMouseEvent (targetNode, "click");
         } else
-            console.log("*** Target node not found!");
+            logger.debug("*** Target node not found!");
     };
 
     function triggerMouseEvent(node, eventType) {
@@ -432,17 +440,17 @@ ROUTER.RouterContainer = function() {
         if (_state == rSTATE.NONE) return;
         if (testMode === undefined) {
             if ((_logic === undefined) || (_logic === null)) {
-                console.log('_logic => null');
+                logger.debug('_logic => null');
             } else {
                 _logic.RenderStep(board);
             };
         } else {
-            console.log('ROUTER.RenderStep()');
+            logger.debug('ROUTER.RenderStep()');
             _logic.RenderStep(board, testMode);
         };
         var state_ = null;
         if ((_logic === undefined) || (_logic === null)) {
-            console.log('_logic => null');
+            logger.debug('_logic => null');
         } else {
             state_ = _logic.getCurrentState();
         };
@@ -489,9 +497,9 @@ ROUTER.RouterContainer = function() {
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var resp = $.parseJSON(xmlhttp.responseText); //parse JSON
-                console.log('Data from Server:' + resp);
+                logger.debug('Data from Server:' + resp);
                 var ct = resp['clientType'];
-                console.log("We a " + ct);
+                logger.debug("We a " + ct);
                 _network.clientType = resp['clientType'];
                 _network.sessionId = resp.sessionId;
                 _network.roomNum = resp.roomNum;
@@ -537,7 +545,7 @@ ROUTER.RouterContainer = function() {
             savedFigure.figureIndex = boardData[i].figureIndex;
             resBoard.push(savedFigure);
         };
-        console.log(resBoard);
+        logger.debug(resBoard);
         board.setBoardFigures(resBoard);
     };
 
@@ -550,23 +558,23 @@ ROUTER.RouterContainer = function() {
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var resp = $.parseJSON(xmlhttp.responseText); //parse JSON
-                // console.log('Data from Server:' + resp);
+                // logger.debug('Data from Server:' + resp);
                 makeBoard(resp, board);
             }
         }
         xmlhttp.send();
     };
     this.Init = function(state, localLogic, board) {
-        console.log('--- Init(state=%d) ---', state);
+        logger.debug('--- Init(state=%d) ---', state);
         if (state === rSTATE.TEST) {
             _state = state;
-            console.log('* state set manual:%d', state);
+            logger.debug('* state set manual:%d', state);
             _logic = localLogic;
             return;
         };
-        _logic = new LOGIC.LogicContainer();
+        _logic = new LOGIC.LogicContainer(_config);
         _logic.Init(this.zeroStep);
-        var sampleBoard = new TAVRELI.init();
+        var sampleBoard = new TAVRELI.init(_config);
         sampleBoard.creates("skip");
         _logic.setTestBoard(sampleBoard);
         defaultSettings();
@@ -581,13 +589,13 @@ ROUTER.RouterContainer = function() {
             _state = window.GameState;
             var sampleStr_ = SAMPLES.main.getSampleString();
             _sampleArray = PARSER.main.parseString(sampleStr_);
-            console.log(_sampleArray);
+            logger.debug(_sampleArray);
             clickMouse();
         } else if (_state == rSTATE.NETWORK) {
             setTimeout(serverGetPlayer, 1000 * 5);
             // TODO: get all previous steps
         } else {
-            console.log('???');
+            logger.debug('???');
         };
     };
     // $('info').mousedown();

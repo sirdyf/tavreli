@@ -1,5 +1,5 @@
 var UTILS = UTILS || {
-    REVISION: '0.2'
+    REVISION: '0.2.1'
 };
 
 if (typeof module === 'object') {
@@ -109,7 +109,7 @@ UTILS.addMoveArrow = function(figure) {
     var moveRule_ = figure.main.getMoveRule();
     figure.main.moveArrows = [];
     for (var i = 0; i < moveRule_.length; i++) {
-        var vecDir_ = new THREE.Vector3(moveRule_[i].x, 0, moveRule_[i].y);
+        var vecDir_ = new THREE.Vector3(moveRule_[i].x, -1, moveRule_[i].y);
         var objectArrow = new THREE.ArrowHelper(vecDir_, new THREE.Vector3(0, 1, 0), 10);
         objectArrow.name = 'move_arrow';
         figure.main.moveArrows.push(objectArrow);
